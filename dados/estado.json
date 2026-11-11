@@ -1,0 +1,49 @@
+{
+ "usdt": 0.1329987,
+ "btc": 0.00012987,
+ "parametros": [
+  90,
+  200
+ ],
+ "semestre": "2026-S2",
+ "ultimo_candle": "2026-11-09 00:00:00+00:00",
+ "operacoes": [
+  {
+   "quando": "2026-11-07T00:49:29.949919+00:00",
+   "lado": "BUY",
+   "btc": 0.00013,
+   "usdt": 9.8670013,
+   "preco": 75900.01,
+   "taxas": {
+    "BTC": 1.3e-07
+   }
+  }
+ ],
+ "diario": [
+  {
+   "dia": "2026-11-06",
+   "patrimonio": 9.9901,
+   "preco": 75900.0,
+   "comprado": true
+  },
+  {
+   "dia": "2026-11-07",
+   "patrimonio": 9.9801,
+   "preco": 75822.95,
+   "comprado": true
+  },
+  {
+   "dia": "2026-11-08",
+   "patrimonio": 9.8227,
+   "preco": 74610.49,
+   "comprado": true
+  },
+  {
+   "dia": "2026-11-09",
+   "patrimonio": 9.9179,
+   "preco": 75344.01,
+   "comprado": true
+  }
+ ],
+ "inicio": "2026-11-07T00:49:27.318317+00:00"
+}

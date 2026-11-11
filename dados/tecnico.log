@@ -1,0 +1,12 @@
+[2026-11-08 00:05:04 UTC] SINAL candle=2026-11-07 fechamento=75867.59 media200=73240.19 retorno90d=0.1690 quer_comprado=True tem_posicao=True preco_execucao=75822.95 passo=1e-05 minimo=5.0
+[2026-11-08 00:05:04 UTC] FIM usdt=0.132999 btc=0.00012987 patrimonio=9.9801 comprado=True ensaio=False
+[2026-11-09 00:05:04 UTC] SINAL candle=2026-11-08 fechamento=74851.44 media200=73223.56 retorno90d=0.1701 quer_comprado=True tem_posicao=True preco_execucao=74610.49 passo=1e-05 minimo=5.0
+[2026-11-09 00:05:04 UTC] FIM usdt=0.132999 btc=0.00012987 patrimonio=9.8227 comprado=True ensaio=False
+[2026-11-09 23:30:16 UTC] IA_FILTRO novas=27 impacto=6 direcao=incerta resumo=Lote sem choque confirmado para o BTC.
+[2026-11-09 23:45:16 UTC] IA_FILTRO novas=32 impacto=4 direcao=incerta resumo=Nenhuma manchete é choque para o BTC.
+[2026-11-10 00:00:08 UTC] CONSELHO votos=[True, False, False, True]
+[2026-11-10 00:00:26 UTC] SOMBRA surf varredura dia=2026-11-10 achou=None
+[2026-11-10 00:00:31 UTC] IA_FILTRO novas=40 impacto=5 direcao=queda resumo=Lote sem choque de impacto alto.
+[2026-11-10 00:05:04 UTC] SINAL candle=2026-11-09 fechamento=75368.41 media200=73209.11 retorno90d=0.1850 quer_comprado=True tem_posicao=True preco_execucao=75344.01 passo=1e-05 minimo=5.0
+[2026-11-10 00:05:04 UTC] FIM usdt=0.132999 btc=0.00012987 patrimonio=9.9179 comprado=True ensaio=False
+[2026-11-10 00:15:19 UTC] IA_FILTRO novas=40 impacto=3 direcao=incerta resumo=Lote sem choque relevante.

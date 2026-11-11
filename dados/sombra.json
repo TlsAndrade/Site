@@ -1,0 +1,206 @@
+{
+ "ema921": {
+  "usdt": 10.0,
+  "btc": 0.0,
+  "operacoes": [],
+  "diario": [
+   {
+    "candle": "2026-11-06 00:00:00+00:00",
+    "valor": 10.0,
+    "comprado": false
+   },
+   {
+    "candle": "2026-11-07 00:00:00+00:00",
+    "valor": 10.0,
+    "comprado": false
+   },
+   {
+    "candle": "2026-11-08 00:00:00+00:00",
+    "valor": 10.0,
+    "comprado": false
+   },
+   {
+    "candle": "2026-11-09 00:00:00+00:00",
+    "valor": 10.0,
+    "comprado": false
+   }
+  ]
+ },
+ "supertrend": {
+  "usdt": 10.0,
+  "btc": 0.0,
+  "operacoes": [],
+  "diario": [
+   {
+    "candle": "2026-11-06 00:00:00+00:00",
+    "valor": 10.0,
+    "comprado": false
+   },
+   {
+    "candle": "2026-11-07 00:00:00+00:00",
+    "valor": 10.0,
+    "comprado": false
+   },
+   {
+    "candle": "2026-11-08 00:00:00+00:00",
+    "valor": 10.0,
+    "comprado": false
+   },
+   {
+    "candle": "2026-11-09 00:00:00+00:00",
+    "valor": 10.0,
+    "comprado": false
+   }
+  ]
+ },
+ "conselho": {
+  "usdt": 10.0,
+  "btc": 0.0,
+  "operacoes": [],
+  "diario": [
+   {
+    "candle": "2026-11-06 00:00:00+00:00",
+    "valor": 10.0,
+    "comprado": false
+   },
+   {
+    "candle": "2026-11-07 00:00:00+00:00",
+    "valor": 10.0,
+    "comprado": false
+   },
+   {
+    "candle": "2026-11-08 00:00:00+00:00",
+    "valor": 10.0,
+    "comprado": false
+   },
+   {
+    "candle": "2026-11-09 00:00:00+00:00",
+    "valor": 10.0,
+    "comprado": false
+   }
+  ]
+ },
+ "memes": {
+  "usdt": 0.0,
+  "moeda": "PEPEUSDT",
+  "qtd": 2033606.4147152496,
+  "operacoes": [
+   {
+    "candle": "2026-11-06 00:00:00+00:00",
+    "lado": "BUY",
+    "moeda": "PEPEUSDT",
+    "preco": 4.912454999999999e-06,
+    "usdt": 10.0
+   }
+  ],
+  "diario": [
+   {
+    "candle": "2026-11-06 00:00:00+00:00",
+    "valor": 9.985,
+    "moeda": "PEPEUSDT"
+   },
+   {
+    "candle": "2026-11-07 00:00:00+00:00",
+    "valor": 9.8833,
+    "moeda": "PEPEUSDT"
+   },
+   {
+    "candle": "2026-11-08 00:00:00+00:00",
+    "valor": 10.0664,
+    "moeda": "PEPEUSDT"
+   },
+   {
+    "candle": "2026-11-09 00:00:00+00:00",
+    "valor": 10.4324,
+    "moeda": "PEPEUSDT"
+   }
+  ]
+ },
+ "rot3": {
+  "usdt": 10.0,
+  "moeda": null,
+  "qtd": 0.0,
+  "operacoes": [],
+  "diario": [
+   {
+    "candle": "2026-11-06 00:00:00+00:00",
+    "valor": 10.0,
+    "moeda": null
+   },
+   {
+    "candle": "2026-11-07 00:00:00+00:00",
+    "valor": 10.0,
+    "moeda": null
+   },
+   {
+    "candle": "2026-11-08 00:00:00+00:00",
+    "valor": 10.0,
+    "moeda": null
+   },
+   {
+    "candle": "2026-11-09 00:00:00+00:00",
+    "valor": 10.0,
+    "moeda": null
+   }
+  ]
+ },
+ "aporte": {
+  "usdt": 0.0,
+  "btc": 0.00013160578838664308,
+  "aportado": 10.0,
+  "mes": "2026-11",
+  "diario": [
+   {
+    "candle": "2026-11-06 00:00:00+00:00",
+    "valor": 9.985,
+    "aportado": 10.0
+   },
+   {
+    "candle": "2026-11-07 00:00:00+00:00",
+    "valor": 9.9819,
+    "aportado": 10.0
+   },
+   {
+    "candle": "2026-11-08 00:00:00+00:00",
+    "valor": 9.8406,
+    "aportado": 10.0
+   },
+   {
+    "candle": "2026-11-09 00:00:00+00:00",
+    "valor": 9.916,
+    "aportado": 10.0
+   }
+  ]
+ },
+ "surf": {
+  "usdt": 10.0,
+  "moeda": null,
+  "qtd": 0.0,
+  "entrada": null,
+  "topo": null,
+  "ultimo_dia": "2026-11-10",
+  "operacoes": [],
+  "diario": [
+   {
+    "dia": "2026-11-07",
+    "valor": 10.0,
+    "moeda": null
+   },
+   {
+    "dia": "2026-11-08",
+    "valor": 10.0,
+    "moeda": null
+   },
+   {
+    "dia": "2026-11-09",
+    "valor": 10.0,
+    "moeda": null
+   },
+   {
+    "dia": "2026-11-10",
+    "valor": 10.0,
+    "moeda": null
+   }
+  ]
+ }
+}

@@ -1,0 +1,31 @@
+{
+ "usdt": 10.0,
+ "btc": 0.0,
+ "operacoes": [],
+ "decisoes": [],
+ "diario": [],
+ "recentes": [
+  {
+   "quando": "2026-11-10T00:00:27+00:00",
+   "fonte": "Google News cripto",
+   "titulo": "Bitcoin recua para perto de 75 mil dólares com saída de dinheiro dos fundos (ETFs) · Chosunbiz",
+   "impacto": 5
+  },
+  {
+   "quando": "2026-11-10T00:15:14+00:00",
+   "fonte": "Google News cripto",
+   "titulo": "Mineradora MARA vende 13.597 bitcoins para pagar dívida · Yahoo Finance",
+   "impacto": 3
+  },
+  {
+   "quando": "2026-11-10T00:15:14+00:00",
+   "fonte": "Google News cripto",
+   "titulo": "Sai hoje a inflação americana de outubro (CPI) · bloomingbit",
+   "impacto": 3
+  }
+ ],
+ "custo": {
+  "2026-11": 0.00185
+ },
+ "inicio": "2026-11-09T23:16:25.785783+00:00"
+}
