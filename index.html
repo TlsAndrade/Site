@@ -808,7 +808,7 @@ const SNAP={"estado":{"usdt":0.13299869999999991,"btc":0.00012987,"parametros":[
 /* ============ nucleo: mercado, indicadores e estrategias (os mesmos calculos do robo) ============ */
 const DAY=864e5,COST=0.0015;
 const M={c:D.c.slice(),brl:D.brl.slice(),now:D.now,brlNow:D.brlNow,live:false,stamp:new Date(D.stamp)};
-const utc=s=>{const [y,m,d]=s.split('-');return Date.UTC(+y,+m-1,+d);};
+const utc=s=>{if(typeof s==='number')return s*1000;if(s&&typeof s==='object')return Date.UTC(s.year,s.month-1,s.day);const [y,m,d]=String(s).split('-');return Date.UTC(+y,+m-1,+d);};
 const T0=utc(D.t0),IB0=Math.round((utc(D.b0)-T0)/DAY);
 const idxOf=s=>Math.round((utc(s)-T0)/DAY);
 const dateOf=i=>new Date(T0+i*DAY);
@@ -920,7 +920,7 @@ ingest();
 /* ============ atualizacao em tempo real ============ */
 const onData=[];
 function refresh(){ingest();onData.forEach(f=>{try{f();}catch(err){console.warn(err);}});}
-function mergeCandles(arr,kl,daily){for(const k of kl){const t=daily?new Date(k[0]).toISOString().slice(0,10):k[0]/1000,o={time:t,open:+k[1],high:+k[2],low:+k[3],close:+k[4]},last=arr[arr.length-1];if(last.time===t)arr[arr.length-1]=o;else if(t>last.time)arr.push(o);}}
+function mergeCandles(arr,kl,daily){const L=arr[arr.length-1];if(L&&L.time&&typeof L.time==='object')arr[arr.length-1]={...L,time:L.time.year+'-'+String(L.time.month).padStart(2,'0')+'-'+String(L.time.day).padStart(2,'0')};for(const k of kl){const t=daily?new Date(k[0]).toISOString().slice(0,10):k[0]/1000,o={time:t,open:+k[1],high:+k[2],low:+k[3],close:+k[4]},last=arr[arr.length-1];if(last.time===t)arr[arr.length-1]=o;else if(t>last.time)arr.push(o);}}
 async function pullMarket(){
   try{
     const gap=Math.min(1000,Math.ceil((Date.now()-(T0+(M.c.length-1)*DAY))/DAY)+3);
@@ -1449,7 +1449,7 @@ function openDrawer(id){
 function closeDrawer(){const dr=$('#drawer');dr.classList.remove('open');dr.setAttribute('aria-hidden','true');openId=null;if(OFF)OFF.select(null);if(lwChart){lwChart.ch.remove();lwChart=null;}}
 $('#dclose').onclick=closeDrawer;
 onData.push(()=>{if(!openId)return;const a=byId[openId];$('#dfacts').innerHTML=a.fatos().map(f=>'<div><dt>'+f[0]+'</dt><dd>'+f[1]+'</dd></div>').join('');
-  if(lwChart){const c=lwChart.cfg,data=c.tf==='h4'?D.h4.slice(-220):c.tf==='pepe'?D.pepe:D.d1;lwChart.cs.update(lastN(data));}});
+  if(lwChart){const c=lwChart.cfg,data=c.tf==='h4'?D.h4.slice(-220):c.tf==='pepe'?D.pepe:D.d1;lwChart.cs.update({...lastN(data)});}});
 
 /* ============ bastidores ============ */
 function semanas(rows,porGrupo){
@@ -1651,7 +1651,7 @@ function Candles(box){
   }
   box.querySelectorAll('.chips button').forEach(bt=>bt.onclick=()=>{cur=bt.dataset.k;box.querySelectorAll('.chips button').forEach(x=>x.setAttribute('aria-pressed',x===bt));montar();});
   new ResizeObserver(()=>{if(!wrap.clientWidth)return;if(!made)montar();else if(ch)ch.applyOptions({width:wrap.clientWidth,height:wrap.clientHeight});}).observe(wrap);
-  onData.push(()=>{if(!ch)return;const d=dados();cs.update(d[d.length-1]);if(ln){const l=lineData(cur==='h4'?'h4e':'sma200',d.slice(-1),cur);if(l.length)ln.update(l[l.length-1]);}cotacao();});
+  onData.push(()=>{if(!ch)return;const d=dados();cs.update({...d[d.length-1]});if(ln){const l=lineData(cur==='h4'?'h4e':'sma200',d.slice(-1),cur);if(l.length)ln.update(l[l.length-1]);}cotacao();});
 }
 $$('[data-candles]').forEach(Candles);
 /* ============ aviso de modo (teste x dinheiro real) ============ */
