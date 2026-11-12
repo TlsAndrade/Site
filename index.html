@@ -260,6 +260,7 @@ input[type=range]{width:100%;accent-color:var(--core)}
 .cquote{font-family:var(--f-mono);font-size:.84rem;color:var(--muted)}
 .cquote b{color:var(--ink);font-size:1.05rem;margin-right:6px}
 .cwrap{position:relative;height:380px}
+#bt.cwrap{height:380px}#simcv.cwrap{height:300px}#livecv.cwrap{height:260px}
 .candlebox[data-candles="painel"] .cwrap{height:320px}
 @media (max-width:620px){.cwrap{height:300px}}
 .clegend{display:flex;flex-wrap:wrap;gap:14px;font-size:.78rem;color:var(--muted)}
@@ -443,14 +444,14 @@ tr:last-child td{border-bottom:0}
       </div>
       <div class="cap low" data-a="0.44" data-b="0.62">
         <p class="eyebrow">A matéria-prima</p>
-        <h2>A moeda se desfaz em preço: cada estrela vira um dia do Bitcoin.</h2>
-        <p>Este é o último ano e pouco, dia por dia. O robô não tenta adivinhar o futuro. Ele só lê para que lado o preço já está indo.</p>
+        <h2>A moeda se desfaz em preço: as estrelas viram velas do Bitcoin.</h2>
+        <p>Este é o último ano e pouco, uma vela por semana: verde quando a semana fechou em alta, vermelha quando fechou em baixa. O robô não tenta adivinhar o futuro. Ele só lê para que lado o preço já está indo.</p>
       </div>
       <div class="cap low" data-a="0.65" data-b="0.8">
         <p class="eyebrow">A régua</p>
         <h2>A linha azul é a média dos últimos 200 dias.</h2>
         <p>Ela funciona como o nível do mar. Preço acima da linha: maré a favor. Preço abaixo: maré contra.</p>
-        <div class="key"><span><i style="background:#eef0ff"></i>Preço do Bitcoin</span><span><i style="background:var(--ion)"></i>Média de 200 dias</span></div>
+        <div class="key"><span><i class="box" style="background:var(--up)"></i>Semana de alta</span><span><i class="box" style="background:var(--down)"></i>Semana de baixa</span><span><i style="background:var(--ion)"></i>Média de 200 dias</span></div>
       </div>
       <div class="cap low" data-a="0.83" data-b="1.01">
         <p class="eyebrow">A regra</p>
@@ -482,7 +483,7 @@ tr:last-child td{border-bottom:0}
       <div class="two">
         <div class="chartbox rv">
           <div class="legend" id="btlegend"></div>
-          <div class="plot"><canvas id="bt" role="img" aria-label="Evolução de 10 dólares desde 2020 em três estratégias"></canvas><div class="tip" id="bttip"></div></div>
+          <div id="bt" role="img" aria-label="Velas mensais da carteira de 10 dólares desde 2020"></div>
         </div>
         <div class="card rv d1">
           <h3>Maior tombo no caminho</h3>
@@ -537,7 +538,7 @@ tr:last-child td{border-bottom:0}
         </div>
         <div class="chips" id="simchips"></div>
         <label class="switch" for="mens" style="display:flex;align-items:center;gap:10px;font-size:.92rem"><input type="checkbox" id="mens" checked style="width:18px;height:18px;accent-color:var(--core)"> Descontar as mensalidades do plano</label>
-        <div class="plot"><canvas id="simcv" role="img" aria-label="Evolução do valor aplicado em reais no período escolhido"></canvas><div class="tip" id="simtip"></div></div>
+        <div class="legend" id="simlegend"></div><div id="simcv" role="img" aria-label="Velas do valor aplicado em reais no período escolhido"></div>
         <div class="outs" id="outs"></div>
         <p class="note" id="simnote"></p>
       </div>
@@ -769,10 +770,10 @@ tr:last-child td{border-bottom:0}
   <div class="panel"><h3>Mercado ao vivo</h3><div class="candlebox" data-candles="painel"></div></div>
   <div class="cols">
     <div class="panel"><h3>O que a regra está vendo agora</h3><div id="gauge"></div></div>
-    <div class="panel"><h3>Carteiras desde o início do teste</h3><div class="legend" id="livelegend"></div><div class="plot"><canvas id="livecv" role="img" aria-label="Valor de cada carteira desde 6 de novembro"></canvas><div class="tip" id="livetip"></div></div></div>
+    <div class="panel"><h3>Carteiras desde o início, vela por dia</h3><div class="legend" id="livelegend"></div><div id="livecv" role="img" aria-label="Velas diárias da carteira escolhida desde 6 de novembro"></div></div>
   </div>
   <h2>As estratégias, uma por uma</h2>
-  <p class="lead">A faixa verde em cada gráfico mostra os períodos em que aquela estratégia ficaria comprada no último ano.</p>
+  <p class="lead">Cada gráfico mostra velas semanais do que o robô acompanha. A faixa verde marca os períodos em que ele ficaria comprado.</p>
   <div class="strats" id="strats"></div>
   <h2>Comparativo</h2>
   <div class="panel" style="max-width:820px"><h3>Quanto rendeu e quanto caiu, de 2020 até ontem</h3><p class="fine">Cada ponto é uma estratégia. Mais para cima rendeu mais. Mais para a direita caiu menos.</p><div class="plot"><canvas id="scatter" style="height:300px" role="img" aria-label="Saldo final contra maior queda de cada estratégia"></canvas></div></div>
@@ -1038,7 +1039,8 @@ function Film(){
   const NOMES=['ABERTURA','O PROBLEMA','A MATÉRIA-PRIMA','A RÉGUA','A REGRA'];
   let c,W=0,H=0,raf=0,pS=0,mx=.5,my2=.5,F={};
   function data(){const n=M.n,m=Math.min(420,n),a=n-m;F={M:m,c:M.c.slice(a),ma:M.sma[M.N].slice(a),in:Array.from(M.regra.slice(a)),d0:a};
-    const all=F.c.concat(F.ma.filter(v=>v!=null));F.lo=Math.min(...all)*.97;F.hi=Math.max(...all)*1.02;}
+    const all=F.c.concat(F.ma.filter(v=>v!=null));F.lo=Math.min(...all)*.97;F.hi=Math.max(...all)*1.02;
+    F.wk=[];for(let i=0;i<m;i+=7){const j=Math.min(m-1,i+6),seg=F.c.slice(i,j+1),o=i?F.c[i-1]:F.c[0];F.wk.push({i0:i,i1:j,o,c:F.c[j],h:Math.max(o,...seg),l:Math.min(o,...seg)});}}
   data();
   let sd=11;const rnd=()=>(sd=(sd*16807)%2147483647)/2147483647;
   // pontos do simbolo: um B inclinado com os dois tracos em cima e embaixo
@@ -1081,6 +1083,7 @@ function Film(){
         const dg=c.createRadialGradient(cx-RC*.3,cy-RC*.35,RC*.1,cx,cy,RC);dg.addColorStop(0,'rgba(120,70,10,'+(.55*fl)+')');dg.addColorStop(1,'rgba(40,22,4,'+(.7*fl)+')');c.fillStyle=dg;c.beginPath();c.arc(cx,cy,RC,0,6.283);c.fill();
         c.strokeStyle='rgba(255,199,120,'+(.75*fl)+')';c.lineWidth=2;c.beginPath();c.arc(cx,cy,RC*1.0,0,6.283);c.stroke();c.strokeStyle='rgba(255,199,120,'+(.3*fl)+')';c.lineWidth=1;c.beginPath();c.arc(cx,cy,RC*.86,0,6.283);c.stroke();}
       if(GI){const sc=gs/GB.hh;c.save();c.globalAlpha=clamp(1-g*2.6)*.92;c.translate(cx,cy);c.transform(1,0,SK,1,0,0);c.scale(sc,sc);c.shadowColor='rgba(247,147,26,.9)';c.shadowBlur=26;c.drawImage(GI,-GB.cxg,-GB.cyg);c.restore();}}
+    const a1=clamp((p-.6)/.05);
     c.globalCompositeOperation='lighter';c.lineCap='round';
     for(const q of P){
       let gx,gy,w,tx=0,tyv=0;
@@ -1094,19 +1097,19 @@ function Film(){
       const m=ease(clamp(g*1.7-q.dl*.7)),fi=q.k*(F.M-1),i0=Math.floor(fi),v=lerp(F.c[i0],F.c[Math.min(F.M-1,i0+1)],fi-i0);
       const x=lerp(gx,px(fi),m),y=lerp(gy,py(v)+q.jy*(1-.6*clamp((p-.6)/.1)),m);
       if(x<-20||x>W+20||y<-20||y>H+20)continue;
-      const ww=w*(1-m),al=q.a*lerp(1,.55,m),col='rgba('+Math.round(lerp(190,255,ww))+','+Math.round(lerp(212,q.ty===1?168:200,ww))+','+Math.round(lerp(255,q.ty===1?60:130,ww))+',';
+      const ww=w*(1-m),al=q.a*lerp(1,.55,m)*(1-.75*a1),col='rgba('+Math.round(lerp(190,255,ww))+','+Math.round(lerp(212,q.ty===1?168:200,ww))+','+Math.round(lerp(255,q.ty===1?60:130,ww))+',';
       const s=q.sz*lerp(1,.8,m);
       if(q.ty===0&&spin>.05&&m<.2){const d=Math.hypot(tx,tyv)||1,len=spin*(6+q.r*26);c.strokeStyle=col+(al*.55)+')';c.lineWidth=s*.8;c.beginPath();c.moveTo(x,y);c.lineTo(x-tx/d*len,y-tyv/d*len);c.stroke();}
       c.fillStyle=col+al+')';c.fillRect(x-s/2,y-s/2,s,s);
     }
     c.globalCompositeOperation='source-over';
-    const a1=clamp((p-.6)/.05),q2=clamp((p-.66)/.12),q3=clamp((p-.83)/.1),Mx=F.M;
+    const q2=clamp((p-.66)/.12),q3=clamp((p-.83)/.1),Mx=F.M;
     if(a1>0){
       if(q3>0){let i=0;while(i<Mx){let j=i;while(j<Mx&&F.in[j]===F.in[i])j++;c.fillStyle=F.in[i]?'rgba(86,217,154,'+(.17*q3)+')':'rgba(158,176,255,'+(.05*q3)+')';c.fillRect(px(i),by0-14,px(Math.min(Mx-1,j))-px(i),by1-by0+28);i=j;}}
       c.font='11px "JetBrains Mono",monospace';c.textBaseline='middle';
       for(let v=Math.ceil(F.lo/20000)*20000;v<F.hi;v+=20000){const y=py(v);c.strokeStyle='rgba(158,176,255,'+(.1*a1)+')';c.lineWidth=1;c.beginPath();c.moveTo(bx0,y);c.lineTo(bx1,y);c.stroke();c.fillStyle='rgba(158,166,204,'+(.9*a1)+')';if(mob){c.textAlign='right';c.fillText('US$ '+(v/1000)+' mil',bx1-2,y-8);}else{c.textAlign='left';c.fillText('US$ '+(v/1000)+' mil',bx1+8,y);}}
       c.textBaseline='top';[0,Math.round(Mx/3),Math.round(2*Mx/3),Mx-1].forEach((i,n)=>{c.textAlign=n===0?'left':n===3?'right':'center';c.fillStyle='rgba(158,166,204,'+(.9*a1)+')';c.fillText(my(iso(F.d0+i)),px(i),by1+20);});
-      c.strokeStyle='rgba(238,240,255,'+(.92*a1)+')';c.lineWidth=1.7;c.lineJoin='round';c.beginPath();for(let i=0;i<Mx;i++){i?c.lineTo(px(i),py(F.c[i])):c.moveTo(px(i),py(F.c[i]));}c.lineTo(px(Mx-1)+2,py(M.now));c.stroke();
+      const bw=Math.max(2,(px(7)-px(0))*.62);F.wk.forEach(k=>{const up=k.c>=k.o,x=(px(k.i0)+px(k.i1))/2,col=up?'86,217,154':'255,123,139';c.strokeStyle='rgba('+col+','+(.95*a1)+')';c.fillStyle='rgba('+col+','+(.9*a1)+')';c.lineWidth=1;c.beginPath();c.moveTo(x,py(k.h));c.lineTo(x,py(k.l));c.stroke();const y1=py(Math.max(k.o,k.c)),y2=py(Math.min(k.o,k.c));c.fillRect(x-bw/2,y1,bw,Math.max(1.5,y2-y1));});
       if(q2>0){const end=Math.floor(q2*(Mx-1));c.strokeStyle=C.ion;c.lineWidth=2.2;c.shadowColor=C.ion;c.shadowBlur=10;c.beginPath();let st=false;for(let i=0;i<=end;i++){if(F.ma[i]==null)continue;st?c.lineTo(px(i),py(F.ma[i])):(c.moveTo(px(i),py(F.ma[i])),st=true);}c.stroke();c.shadowBlur=0;}
       const ex=px(Mx-1)+2,ey=py(M.now);c.fillStyle='rgba(247,147,26,'+a1+')';c.beginPath();c.arc(ex,ey,4.5+Math.sin(t/300)*1.2,0,6.283);c.fill();
       const lb=us(M.now)+(M.live?' agora':' em '+dm(iso(M.n-1)));c.textAlign='right';c.textBaseline='bottom';c.font='600 12px "JetBrains Mono",monospace';c.lineWidth=5;c.strokeStyle='rgba(6,7,20,'+(.9*a1)+')';c.strokeText(lb,ex-2,ey-14);c.fillStyle='rgba(255,199,120,'+a1+')';c.fillText(lb,ex-2,ey-14);
@@ -1165,18 +1168,52 @@ function LineChart(cv,tip,opt){
   addEventListener('resize',()=>{if(cv.offsetParent)draw();});
   return {draw,play(){if(prog>=1)return draw();const t0=performance.now();(function st(t){prog=clamp((t-t0)/1900);draw();if(prog<1)requestAnimationFrame(st);})(t0);}};
 }
+/* ============ velas para series de valor (carteiras) ============ */
+function agrupar(vals,datas,modo){
+  const out=[];let cur=null,prev=null;
+  const chave=d=>{if(modo==='month')return d.slice(0,7);if(modo==='day')return d;const t=new Date(d+'T00:00:00Z'),w=(t.getUTCDay()+6)%7;return new Date(t-w*864e5).toISOString().slice(0,10);};
+  vals.forEach((v,i)=>{const d=datas[i],k=chave(d);if(!cur||cur.k!==k){if(cur){out.push(cur);prev=cur.close;}const o=prev==null?v:prev;cur={k,time:d,open:o,high:Math.max(o,v),low:Math.min(o,v),close:v};}else{cur.high=Math.max(cur.high,v);cur.low=Math.min(cur.low,v);cur.close=v;}});
+  if(cur)out.push(cur);return out.map(({k,...r})=>r);
+}
+function CandleChart(host,opt){
+  let ch=null,cs=null,pl=null,sel=opt.inicial,made=false,velas=[];
+  host.classList.add('cwrap');host.innerHTML='<div class="ctip"></div>';const tip=host.firstChild;
+  const leg=opt.legendEl;
+  function chips(){if(!leg)return;const S=opt.series();leg.innerHTML='';S.forEach(x=>{const b=document.createElement('button');b.type='button';b.setAttribute('aria-pressed',x.k===sel);b.innerHTML='<i style="background:'+x.cor+'"></i>'+x.nome+(opt.chip?' <b>'+opt.chip(x)+'</b>':'');b.onclick=()=>{sel=x.k;chips();dados();};leg.appendChild(b);});}
+  function serie(){const S=opt.series();return S.find(x=>x.k===sel)||S[0];}
+  function dados(){
+    if(!ch)return;const x=serie();if(!x)return;
+    const datas=x.vals.map((_,i)=>opt.data(i));velas=agrupar(x.vals,datas,opt.modo(x.vals.length));
+    cs.setData(velas);
+    if(pl){cs.removePriceLine(pl);pl=null;}
+    if(opt.base)pl=cs.createPriceLine({price:opt.base(),color:'rgba(238,240,255,.45)',lineWidth:1,lineStyle:2,axisLabelVisible:true,title:opt.baseTitulo||''});
+    ch.timeScale().fitContent();
+  }
+  function montar(){
+    if(!window.LightweightCharts){host.innerHTML='<p style="padding:16px;color:var(--muted)">O gráfico não carregou neste aparelho.</p>';return;}
+    ch=LightweightCharts.createChart(host,{width:host.clientWidth,height:host.clientHeight,layout:{background:{type:'solid',color:'transparent'},textColor:'#9ea6cc',fontFamily:'JetBrains Mono, monospace',fontSize:11},grid:{vertLines:{color:'rgba(158,176,255,.05)'},horzLines:{color:'rgba(158,176,255,.07)'}},rightPriceScale:{borderColor:'rgba(158,176,255,.16)'},timeScale:{borderColor:'rgba(158,176,255,.16)'},crosshair:{mode:0},localization:{locale:'pt-BR',priceFormatter:opt.fmt}});
+    cs=ch.addCandlestickSeries({upColor:'#56d99a',downColor:'#ff7b8b',wickUpColor:'#56d99a',wickDownColor:'#ff7b8b',borderVisible:false});
+    ch.subscribeCrosshairMove(p=>{const v=p&&p.seriesData?p.seriesData.get(cs):null;if(!v){tip.style.display='none';return;}const var_=(v.close/v.open-1)*100;tip.style.display='block';tip.innerHTML=(opt.periodo?opt.periodo(p.time)+' · ':'')+'começou <b>'+opt.fmt(v.open)+'</b> · terminou <b class="'+(v.close>=v.open?'up':'down')+'">'+opt.fmt(v.close)+'</b> ('+pct(var_)+')';});
+    made=true;dados();
+  }
+  new ResizeObserver(()=>{if(!host.clientWidth)return;if(!made)montar();else if(ch)ch.applyOptions({width:host.clientWidth,height:host.clientHeight});}).observe(host);
+  chips();
+  return {draw(){chips();dados();},play(){}};
+}
+const tStr=t=>typeof t==='string'?t:(t.year?t.year+'-'+String(t.month).padStart(2,'0')+'-'+String(t.day).padStart(2,'0'):new Date(t*1000).toISOString().slice(0,10));
+const MESF=t=>{const s=tStr(t);return MES[+s.slice(5,7)-1]+'/'+s.slice(0,4);};
+const SEMF=t=>'semana de '+dm(tStr(t));
 const ESTR=[{k:'hold',nome:'Só comprar e segurar',cor:C.base,dash:[5,4]},{k:'regra',nome:'Robô básico',cor:C.regra},{k:'cons',nome:'Conselho',cor:C.cons}];
 function Backtest(){
   const on={hold:true,regra:true,cons:true};let E={},a=0;
   function calc(){a=M.i2020;ESTR.forEach(s=>{const q=equity(M[s.k],a,M.n-1,10);E[s.k]={q,fim:q[q.length-1],dd:maxDD(q)};});
     const y0=idxOf('2022-01-01')-a,y1=idxOf('2022-12-31')-a;ESTR.forEach(s=>E[s.k].y22=(E[s.k].q[y1]/E[s.k].q[y0-1]-1)*100);M.E=E;}
   calc();
-  const ch=LineChart($('#bt'),$('#bttip'),{animate:true,zero:true,m:{l:46,r:46,t:14,b:30},series:()=>ESTR.map(s=>({nome:s.nome,cor:s.cor,dash:s.dash,vals:E[s.k].q,off:!on[s.k]})),n:()=>M.n-a,
-    yfmt:v=>'$'+fmt(v,0),tipfmt:v=>us(v,2),title:i=>dmy(iso(a+i)),xticks:n=>{const o=[];for(let y=2020;y<=2030;y++){const i=idxOf(y+'-01-01')-a;if(i>=0&&i<n)o.push({i,t:''+y,al:i===0?'left':'center'});}return o;}});
   const lg=$('#btlegend');
+  const ch=CandleChart($('#bt'),{legendEl:lg,inicial:'regra',series:()=>ESTR.map(x=>({k:x.k,nome:x.nome,cor:x.cor,vals:E[x.k].q})),chip:x=>us(E[x.k].fim,0),
+    data:i=>iso(a+i),modo:()=>'month',base:()=>10,baseTitulo:'início',fmt:v=>'$'+fmt(v,v<100?2:0),periodo:MESF});
   function texts(){
-    lg.innerHTML='';ESTR.forEach(s=>{const b=document.createElement('button');b.type='button';b.setAttribute('aria-pressed',on[s.k]);b.innerHTML='<i style="background:'+s.cor+'"></i>'+s.nome+' <b>'+us(E[s.k].fim,0)+'</b>';b.onclick=()=>{on[s.k]=!on[s.k];b.setAttribute('aria-pressed',on[s.k]);ch.draw();};lg.appendChild(b);});
-    $('#btlead').textContent='Colocamos 10 dólares em janeiro de 2020 e deixamos cada estratégia rodar até '+dmy(iso(M.n-1))+', já descontando taxas. Passe o dedo ou o mouse no gráfico para ver cada data.';
+    $('#btlead').textContent='Colocamos 10 dólares em janeiro de 2020 e deixamos cada estratégia rodar até '+dmy(iso(M.n-1))+', já descontando taxas. Cada vela é um mês da carteira: verde, o mês terminou com mais dinheiro; vermelha, com menos. Velas achatadas são meses em que o robô ficou parado em dólar. Escolha a estratégia nos botões e passe o dedo ou o mouse nas velas.';
     $('#falls').innerHTML=ESTR.map(s=>'<div class="fall"><div class="row"><span>'+s.nome+'</span><b class="down">'+fmt(E[s.k].dd,0)+'%</b></div><div class="track"><i style="background:'+s.cor+';width:'+Math.abs(E[s.k].dd)+'%"></i></div></div>').join('');
     $('#y2022').textContent='No pior ano do período, 2022: quem só segurou perdeu '+fmt(-E.hold.y22,0)+'%, o robô básico '+fmt(-E.regra.y22,0)+'% e o Conselho '+fmt(-E.cons.y22,0)+'%.';
     const best=E.hold.fim>=E.cons.fim;
@@ -1211,8 +1248,8 @@ function Sim(){
     note.textContent='De '+dmy(iso(s0))+' até agora o Bitcoin foi de '+us(b0)+' para '+us(M.now)+' ('+pct(dBtc,0)+') e o dólar de R$ '+fmt(fx0,2)+' para R$ '+fmt(M.brlNow,2)+'. '+(s0<idxOf(R.inicio)?'O trecho antes de '+dm(R.inicio)+'/2026 é teste histórico. ':'')+'No teste ao vivo, com dinheiro fictício, o robô foi de US$ 10,00 para '+us(R.robo.pat,2)+' desde '+dm(R.inicio)+'.';
     ch.draw();
   }
-  const ch=LineChart($('#simcv'),$('#simtip'),{m:{l:78,r:78,t:14,b:30},series:()=>Sx,n:()=>Sx.length?Sx[0].vals.length:0,base:()=>v0,yfmt:v=>'R$ '+fmt(v,0),title:i=>i>=M.n-s0?'agora':dmy(iso(s0+i)),
-    xticks:n=>{const o=[{i:0,t:my(iso(s0)),al:'left'}];if(n>60)o.push({i:Math.round(n/2),t:my(iso(s0+Math.round(n/2)))});o.push({i:n-1,t:'hoje',al:'right'});return o;}});
+  const ch=CandleChart($('#simcv'),{legendEl:$('#simlegend'),inicial:'regra',series:()=>Sx.map((x,i)=>({k:ESTR[i].k,nome:x.nome,cor:x.cor,vals:x.vals})),chip:x=>brl(Sx[ESTR.findIndex(e=>e.k===x.k)].now),
+    data:i=>s0+i<M.n?iso(s0+i):iso(M.n),modo:n=>n>500?'month':n>90?'week':'day',base:()=>v0,baseTitulo:'aplicado',fmt:v=>'R$ '+fmt(v,0),periodo:t=>{const n=Sx.length?Sx[0].vals.length:0;return n>500?MESF(t):n>90?SEMF(t):dm(tStr(t));}});
   ini.min=IB0;ini.max=M.n-2;ini.value=M.n-1-365;mkchips();up();
   cap.addEventListener('input',up);ini.addEventListener('input',()=>{pick=-1;mkchips();up();});mens.addEventListener('change',up);
   onData.push(up);
@@ -1302,6 +1339,8 @@ function Office(){
     [[tx-15,ty+19],[tx+15,ty+19]].forEach(([x,y],i)=>drawBot(b,x,y,{id:'voto',cor:'#a8691a',i:i+2},0,false,false));
   }
   function size(){const r=cv.getBoundingClientRect(),d=Math.min(devicePixelRatio||1,2);cv.width=Math.round(r.width*d);cv.height=Math.round(r.width*d*LH/LW);o=cv.getContext('2d');K=cv.width/LW;paintBg();}
+  function velas(x,y,w,h,rows){const lo=Math.min(...rows.map(r=>r.low)),hi=Math.max(...rows.map(r=>r.high)),n=rows.length,st=w/n,Y=v=>y+h-(hi>lo?(v-lo)/(hi-lo):.5)*h,bw=Math.max(.6,st*.6);
+    rows.forEach((r,i)=>{const cx=x+st*(i+.5),col=r.close>=r.open?'#56d99a':'#ff7b8b';o.strokeStyle=col;o.fillStyle=col;o.lineWidth=.35;o.beginPath();o.moveTo(cx,Y(r.high));o.lineTo(cx,Y(r.low));o.stroke();const y1=Y(Math.max(r.open,r.close)),y2=Y(Math.min(r.open,r.close));o.fillRect(cx-bw/2,y1,bw,Math.max(.4,y2-y1));});}
   function spark(x,y,w,h,vals,col,fill){const mn=Math.min(...vals),mx=Math.max(...vals),n=vals.length;o.beginPath();vals.forEach((v,i)=>{const px=x+w*i/(n-1),py=y+h-(mx>mn?(v-mn)/(mx-mn):.5)*h;i?o.lineTo(px,py):o.moveTo(px,py);});o.strokeStyle=col;o.stroke();if(fill){o.lineTo(x+w,y+h);o.lineTo(x,y+h);o.closePath();o.fillStyle=fill;o.fill();}}
   function screen(a,t){
     const s=scr(a),tk=Math.floor(t/300),st=a.st()[1];
@@ -1312,7 +1351,7 @@ function Office(){
     else if(id==='gestor'){for(let i=0;i<3;i++){o.fillStyle=i<=tk%4?'#56d99a':'#59628f';o.fillRect(s.x+1.6,s.y+1.6+i*2.7,1.5,1.5);o.fillStyle='#59628f';o.fillRect(s.x+4.2,s.y+2+i*2.7,8,.7);}}
     else if(id==='surfista'){spark(s.x+1,s.y+2,s.w-2,s.h-4,[3,4,3,5,4,3,4,3,4],'#59628f');o.fillStyle='rgba(255,111,174,.75)';o.fillRect(s.x+((t/120)%s.w),s.y,.8,s.h);}
     else if(id==='analista'){for(let i=0;i<6;i++){const hh=2+((i*5+tk)%5);o.fillStyle=i%2?'#ff8fa0':'#59628f';o.fillRect(s.x+1.6+i*2.1,s.y+s.h-1.2-hh,1.3,hh);}}
-    else{const src=id==='mare'?D.h4:id==='pepe'?D.pepe:D.d1,vals=src.slice(-22).map(k=>k.close),col=st==='up'?a.cor:'#7c86b8';spark(s.x+1.2,s.y+1.6,s.w-2.4,s.h-3.2,vals,col,st==='up'?'rgba(86,217,154,.12)':null);if(st!=='up'&&tk%2){o.fillStyle='#ffb454';o.fillRect(s.x+s.w-2.6,s.y+1.2,1.3,1.3);}}
+    else{const src=id==='mare'?D.h4:id==='pepe'?D.pepe:D.d1;velas(s.x+1,s.y+1.4,s.w-2,s.h-2.8,src.slice(-12));if(st!=='up'&&tk%2){o.fillStyle='#ffb454';o.fillRect(s.x+s.w-2.6,s.y+1.2,1.3,1.3);}}
     o.restore();
     const gl=o.createRadialGradient(s.x+s.w/2,s.y+s.h+9,1,s.x+s.w/2,s.y+s.h+9,15);gl.addColorStop(0,'rgba(111,224,255,.10)');gl.addColorStop(1,'rgba(111,224,255,0)');o.fillStyle=gl;o.fillRect(s.x-10,s.y+s.h,s.w+20,22);
   }
@@ -1325,11 +1364,11 @@ function Office(){
     o.fillStyle='#2a3270';o.fillRect(64.4,6.5,1.2,30);
     // telao com o preco real
     o.save();rrect(o,138.5,5.5,107,32,2.6);o.clip();o.fillStyle='#050818';o.fillRect(138,5,108,33);
-    const vals=D.d1.slice(-90).map(k=>k.close),up=M.chg>=0;o.lineWidth=.8;o.lineJoin='round';spark(141,17,101,18,vals,'#6fe0ff','rgba(111,224,255,.10)');
+    const vals=D.d1.slice(-90).map(k=>k.close),up=M.chg>=0;velas(141,17,101,18,D.d1.slice(-34));
     o.fillStyle='#8f99c8';o.font='500 3.6px "JetBrains Mono",monospace';o.textBaseline='top';o.textAlign='left';o.fillText('BTC / USDT'+(M.live?' · AO VIVO':''),142,8);
     o.fillStyle='#eef0ff';o.font='600 6.4px "JetBrains Mono",monospace';o.fillText(fmt(M.now,0),142,12.4);
     o.fillStyle=up?'#56d99a':'#ff7b8b';o.font='600 4px "JetBrains Mono",monospace';o.textAlign='right';o.fillText(pct(M.chg,2)+' hoje',243,8.4);
-    if(Math.floor(t/500)%2){o.fillStyle='#f7931a';o.beginPath();o.arc(242,17+18-((lastN(vals)-Math.min(...vals))/(Math.max(...vals)-Math.min(...vals)||1))*18,1.1,0,6.283);o.fill();}
+
     o.restore();
     for(let i=0;i<7;i++){o.fillStyle=(Math.floor(t/300)+i*3)%5?'#56d99a':'#12163c';o.beginPath();o.arc(344,31.5+i*9.6,.9,0,6.283);o.fill();o.fillStyle=(Math.floor(t/170)+i)%3?'#6fe0ff':'#12163c';o.beginPath();o.arc(347.4,31.5+i*9.6,.9,0,6.283);o.fill();o.fillStyle='#232a60';o.fillRect(352,31+i*9.6,16,1);}
   }
@@ -1413,17 +1452,27 @@ onData.push(()=>{if(!openId)return;const a=byId[openId];$('#dfacts').innerHTML=a
   if(lwChart){const c=lwChart.cfg,data=c.tf==='h4'?D.h4.slice(-220):c.tf==='pepe'?D.pepe:D.d1;lwChart.cs.update(lastN(data));}});
 
 /* ============ bastidores ============ */
+function semanas(rows,porGrupo){
+  /* rows: [{time,open,high,low,close}] -> velas agrupadas por semana (ou a cada N linhas) com o indice da ultima linha */
+  const out=[];let g=null;
+  rows.forEach((r,i)=>{const k=porGrupo?Math.floor(i/porGrupo):(()=>{const t=new Date((typeof r.time==='number'?r.time*1000:Date.parse(r.time+'T00:00:00Z'))),w=(t.getUTCDay()+6)%7;return Math.floor((t-w*864e5)/864e5);})();
+    if(!g||g.k!==k){if(g)out.push(g);g={k,o:r.open,h:r.high,l:r.low,c:r.close,ult:i,time:r.time};}else{g.h=Math.max(g.h,r.high);g.l=Math.min(g.l,r.low);g.c=r.close;g.ult=i;g.time=r.time;}});
+  if(g)out.push(g);return out;
+}
 function mini(cv,o){
-  const [c,W,H]=fit(cv),n=o.vals.length,all=o.vals.concat(...(o.lines||[]).map(l=>l[0].filter(v=>v!=null))),lo=Math.min(...all),hi=Math.max(...all),X=i=>4+(W-8)*i/(n-1),Y=v=>H-6-(H-12)*(v-lo)/(hi-lo||1);
+  const [c,W,H]=fit(cv),v=o.velas,n=v.length;if(!n)return;
+  const all=v.flatMap(x=>[x.h,x.l]).concat(...(o.lines||[]).map(l=>l[0].filter(z=>z!=null)));const lo=Math.min(...all),hi=Math.max(...all);
+  const step=(W-8)/n,X=i=>4+step*(i+.5),Y=z=>H-6-(H-12)*(z-lo)/(hi-lo||1);
   c.clearRect(0,0,W,H);
-  if(o.pos){let i=0;while(i<n){let j=i;while(j<n&&o.pos[j]===o.pos[i])j++;if(o.pos[i]){c.fillStyle='rgba(86,217,154,.16)';c.fillRect(X(i),0,X(Math.min(n-1,j))-X(i),H);}i=j;}}
-  (o.lines||[]).forEach(([arr,cor])=>{c.strokeStyle=cor;c.lineWidth=1.4;c.beginPath();let st=false;arr.forEach((v,i)=>{if(v==null)return;st?c.lineTo(X(i),Y(v)):(c.moveTo(X(i),Y(v)),st=true);});c.stroke();});
-  c.strokeStyle=C.ink;c.lineWidth=1.3;c.lineJoin='round';c.beginPath();o.vals.forEach((v,i)=>i?c.lineTo(X(i),Y(v)):c.moveTo(X(i),Y(v)));c.stroke();
-  c.fillStyle=C.btc;c.beginPath();c.arc(X(n-1),Y(o.vals[n-1]),3,0,6.283);c.fill();
+  if(o.pos){let i=0;while(i<n){let j=i;while(j<n&&o.pos[j]===o.pos[i])j++;if(o.pos[i]){c.fillStyle='rgba(86,217,154,.14)';c.fillRect(X(i)-step/2,0,step*(j-i),H);}i=j;}}
+  (o.lines||[]).forEach(([arr,cor])=>{c.strokeStyle=cor;c.lineWidth=1.3;c.beginPath();let st=false;arr.forEach((z,i)=>{if(z==null)return;st?c.lineTo(X(i),Y(z)):(c.moveTo(X(i),Y(z)),st=true);});c.stroke();});
+  const bw=Math.max(1.5,step*.62);
+  v.forEach((x,i)=>{const up=x.c>=x.o,col=up?C.up:C.down;c.strokeStyle=col;c.fillStyle=col;c.lineWidth=1;c.beginPath();c.moveTo(X(i),Y(x.h));c.lineTo(X(i),Y(x.l));c.stroke();const y1=Y(Math.max(x.o,x.c)),y2=Y(Math.min(x.o,x.c));c.fillRect(X(i)-bw/2,y1,bw,Math.max(1,y2-y1));});
 }
 function Painel(){
-  const liveCh=LineChart($('#livecv'),$('#livetip'),{m:{l:52,r:58,t:12,b:28},series:()=>LS,n:()=>LD.length,base:()=>10,yfmt:v=>'$'+fmt(v,2),title:i=>LD[i]==='agora'?'agora':dmy(LD[i]),xticks:n=>LD.map((d,i)=>({i,t:d==='agora'?'agora':dm(d),al:i===0?'left':i===n-1?'right':'center'})).filter((k,i)=>n<8||i%Math.ceil(n/6)===0||i===n-1)});
   let LS=[],LD=[];
+  const liveCh=CandleChart($('#livecv'),{legendEl:$('#livelegend'),inicial:'Capitão',series:()=>LS.map(x=>({k:x.nome,nome:x.nome,cor:x.cor,vals:x.vals})),chip:x=>'$'+fmt(lastN(x.vals),2),
+    data:i=>LD[i]==='agora'?iso(M.n):LD[i],modo:()=>'day',base:()=>10,baseTitulo:'início',fmt:v=>'$'+fmt(v,2),periodo:t=>dm(tStr(t))});
   function stat(a,e){const q=equity(M[a],M.i2020,e,10);return {fim:q[q.length-1],dd:maxDD(q),ops:tradesPerYear(M[a],M.i2020,e)/2,tin:timeIn(M[a],M.i2020,e)};}
   function render(){
     const r=R.robo,d=(r.pat-10)*10,e=M.n-1;
@@ -1445,19 +1494,20 @@ function Painel(){
     // carteiras ao vivo
     LD=r.diario.map(x=>x.dia);const by=id=>{const m={};R.s[id].serie.forEach(p=>m[p.d]=p.v);let last=10;return LD.map(dd=>last=(m[dd]!=null?m[dd]:last));};
     const cor={capitao:C.regra,conselho:C.cons,pepe:'#4cbf5a'};
-    LS=[{id:'capitao',vals:r.diario.map(x=>x.patrimonio)}].concat(SOMBRAS.map(([id])=>({id,vals:by(id)}))).map(s=>({nome:byId[s.id].nome,cor:cor[s.id]||'#5e668f',w:cor[s.id]?2.2:1.2,nolabel:!cor[s.id],vals:s.vals}));
+    LS=[{id:'capitao',vals:r.diario.map(x=>x.patrimonio)}].concat(SOMBRAS.map(([id])=>({id,vals:by(id)}))).map(s=>({nome:byId[s.id].nome,cor:byId[s.id].cor,vals:s.vals}));
     if(R.fresh){LD=LD.concat(['agora']);LS.forEach(s=>s.vals=s.vals.concat([s.nome==='Capitão'?r.pat:lastN(s.vals)]));}
-    $('#livelegend').innerHTML=LS.filter(s=>!s.nolabel).map(s=>'<button type="button" aria-pressed="true" tabindex="-1" style="cursor:default"><i style="background:'+s.cor+'"></i>'+s.nome+'</button>').join('')+'<button type="button" aria-pressed="true" tabindex="-1" style="cursor:default"><i style="background:#5e668f"></i>Demais sombras</button>';
     liveCh.draw();
     // estrategias
+    const dW=semanas(D.d1.slice(-245)),dIdx=g=>Math.min(idxOf(D.d1.slice(-245)[g.ult].time),M.n-1);
+    const vel=x=>({velas:dW,lines:(x.lines||[]).map(([arr,cor])=>[dW.map(g=>arr[dIdx(g)]),cor]),pos:x.pos?dW.map(g=>x.pos[dIdx(g)]):null});
     const a=M.n-365,cl=M.c.slice(a),sl=x=>Array.from(x.slice(a)),E={regra:stat('regra',e),cons:stat('cons',e),ema:stat('emaS',e),hold:stat('hold',e)};
     const nums=x=>'<div class="nums"><span>10 dólares viraram <b>'+us(x.fim,0)+'</b></span><span>maior tombo <b>'+fmt(x.dd,0)+'%</b></span><span><b>'+fmt(x.ops,0)+'</b> compras por ano</span><span>comprado <b>'+fmt(x.tin,0)+'%</b> do tempo</span></div>';
     const ST=[
-      {id:'capitao',t:'Só fica em Bitcoin quando o preço está acima da média de '+M.N+' dias e mais alto que '+M.L+' dias atrás. Ideia simples: acompanhar a maré e sair quando ela vira.',n:nums(E.regra),m:{vals:cl,lines:[[M.sma[M.N].slice(a),C.ion]],pos:sl(M.regra)}},
-      {id:'conselho',t:'Quatro regras votam: a do Capitão, o cruzamento de 9 e 21 dias, três médias alinhadas e a média de 50 acima da de 200. Só compra com três votos, por isso entra menos e apanha menos.',n:nums(E.cons),m:{vals:cl,lines:[[M.sma[50].slice(a),C.cons]],pos:sl(M.cons)}},
-      {id:'faisca',t:'Compra quando a média de 9 dias passa por cima da de 21 e vende quando volta para baixo. É a mais rápida: rende bem em alta forte, mas devolve muito nas viradas.',n:nums(E.ema),m:{vals:cl,lines:[[M.e9.slice(a),'#ffd84d'],[M.e21.slice(a),'#ff8a5c']],pos:sl(M.emaS)}},
-      {id:'mare',t:'Usa o gráfico de 4 horas com um indicador de tendência e uma média longa. Reage antes das outras, ao custo de operar mais vezes.',n:'<div class="nums"><span>10 dólares viraram <b>US$ 75</b>*</span><span>maior tombo <b>−34%</b>*</span></div>',m:{vals:D.h4.slice(-220).map(k=>k.close),lines:[[M.h4e.slice(-220),'#5cc8ff']]}},
-      {id:'pepe',t:'Rodízio entre seis memecoins, sempre na mais forte. Números históricos enormes, mas enganosos: só entraram no teste as moedas que ficaram famosas.',n:'<div class="nums"><span>maior tombo <b>−86%</b>*</span><span>plano Galáxia · risco muito alto</span></div>',m:{vals:D.pepe.map(k=>k.close*1e6)}},
+      {id:'capitao',t:'Só fica em Bitcoin quando o preço está acima da média de '+M.N+' dias e mais alto que '+M.L+' dias atrás. Ideia simples: acompanhar a maré e sair quando ela vira.',n:nums(E.regra),m:vel({lines:[[M.sma[M.N],C.ion]],pos:M.regra})},
+      {id:'conselho',t:'Quatro regras votam: a do Capitão, o cruzamento de 9 e 21 dias, três médias alinhadas e a média de 50 acima da de 200. Só compra com três votos, por isso entra menos e apanha menos.',n:nums(E.cons),m:vel({lines:[[M.sma[50],C.cons]],pos:M.cons})},
+      {id:'faisca',t:'Compra quando a média de 9 dias passa por cima da de 21 e vende quando volta para baixo. É a mais rápida: rende bem em alta forte, mas devolve muito nas viradas.',n:nums(E.ema),m:vel({lines:[[M.e9,'#ffd84d'],[M.e21,'#ff8a5c']],pos:M.emaS})},
+      {id:'mare',t:'Usa o gráfico de 4 horas com um indicador de tendência e uma média longa. Reage antes das outras, ao custo de operar mais vezes.',n:'<div class="nums"><span>10 dólares viraram <b>US$ 75</b>*</span><span>maior tombo <b>−34%</b>*</span></div>',m:(()=>{const rows=D.h4.slice(-216),g=semanas(rows,6),off=D.h4.length-216;return {velas:g,lines:[[g.map(x=>M.h4e[off+x.ult]),'#5cc8ff']]};})()},
+      {id:'pepe',t:'Rodízio entre seis memecoins, sempre na mais forte. Números históricos enormes, mas enganosos: só entraram no teste as moedas que ficaram famosas.',n:'<div class="nums"><span>maior tombo <b>−86%</b>*</span><span>plano Galáxia · risco muito alto</span></div>',m:{velas:semanas(D.pepe.slice(-105),3)}},
       {id:'trio',t:'Escolhe a mais forte entre Bitcoin, Ethereum e Solana, só quando há tendência de alta. O resultado histórico é inflado porque a Solana foi escolhida depois de já ter dado certo.',n:'<div class="nums"><span>maior tombo <b>−55%</b>*</span></div>'},
       {id:'formiga',t:'A mesma regra do Capitão com 10 dólares novos todo mês. Mostra o efeito de aportar sempre, que no longo prazo pesa mais que a escolha da estratégia.',n:''},
       {id:'surfista',t:'Procura moedas que subiram 50% em uma semana com volume dobrado e tenta pegar a continuação. No teste, 79% das versões perderam dinheiro.',n:'<div class="nums"><span>plano Galáxia · risco muito alto</span></div>'},
