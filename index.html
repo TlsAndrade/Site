@@ -228,6 +228,31 @@ input[type=range]{width:100%;accent-color:var(--core)}
 .tdone-all{border:1px solid rgba(86,217,154,.5);background:rgba(86,217,154,.06);border-radius:16px;padding:24px;display:grid;gap:8px}
 .cmds td:first-child{white-space:nowrap;width:1%}
 .panel details{padding:10px 0}
+.phases{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px}
+.phase-card{display:flex;gap:14px;align-items:flex-start;text-decoration:none;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px}
+.phase-card:hover{border-color:var(--core)}
+.phase-card>b{flex:none;width:38px;height:38px;border-radius:50%;display:grid;place-items:center;font-family:var(--f-display);background:linear-gradient(135deg,#ffd58a,var(--btc));color:#1a1205}
+.phase-card p{color:#d6daf5;font-size:.9rem;margin-top:4px}
+.phase-card small{display:block;color:var(--muted);font-size:.8rem;margin-top:4px}
+.botcard{grid-template-columns:auto 1fr;align-items:center;gap:20px}
+@media (max-width:520px){.botcard{grid-template-columns:1fr;justify-items:start}}
+.botqr{background:#fff;border-radius:12px;padding:10px;width:150px;line-height:0}
+.botinfo{display:grid;gap:6px}
+.glossary{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:4px 18px}
+.glossary summary{padding:12px 0}
+.glossary dl{margin:0 0 14px;display:grid;gap:0}
+.glossary dl div{display:grid;grid-template-columns:140px 1fr;gap:14px;padding:10px 0;border-top:1px solid var(--line);font-size:.92rem}
+@media (max-width:520px){.glossary dl div{grid-template-columns:1fr;gap:2px}}
+.glossary dt{font-weight:700;color:var(--core)}
+.glossary dd{margin:0;color:#d6daf5}
+.what{color:var(--muted)!important;font-size:.94rem}
+.okline{font-size:.9rem;color:var(--up)!important;border-left:3px solid var(--up);padding:2px 0 2px 12px}
+.okline::before{content:"✓ "}
+.example{display:grid;gap:6px;background:#070916;border:1px solid var(--line);border-radius:12px;padding:12px 14px;font-size:.84rem;color:var(--muted);max-width:100%;overflow-x:auto}
+.example code{color:var(--core);font-size:.82rem;white-space:nowrap}
+.tqr{display:grid;grid-template-columns:auto 1fr;gap:14px;align-items:center;border:1px solid var(--line);border-radius:12px;padding:12px;background:#070916}
+.tqr>div:first-child{background:#fff;padding:8px;border-radius:10px;width:118px;line-height:0}
+.tqr p{font-size:.84rem;color:var(--muted)}
 /* planos */
 .plans{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:18px}
 .plan{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:26px;display:grid;gap:14px;align-content:start}
@@ -534,112 +559,148 @@ tr:last-child td{border-bottom:0}
 <!-- ================= COMO COMECAR ================= -->
 <div id="v-tutorial" class="view" hidden>
   <div class="tuthero">
-    <div class="head"><p class="eyebrow">Como começar</p><h1>Do cadastro ao robô ligado, em 10 passos</h1>
-    <p class="lead">Leva uns 20 minutos de mão na massa, mais o tempo de a Binance aprovar a sua conta e de o seu pagamento ser confirmado. Marque cada passo conforme for fazendo: a página guarda o seu progresso neste aparelho.</p></div>
+    <div class="head"><p class="eyebrow">Como começar</p><h1>Passo a passo para usar o robô</h1>
+    <p class="lead">Você não precisa entender de gráfico nem de programação. São três etapas: preparar a sua conta na corretora, assinar, e conectar o robô. Siga na ordem e marque cada passo quando terminar. A página guarda o seu progresso neste aparelho.</p></div>
     <div class="tprog" aria-live="polite"><div class="tprogbar"><i id="tbar"></i></div><span id="tcount">0 de 10 passos feitos</span></div>
   </div>
 
-  <div class="need">
-    <div class="card"><span class="step">VOCÊ VAI PRECISAR</span><h3>Conta na Binance</h3><p>Verificada com documento e selfie, e com a verificação em duas etapas ligada.</p></div>
-    <div class="card"><span class="step">VOCÊ VAI PRECISAR</span><h3>Pelo menos 20 dólares</h3><p id="needusd">Em USDT, o dólar digital da corretora.</p></div>
-    <div class="card"><span class="step">VOCÊ VAI PRECISAR</span><h3>Telegram no celular</h3><p>É por lá que você liga o robô e recebe os avisos de cada compra e venda.</p></div>
+  <div class="phases">
+    <a class="phase-card" href="#t1"><b>1</b><div><h3>Preparar a Binance</h3><p>Passos 1 e 2 · conta aprovada e dinheiro na corretora</p><small>pode levar algumas horas, por causa da aprovação da conta</small></div></a>
+    <a class="phase-card" href="#t3"><b>2</b><div><h3>Assinar</h3><p>Passos 3 a 6 · inscrição, Pix e entrada no robô</p><small>uns 5 minutos, mais a confirmação do pagamento</small></div></a>
+    <a class="phase-card" href="#t7"><b>3</b><div><h3>Conectar e ligar</h3><p>Passos 7 a 10 · chave da Binance e robô ligado</p><small>uns 10 minutos</small></div></a>
   </div>
+
+  <div class="cols">
+    <div class="panel botcard">
+      <div class="botqr" id="botqr" aria-label="QR Code que abre o robô no Telegram"></div>
+      <div class="botinfo"><p class="eyebrow">O robô no Telegram</p>
+        <h3 class="tgname">Andromeda_Clientes</h3>
+        <p class="mono" style="color:var(--core)">@<span class="tguser">AndromedaCriptoBot</span></p>
+        <p class="fine">Leia o QR com a câmera do celular ou toque no botão para abrir. Para entrar de verdade, use o QR ou o botão que aparecem no fim da sua inscrição: eles levam o seu código junto.</p>
+        <a class="cta" id="botlink" href="https://t.me/AndromedaCriptoBot" target="_blank" rel="noopener" style="background:linear-gradient(135deg,#5ec8ff,#2aabee);color:#04121c">Abrir no Telegram</a></div>
+    </div>
+    <div class="panel"><h3>Cuidado com golpes</h3>
+      <ul class="tlist"><li>O robô verdadeiro é só o <b>@<span class="tguser">AndromedaCriptoBot</span></b>. Confira o usuário antes de mandar qualquer coisa.</li><li>O robô nunca pede a sua senha da Binance, o código do SMS ou do aplicativo autenticador.</li><li>Ninguém da Andrômeda pede para você transferir dinheiro para outra conta. O seu dinheiro fica sempre na sua Binance.</li><li>A chave da Binance você manda só para o robô, com o comando /chave. Nunca para uma pessoa.</li></ul></div>
+  </div>
+
+  <details class="glossary"><summary>Palavras que vão aparecer (toque para ver)</summary><dl>
+    <div><dt>Binance</dt><dd>A corretora onde o seu dinheiro fica. É como um banco de criptomoedas. O robô opera dentro da sua conta lá.</dd></div>
+    <div><dt>USDT</dt><dd>Um dólar digital: vale sempre perto de 1 dólar. O robô usa USDT para comprar Bitcoin e volta para USDT quando vende.</dd></div>
+    <div><dt>Carteira Spot</dt><dd>A parte da sua conta na Binance usada para comprar e vender. Os USDT do robô precisam estar nela.</dd></div>
+    <div><dt>Chave API</dt><dd>Uma autorização que você cria na Binance para o robô. Ela tem duas partes, a API Key e a Secret Key, e você escolhe o que ela pode fazer.</dd></div>
+    <div><dt>IP</dt><dd>O endereço do computador do robô na internet. Você coloca esse endereço na chave e só esse computador consegue usá-la.</dd></div>
+    <div><dt>Comando</dt><dd>Uma mensagem que começa com barra, como /status. É assim que você conversa com o robô no Telegram.</dd></div>
+  </dl></details>
 
   <div class="tgrid">
     <nav class="tindex" aria-label="Passos do tutorial"><ol id="tindex"></ol></nav>
     <ol class="tsteps" id="tsteps">
 
-      <li class="tstep" id="t1" data-fase="Preparar a corretora">
+      <li class="tstep" id="t1" data-fase="Preparar a Binance">
         <div class="ttext"><span class="step">PASSO 01</span><h2>Abra a sua conta na Binance</h2>
-          <p>Baixe o aplicativo da Binance, faça o cadastro e complete a verificação de identidade. A aprovação pode levar algumas horas.</p>
-          <ul class="tlist"><li>Envie documento com foto e a selfie que o aplicativo pede.</li><li>Ligue a verificação em duas etapas (aplicativo autenticador ou SMS). Sem ela, a Binance não deixa criar a chave do passo 7.</li><li>Já tem conta verificada? Pule para o passo 2.</li></ul>
+          <p class="what">Se você já tem conta na Binance com a identidade verificada, pule para o passo 2.</p>
+          <ol class="tlist num"><li>Baixe o aplicativo <b>Binance</b> na loja do seu celular (App Store ou Google Play).</li><li>Toque em <b>Cadastrar</b> e crie a conta com e-mail ou telefone.</li><li>O aplicativo pede a <b>verificação de identidade</b>: foto do documento (RG ou CNH) e uma selfie. Faça tudo até o fim.</li><li>Ative a <b>verificação em duas etapas</b>. Ela fica no seu perfil, em Segurança. Pode ser por SMS ou por um aplicativo autenticador. Sem isso a Binance não deixa criar a chave do passo 7.</li><li>Espere o e-mail da Binance dizendo que a conta foi aprovada. Pode levar algumas horas.</li></ol>
+          <p class="okline">Deu certo quando: a Binance avisar que a sua identidade foi verificada.</p>
           <button type="button" class="tdone" aria-pressed="false">Marcar como feito</button></div>
       </li>
 
-      <li class="tstep" id="t2" data-fase="Preparar a corretora">
-        <div class="ttext"><span class="step">PASSO 02</span><h2>Coloque dólares digitais (USDT) na conta</h2>
-          <p>O robô compra Bitcoin usando USDT, uma moeda que acompanha o dólar. Você coloca reais pelo Pix e converte.</p>
-          <ul class="tlist"><li>No aplicativo, deposite reais pelo Pix (opção de depósito em BRL).</li><li>Depois, use a função de converter: de BRL para USDT.</li><li>Separe só o que você aceita ver oscilar. O robô usa apenas o valor que você definir no passo 9 e não toca no resto.</li></ul>
+      <li class="tstep" id="t2" data-fase="Preparar a Binance">
+        <div class="ttext"><span class="step">PASSO 02</span><h2>Coloque dinheiro e transforme em USDT</h2>
+          <p class="what">O robô só compra Bitcoin usando USDT, o dólar digital. Então você coloca reais pelo Pix e troca por USDT.</p>
+          <ol class="tlist num"><li>No aplicativo da Binance, toque em <b>Depositar</b>, escolha <b>BRL</b> (reais) e a opção <b>Pix</b>.</li><li>Digite o valor, pague o Pix pelo seu banco e espere os reais aparecerem (normalmente em minutos).</li><li>Agora troque: procure a função <b>Converter</b>, escolha de <b>BRL</b> para <b>USDT</b>, digite o valor e confirme.</li><li>Abra a sua <b>Carteira</b> e confira se os USDT estão na <b>Spot</b>. Se estiverem em outra carteira (como Financiamento), use <b>Transferir</b> e mande para a Spot.</li></ol>
+          <p class="what">O mínimo é 20 dólares. Coloque só o que você aceita ver subir e descer: o Bitcoin oscila muito.</p>
+          <p class="okline">Deu certo quando: aparecer o seu saldo em USDT na Carteira Spot.</p>
           <button type="button" class="tdone" aria-pressed="false">Marcar como feito</button></div>
-        <div class="tvis"><div class="calc"><label for="tcalc">Quantos dólares quer que o robô use?</label><input type="range" id="tcalc" min="20" max="2000" step="10" value="100"><div class="calcout"><b id="tcalcusd">US$ 100</b><span id="tcalcbrl">≈ R$ 0</span></div><p class="fine" id="tcalcnote"></p></div></div>
+        <div class="tvis"><div class="calc"><label for="tcalc">Quanto você quer que o robô use?</label><input type="range" id="tcalc" min="20" max="2000" step="10" value="100"><div class="calcout"><b id="tcalcusd">US$ 100</b><span id="tcalcbrl">≈ R$ 0</span></div><p class="fine" id="tcalcnote"></p></div></div>
       </li>
 
       <li class="tstep" id="t3" data-fase="Assinar">
-        <div class="ttext"><span class="step">PASSO 03</span><h2>Escolha o plano e faça a inscrição</h2>
-          <p>Na aba Missão, desça até os planos e toque em <b>Assinar</b>. Preencha nome, WhatsApp e e-mail e marque as duas caixas.</p>
-          <ul class="tlist"><li>Hoje o robô opera o plano <b>Órbita</b>. Constelação e Galáxia ainda estão em preparação.</li><li>Sem fidelidade: você cancela quando quiser.</li></ul>
-          <a class="cta ghost" href="#planos">Ver os planos</a>
+        <div class="ttext"><span class="step">PASSO 03</span><h2>Faça a inscrição aqui no site</h2>
+          <ol class="tlist num"><li>Toque em <b>Assinar</b>, no canto de cima da página, ou no botão abaixo.</li><li>Escolha o plano <b>Órbita</b>. Ele é o que opera hoje; os outros ainda estão em preparação.</li><li>Preencha nome, WhatsApp com DDD e e-mail.</li><li>Leia e marque as duas caixinhas no fim do formulário.</li><li>Toque em <b>Continuar para o pagamento</b>.</li></ol>
+          <p class="okline">Deu certo quando: aparecer a tela “Passo 2 de 2 · pagamento” com um QR Code.</p>
+          <a class="cta ghost" href="#planos">Ir para os planos</a>
           <button type="button" class="tdone" aria-pressed="false">Marcar como feito</button></div>
       </li>
 
       <li class="tstep" id="t4" data-fase="Assinar">
-        <div class="ttext"><span class="step">PASSO 04</span><h2>Pague a primeira mensalidade pelo Pix</h2>
-          <p>Depois do formulário aparece o QR Code. Aponte a câmera do aplicativo do seu banco, ou toque em <b>Copiar código Pix</b> e cole na opção Pix copia e cola.</p>
-          <ul class="tlist"><li>A mensalidade só começa a contar no dia em que o robô for ligado.</li><li>Se desistir antes disso, o valor volta inteiro.</li></ul>
+        <div class="ttext"><span class="step">PASSO 04</span><h2>Pague a mensalidade pelo Pix</h2>
+          <p class="what">Não feche a tela de pagamento até terminar o passo 5.</p>
+          <ol class="tlist num"><li><b>Se está no computador:</b> abra o aplicativo do seu banco no celular, escolha pagar com Pix por QR Code e aponte a câmera para o QR da tela.</li><li><b>Se está no celular:</b> toque em <b>Copiar código Pix</b>. Abra o aplicativo do banco, escolha <b>Pix copia e cola</b> e cole.</li><li>Confira o valor e o nome do recebedor, <b>Thales Andrade Calumby</b>, e confirme.</li></ol>
+          <p class="what">A mensalidade só começa a contar no dia em que o robô for ligado. Se desistir antes disso, o valor volta inteiro.</p>
+          <p class="okline">Deu certo quando: o seu banco mostrar o comprovante do Pix.</p>
           <button type="button" class="tdone" aria-pressed="false">Marcar como feito</button></div>
       </li>
 
-      <li class="tstep" id="t5" data-fase="Entrar no robô">
-        <div class="ttext"><span class="step">PASSO 05</span><h2>Abra o robô no Telegram</h2>
-          <p>Ainda na tela do Pix, toque no botão azul <b>Depois de pagar, abra o robô no Telegram</b>. O Telegram abre o robô da Andrômeda já com o seu código. Toque em <b>Começar</b>.</p>
-          <ul class="tlist"><li>Fechou a tela sem querer? Faça a inscrição de novo: o código novo vale igual.</li></ul>
+      <li class="tstep" id="t5" data-fase="Assinar">
+        <div class="ttext"><span class="step">PASSO 05</span><h2>Entre no robô pelo Telegram</h2>
+          <p class="what">Você precisa do Telegram instalado no celular. Se não tiver, baixe na loja e crie a conta com o seu número.</p>
+          <ol class="tlist num"><li>Ainda na tela do pagamento, toque no botão azul <b>Depois de pagar, abra o robô no Telegram</b>. No computador, leia com o celular o QR que aparece logo abaixo do botão.</li><li>O Telegram abre a conversa com <b class="tgname">Andromeda_Clientes</b>. Confira se o usuário é <b>@<span class="tguser">AndromedaCriptoBot</span></b>.</li><li>Toque em <b>Começar</b> (ou <b>Iniciar</b>), no pé da tela.</li></ol>
+          <p class="what">Fechou a tela sem querer? Faça a inscrição de novo. O código novo vale igual e o Pix já pago é aproveitado: avise na conversa do robô.</p>
+          <p class="okline">Deu certo quando: o robô responder “Recebi a sua inscrição” com o seu código.</p>
           <button type="button" class="tdone" aria-pressed="false">Marcar como feito</button></div>
-        <div class="tvis"><div class="tphone"><div class="tph-top"><i></i>Andrômeda Clientes</div><div class="tph-body">
+        <div class="tvis"><div class="tphone"><div class="tph-top"><i></i><span class="tgname">Andromeda_Clientes</span></div><div class="tph-body">
           <div class="bub me">/start O-7F2A91C0</div>
           <div class="bub">Olá, Maria! Recebi a sua inscrição (código <b>7F2A91C0</b>). 🚀<br><br>Assim que o pagamento for confirmado, eu te mando aqui o passo a passo.</div>
         </div></div></div>
       </li>
 
-      <li class="tstep" id="t6" data-fase="Entrar no robô">
+      <li class="tstep" id="t6" data-fase="Assinar">
         <div class="ttext"><span class="step">PASSO 06</span><h2>Espere a confirmação do pagamento</h2>
-          <p>O pagamento é conferido à mão, normalmente em poucas horas. Quando for confirmado, o robô te avisa no Telegram e manda o passo a passo da chave.</p>
-          <ul class="tlist"><li>Dúvida nesse meio-tempo? Escreva qualquer mensagem para o robô, sem barra na frente. Ela chega para o suporte e a resposta volta ali mesmo.</li></ul>
+          <p>O pagamento é conferido por uma pessoa, normalmente em poucas horas. Você não precisa fazer nada: o robô te avisa no Telegram.</p>
+          <ul class="tlist"><li>Quer perguntar algo? Escreva normalmente na conversa do robô, sem barra na frente. A mensagem chega para o suporte e a resposta volta ali mesmo.</li></ul>
+          <p class="okline">Deu certo quando: chegar a mensagem “Pagamento confirmado!”.</p>
           <button type="button" class="tdone" aria-pressed="false">Marcar como feito</button></div>
-        <div class="tvis"><div class="tphone"><div class="tph-top"><i></i>Andrômeda Clientes</div><div class="tph-body">
+        <div class="tvis"><div class="tphone"><div class="tph-top"><i></i><span class="tgname">Andromeda_Clientes</span></div><div class="tph-body">
           <div class="bub">✅ <b>Pagamento confirmado!</b> Bem-vindo à Andrômeda.<br><br>🔑 Como criar a chave na Binance…</div>
         </div></div></div>
       </li>
 
-      <li class="tstep" id="t7" data-fase="Conectar a corretora">
+      <li class="tstep" id="t7" data-fase="Conectar e ligar">
         <div class="ttext"><span class="step">PASSO 07</span><h2>Crie a chave do robô na Binance</h2>
-          <p>A chave é uma autorização limitada: deixa o robô comprar e vender Bitcoin na sua conta, sem conseguir sacar. Faça pelo site da Binance no computador, que é mais fácil.</p>
-          <ol class="tlist num"><li>Perfil, <b>Gerenciamento de API</b>, <b>Criar API</b>, opção <b>Gerada pelo sistema</b>.</li><li>Dê o nome <b>Andromeda</b> e confirme com a verificação em duas etapas.</li><li>Toque em <b>Editar restrições</b> e deixe exatamente como no quadro “Restrições da chave”.</li><li>Em acesso por IP, escolha restringir a IPs confiáveis e cole o endereço do robô.</li><li>Salve e copie a <b>API Key</b> e a <b>Secret Key</b>. A Secret Key aparece uma vez só.</li></ol>
+          <p class="what">A chave é a autorização para o robô comprar e vender Bitcoin na sua conta. Ele não consegue sacar nem transferir nada. Faça este passo pelo site da Binance no computador: é bem mais fácil que no celular.</p>
+          <ol class="tlist num"><li>Entre em <b>binance.com</b> no computador e faça login.</li><li>Clique no ícone do seu perfil, no canto de cima, e depois em <b>Gerenciamento de API</b> (API Management).</li><li>Clique em <b>Criar API</b> e escolha <b>Gerada pelo sistema</b>.</li><li>Dê o nome <b>Andromeda</b> e confirme com a verificação em duas etapas (código do SMS, do e-mail ou do autenticador).</li><li>A chave aparece na tela. Clique em <b>Editar restrições</b>.</li><li>Em acesso por IP, marque <b>Restringir acesso apenas a IPs confiáveis</b>, cole o IP do robô (abaixo) e confirme.</li><li>Marque <b>Ativar negociação Spot e de Margem</b> (Enable Spot & Margin Trading). Deixe todo o resto como no quadro “Restrições da chave”: <b>saque desligado</b>.</li><li>Clique em <b>Salvar</b>.</li><li>Copie a <b>API Key</b> e a <b>Secret Key</b> para um bloco de notas. A Secret Key aparece uma vez só. Se perder, apague a chave e crie outra.</li></ol>
           <div class="ipbox"><span>IP do robô</span><b class="mono" id="tip">20.198.68.64</b><button type="button" class="copy" id="tipcopy" data-l="Copiar">Copiar</button></div>
+          <p class="okline">Deu certo quando: você tiver a API Key e a Secret Key copiadas.</p>
           <button type="button" class="tdone" aria-pressed="false">Marcar como feito</button></div>
         <div class="tvis"><div class="perm"><p class="permtitle">Restrições da chave · como deve ficar</p>
-          <div class="prow ok"><i>✓</i><span>Leitura</span><small>a Binance já deixa marcada</small></div>
-          <div class="prow ok"><i>✓</i><span>Negociação à vista (Spot & Margin Trading)</span><small>marque esta</small></div>
+          <div class="prow ok"><i>✓</i><span>Restringir a IPs confiáveis</span><small>com o IP do robô</small></div>
+          <div class="prow ok"><i>✓</i><span>Leitura</span><small>já vem marcada</small></div>
+          <div class="prow ok"><i>✓</i><span>Negociação Spot e de Margem</span><small>marque esta</small></div>
           <div class="prow no"><i>✕</i><span>Saques</span><small>deixe desligado</small></div>
           <div class="prow no"><i>✕</i><span>Futuros</span><small>deixe desligado</small></div>
-          <div class="prow no"><i>✕</i><span>Margem</span><small>deixe desligado</small></div>
-          <div class="prow ok"><i>✓</i><span>Restringir a IPs confiáveis</span><small>cole o IP do robô</small></div>
-          <p class="fine" style="margin-top:10px">Esquema ilustrativo. Os nomes na tela da Binance podem variar um pouco. Se a chave puder sacar, o robô recusa.</p></div></div>
+          <div class="prow no"><i>✕</i><span>Margem e transferências</span><small>deixe desligado</small></div>
+          <p class="fine" style="margin-top:10px">Esquema ilustrativo. Os nomes na tela da Binance podem variar um pouco ou aparecer em inglês. Se a chave puder sacar, o robô recusa.</p></div></div>
       </li>
 
-      <li class="tstep" id="t8" data-fase="Conectar a corretora">
+      <li class="tstep" id="t8" data-fase="Conectar e ligar">
         <div class="ttext"><span class="step">PASSO 08</span><h2>Mande a chave para o robô</h2>
-          <p>No Telegram, mande numa mensagem só: <code class="kbd">/chave</code>, um espaço, a API Key, outro espaço e a Secret Key.</p>
-          <ul class="tlist"><li>O robô apaga a sua mensagem na hora e guarda a chave criptografada.</li><li>Ele confere na Binance se a chave negocia e se <b>não</b> saca. Se algo estiver errado, ele diz o quê.</li><li>Nunca mande a chave para ninguém, nem para o suporte. Só para o robô, com o comando <code class="kbd">/chave</code>.</li></ul>
+          <ol class="tlist num"><li>Abra a conversa com o robô no Telegram.</li><li>Escreva <code class="kbd">/chave</code>, dê um espaço, cole a <b>API Key</b>, dê outro espaço e cole a <b>Secret Key</b>. Tudo numa mensagem só.</li><li>Envie e espere até um minuto.</li></ol>
+          <div class="example"><span>Fica assim (com as suas chaves):</span><code class="mono">/chave vmPUZE6mv9SD5VNHk4… NhqPtmdSJYdKjVHjA7…</code></div>
+          <p class="what">O robô apaga a sua mensagem na hora, guarda a chave protegida e confere na Binance se ela negocia e se <b>não</b> saca. Se algo estiver errado, ele explica o que mudar.</p>
+          <p class="okline">Deu certo quando: o robô responder “Chave conferida”.</p>
           <button type="button" class="tdone" aria-pressed="false">Marcar como feito</button></div>
-        <div class="tvis"><div class="tphone"><div class="tph-top"><i></i>Andrômeda Clientes</div><div class="tph-body">
+        <div class="tvis"><div class="tphone"><div class="tph-top"><i></i><span class="tgname">Andromeda_Clientes</span></div><div class="tph-body">
           <div class="bub me mono">/chave vmPUZE6mv9SD5… NhqPtmdSJYdK…</div>
           <div class="bub">✅ Chave conferida: negocia à vista e <b>não</b> saca. Apaguei a sua mensagem.<br><br>Agora diga quanto o robô pode usar. Exemplo: /valor 100</div>
         </div></div></div>
       </li>
 
-      <li class="tstep" id="t9" data-fase="Ligar">
+      <li class="tstep" id="t9" data-fase="Conectar e ligar">
         <div class="ttext"><span class="step">PASSO 09</span><h2>Diga quanto o robô pode usar</h2>
-          <p>Mande <code class="kbd">/valor</code> e o número de dólares. Exemplo: <code class="kbd">/valor 100</code>. O mínimo é 20.</p>
-          <ul class="tlist"><li>O robô confere se você tem esse saldo livre em USDT.</li><li>Ele usa só esse valor. O resto da sua conta fica como está.</li><li>Dá para mudar depois, sempre que o robô estiver em dólar.</li></ul>
+          <ol class="tlist num"><li>Escreva <code class="kbd">/valor</code>, um espaço e o número de dólares. Exemplo: <code class="kbd">/valor 100</code>.</li><li>O mínimo é 20. Use só números, sem “US$”.</li></ol>
+          <p class="what">O robô confere se você tem esse tanto de USDT livre na Carteira Spot. Ele usa só esse valor; o resto da sua conta fica parado onde está.</p>
+          <p class="okline">Deu certo quando: o robô responder “Combinado: o robô usa até…”.</p>
           <button type="button" class="tdone" aria-pressed="false">Marcar como feito</button></div>
       </li>
 
-      <li class="tstep" id="t10" data-fase="Ligar">
+      <li class="tstep" id="t10" data-fase="Conectar e ligar">
         <div class="ttext"><span class="step">PASSO 10</span><h2>Ligue o robô</h2>
-          <p>Mande <code class="kbd">/ligar</code>. Pronto: toda noite, às 21h05 de Brasília, ele confere a tendência do Bitcoin e decide se compra, segura ou vende.</p>
+          <ol class="tlist num"><li>Escreva <code class="kbd">/ligar</code> e envie.</li></ol>
+          <p>Pronto. Toda noite, às 21h05 de Brasília, o robô confere se o Bitcoin está em tendência de alta. Se estiver, ele compra. Se a alta acabar, ele vende e espera em dólar. A cada compra ou venda você recebe uma mensagem.</p>
           <p class="note" id="tnow"></p>
+          <p class="okline">Deu certo quando: o robô responder “Robô ligado”.</p>
           <button type="button" class="tdone" aria-pressed="false">Marcar como feito</button></div>
-        <div class="tvis"><div class="tphone"><div class="tph-top"><i></i>Andrômeda Clientes</div><div class="tph-body">
+        <div class="tvis"><div class="tphone"><div class="tph-top"><i></i><span class="tgname">Andromeda_Clientes</span></div><div class="tph-body">
           <div class="bub me">/ligar</div>
           <div class="bub">🚀 Robô ligado. Toda noite, às 21h05 de Brasília, ele confere a tendência…</div>
           <div class="bub">🟢 <b>O robô COMPROU Bitcoin hoje</b>, a 74.412 dólares.</div>
@@ -652,25 +713,26 @@ tr:last-child td{border-bottom:0}
 
   <h2 style="margin-top:20px">Os comandos do robô</h2>
   <div class="tablewrap"><table class="cmds">
-    <tr><th>Comando</th><th>O que faz</th></tr>
-    <tr><td><code class="kbd">/status</code></td><td>Mostra se o robô está ligado, se está com Bitcoin ou em dólar e quanto o seu valor rende.</td></tr>
-    <tr><td><code class="kbd">/valor 100</code></td><td>Define quantos dólares o robô pode usar. Só funciona com o robô em dólar.</td></tr>
+    <tr><th>Escreva</th><th>O que acontece</th></tr>
+    <tr><td><code class="kbd">/status</code></td><td>Mostra se o robô está ligado, se está com Bitcoin ou em dólar e quanto o seu dinheiro rendeu.</td></tr>
+    <tr><td><code class="kbd">/valor 100</code></td><td>Muda quantos dólares o robô pode usar. Só funciona quando ele está em dólar.</td></tr>
     <tr><td><code class="kbd">/ligar</code></td><td>Começa ou volta a operar.</td></tr>
     <tr><td><code class="kbd">/pausar</code></td><td>Para de comprar e vender. O que está na conta fica como está.</td></tr>
     <tr><td><code class="kbd">/chave</code></td><td>Troca a chave da Binance (com o robô em dólar).</td></tr>
     <tr><td><code class="kbd">/sair confirmo</code></td><td>Vende o Bitcoin que o robô comprou, apaga a sua chave e encerra.</td></tr>
-    <tr><td>Mensagem sem barra</td><td>Vai direto para o suporte. A resposta chega no mesmo chat.</td></tr>
+    <tr><td>Qualquer texto sem barra</td><td>Vai direto para o suporte. A resposta chega na mesma conversa.</td></tr>
   </table></div>
 
   <div class="cols" style="margin-top:8px">
     <div class="panel"><h3>Para o robô funcionar direito</h3>
       <ul class="tlist"><li>Não venda à mão o Bitcoin que o robô comprou. Ele perde a conta do que tem.</li><li>Não gaste os dólares que você reservou para ele.</li><li>Vai mexer na conta? Mande <code class="kbd">/pausar</code> antes e <code class="kbd">/ligar</code> depois.</li><li>Não apague a chave na Binance com o robô comprado. Use <code class="kbd">/sair confirmo</code>, que vende antes.</li></ul></div>
-    <div class="panel"><h3>Problemas comuns</h3>
-      <details><summary>“Esta chave tem permissão de saque”</summary><p>Crie outra chave com a opção de saque desligada. O robô nunca aceita chave que saca.</p></details>
-      <details><summary>“A Binance recusou a chave”</summary><p>Confira se colou a API Key e a Secret Key inteiras, sem espaço sobrando, e se o IP do robô está na lista de IPs confiáveis da chave.</p></details>
-      <details><summary>“Você tem menos USDT livres do que pediu”</summary><p>Converta mais reais para USDT ou mande um valor menor com /valor.</p></details>
-      <details><summary>O robô não respondeu</summary><p>Ele confere as mensagens uma vez por minuto. Espere um pouco antes de mandar de novo.</p></details>
-      <details><summary>Liguei e ele não comprou</summary><p>É normal. Ele só compra quando o Bitcoin está em tendência de alta. Se não estiver, espera em dólar até a maré virar.</p></details>
+    <div class="panel"><h3>Deu algum problema?</h3>
+      <details><summary>“Esta chave tem permissão de saque”</summary><p>Volte ao passo 7, apague essa chave e crie outra sem marcar saque. O robô nunca aceita chave que saca.</p></details>
+      <details><summary>“A Binance recusou a chave”</summary><p>Quase sempre é cópia incompleta ou IP. Confira se colou a API Key e a Secret Key inteiras, com um espaço entre elas, e se o IP 20.198.68.64 está na chave.</p></details>
+      <details><summary>“Você tem menos USDT livres do que pediu”</summary><p>Os USDT podem estar em outra carteira. Na Binance, transfira para a Carteira Spot. Ou mande um valor menor com /valor.</p></details>
+      <details><summary>O robô não respondeu</summary><p>Ele lê as mensagens uma vez por minuto. Espere um pouco antes de mandar de novo.</p></details>
+      <details><summary>Liguei e ele não comprou</summary><p>É normal. Ele só compra quando o Bitcoin está em tendência de alta. Se não estiver, espera em dólar até a maré virar, o que pode levar dias ou semanas.</p></details>
+      <details><summary>Ainda tenho dúvida</summary><p>Escreva na conversa do robô, sem barra na frente. A mensagem chega para o suporte.</p></details>
     </div>
   </div>
   <p class="fine">Criptoativos têm risco alto, inclusive de perda do valor aplicado. Resultados passados não garantem resultados futuros.</p>
@@ -787,7 +849,8 @@ const hm=d=>brt(d).split(' ')[1];
 const CFG={
   FORM_URL:'https://script.google.com/macros/s/AKfycbzQuy-ECL4jCNFdDAd8AK4m5LxerpUenzse0MmjSWpqAp67Wp-DO65hf-cKMeRWeeca/exec',                 // endereco do Apps Script que grava na planilha de inscricoes
   DADOS:'dados/',
-  TG_BOT:'AndromedaCriptoBot',     // bot do Telegram dos clientes              // pasta onde o robo publica estado.json, sombra.json, ia_estado.json e tecnico.log
+  TG_BOT:'AndromedaCriptoBot',     // bot do Telegram dos clientes
+  TG_NOME:'Andromeda_Clientes',    // nome que aparece no Telegram (troque se mudar no BotFather)              // pasta onde o robo publica estado.json, sombra.json, ia_estado.json e tecnico.log
   BINANCE:'https://data-api.binance.vision/api/v3/',
   PIX:{chave:'02672444013',nome:'THALES ANDRADE CALUMBY',cidade:'SANTA MARIA'}
 };
@@ -1428,9 +1491,11 @@ function Plans(){
       '<div class="pixbox"><div class="pixrow"><span>Valor da primeira mensalidade</span><b>R$ '+fmt(p.preco,2)+'</b></div><div class="pixrow"><span>Recebedor</span><b style="font-family:var(--f-body)">Thales Andrade Calumby</b></div>'+
       '<div id="pixqr" style="justify-self:center;background:#fff;padding:12px;border-radius:12px;line-height:0;width:min(230px,70vw)"></div><p class="fine" style="text-align:center;max-width:none">Aponte a câmera do aplicativo do seu banco para o QR Code. No celular, use o botão abaixo e cole em Pix copia e cola.</p><button type="button" class="copy" style="justify-self:center;padding:10px 18px" data-l="Copiar código Pix" data-c="'+code+'">Copiar código Pix</button></div>'+
       '<a class="cta" style="justify-self:stretch;justify-content:center;background:linear-gradient(135deg,#5ec8ff,#2aabee);color:#04121c" href="https://t.me/'+CFG.TG_BOT+'?start='+d.plano[0].toUpperCase()+'-'+d.codigo+'" target="_blank" rel="noopener">Depois de pagar, abra o robô no Telegram</a>'+
+      '<div class="tqr"><div id="tgqr"></div><p><b style="color:var(--ink)">No computador?</b> Depois de pagar, leia este QR com a câmera do celular. Ele abre o robô no Telegram já com o seu código.</p></div>'+
       '<ol style="margin:0;padding-left:20px;display:grid;gap:8px;font-size:.92rem;color:#d6daf5"><li>Pague o Pix pelo QR Code.</li><li>Toque no botão azul. O Telegram abre o robô da Andrômeda já com o seu código: <b class="mono">'+d.codigo+'</b>. Toque em <b>Começar</b>.</li><li>Assim que o pagamento for confirmado, o robô te manda ali mesmo o passo a passo para ligar na sua conta da Binance.</li><li>A mensalidade só começa a contar no dia em que o robô for ligado. Se desistir antes disso, o valor volta inteiro.</li></ol>'+
       '<p class="fine">O robô está em fase de testes na conta Demo. Criptoativos têm risco alto e não há garantia de ganho.</p>';
     sheet.querySelector('.x').onclick=close;$$('.copy',sheet).forEach(b=>b.onclick=()=>copy(b,b.dataset.c));sheet.scrollTop=0;
+    const tq=$('#tgqr');if(window.qrcode&&tq){const qr=qrcode(0,'M');qr.addData('https://t.me/'+CFG.TG_BOT+'?start='+d.plano[0].toUpperCase()+'-'+d.codigo);qr.make();tq.innerHTML=qr.createSvgTag({cellSize:3,margin:0,scalable:true});}else if(tq)tq.parentNode.remove();
     const q=$('#pixqr');if(window.qrcode){const qr=qrcode(0,'M');qr.addData(code);qr.make();q.innerHTML=qr.createSvgTag({cellSize:4,margin:0,scalable:true});}else{q.outerHTML='<p class="caution">O QR Code não carregou neste aparelho. Use o botão de copiar o código Pix.</p>';}
   }
   function open(id,from){
@@ -1479,8 +1544,10 @@ function Tutorial(){
   const cal=$('#tcalc');
   function live(){const usd=+cal.value,fx=M.brlNow;$('#tcalcusd').textContent=us(usd);$('#tcalcbrl').textContent='≈ '+brl(usd*fx)+' hoje';
     $('#tcalcnote').textContent='Com o dólar digital a R$ '+fmt(fx,2)+'. A Binance cobra uma taxa pequena em cada compra e venda, perto de 0,1%.';
-    $('#needusd').textContent='Em USDT, o dólar digital da corretora. Hoje, 20 dólares dão uns '+brl(20*fx)+'.';
     const ok=M.read.acima&&M.read.sobe;$('#tnow').textContent='Se você ligar hoje: '+(ok?'a regra está em tendência de alta, então na próxima conferência das 21h05 o robô deve comprar.':'a regra está fora da tendência de alta, então o robô deve esperar em dólar até a maré virar. Isso é normal e pode levar dias ou semanas.');}
+  $$('.tgname').forEach(e=>e.textContent=CFG.TG_NOME);$$('.tguser').forEach(e=>e.textContent=CFG.TG_BOT);$('#botlink').href='https://t.me/'+CFG.TG_BOT;
+  const qrBot=()=>{const q=$('#botqr');if(window.qrcode&&!q.firstChild){const qr=qrcode(0,'M');qr.addData('https://t.me/'+CFG.TG_BOT);qr.make();q.innerHTML=qr.createSvgTag({cellSize:4,margin:0,scalable:true});}};
+  qrBot();addEventListener('load',qrBot);
   cal.addEventListener('input',live);onData.push(live);live();paint();
   return {show(){paint();live();}};
 }
