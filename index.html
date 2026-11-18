@@ -915,7 +915,7 @@ const SOMBRAS=[['faisca','ema921'],['mare','supertrend'],['conselho','conselho']
 function ingest(){
   const e=RAW.estado,s=RAW.sombra||{},ia=RAW.ia||{},log=RAW.log||'';
   R.modo=RAW.modo||{principal:'teste',sombras:'papel'};
-  const lines=log.split('\n').map(l=>{const m=l.match(/^\[(\d{4}-\d\d-\d\d) (\d\d:\d\d:\d\d) UTC\] (\S+) ?(.*)$/);return m?{t:new Date(m[1]+'T'+m[2]+'Z'),k:m[3],x:m[4]}:null;}).filter(Boolean);
+  const lines=log.replace(/bot\d+:[\w-]+/g,'bot•••').replace(/https?:\/\/\S+/g,'(endereço)').split('\n').map(l=>{const m=l.match(/^\[(\d{4}-\d\d-\d\d) (\d\d:\d\d:\d\d) UTC\] (\S+) ?(.*)$/);return m?{t:new Date(m[1]+'T'+m[2]+'Z'),k:m[3],x:m[4]}:null;}).filter(Boolean);
   const dl=e.diario[e.diario.length-1];
   R.fileT=lines.length?lines[lines.length-1].t:new Date(new Date(dl.dia+'T00:05:00Z').getTime()+DAY);
   R.fresh=(Date.now()-R.fileT)<36*3600e3;
