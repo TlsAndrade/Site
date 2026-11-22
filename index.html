@@ -513,7 +513,7 @@ tr:last-child td{border-bottom:0}
   <section class="band alt" id="aovivo">
     <div class="in">
       <div class="head rv"><p class="eyebrow" id="vivoeyebrow">Ao vivo</p><h2>Placar da tripulação ao vivo.</h2>
-      <p class="lead" id="vivolead">Desde 6 de novembro de 2026 toda a tripulação roda ao vivo, com os preços reais do mercado, em ambiente de teste com dinheiro fictício. Cada robô começou com 10 dólares. São os mesmos robôs que você liga na sua conta ao assinar.</p></div>
+      <p class="lead" id="vivolead">Desde 6 de novembro de 2026 toda a tripulação roda ao vivo, com os preços reais do mercado, em ambiente de teste com dinheiro fictício. Cada robô começa com 20 dólares (até 22/11 eram 10; os valores antigos foram dobrados, então as porcentagens não mudaram). São os mesmos robôs que você liga na sua conta ao assinar.</p></div>
       <div class="board rv" id="board"></div>
       <p class="fine rv" id="vivonote"></p>
       <a class="cta ghost rv" href="#escritorio">Ver a tripulação trabalhando no escritório</a>
@@ -913,7 +913,9 @@ const PLANOS=[
 const RAW={estado:SNAP.estado,sombra:SNAP.sombra,ia:SNAP.ia,log:SNAP.log,modo:SNAP.modo};
 const R={};
 const SOMBRAS=[['faisca','ema921'],['mare','supertrend'],['conselho','conselho'],['pepe','memes'],['trio','rot3'],['formiga','aporte'],['surfista','surf']];
+let CAP0=10;
 function ingest(){
+  CAP0=+((RAW.modo||{}).capital)||10;
   const e=RAW.estado,s=RAW.sombra||{},ia=RAW.ia||{},log=RAW.log||'';
   R.modo=RAW.modo||{principal:'teste',sombras:'papel'};
   const lines=log.replace(/bot\d+:[\w-]+/g,'bot•••').replace(/https?:\/\/\S+/g,'(endereço)').split('\n').map(l=>{const m=l.match(/^\[(\d{4}-\d\d-\d\d) (\d\d:\d\d:\d\d) UTC\] (\S+) ?(.*)$/);return m?{t:new Date(m[1]+'T'+m[2]+'Z'),k:m[3],x:m[4]}:null;}).filter(Boolean);
@@ -927,7 +929,7 @@ function ingest(){
   const g=(x,k)=>(x.match(new RegExp(k+'=(\\S+)'))||[])[1];
   R.s={};
   for(const [id,k] of SOMBRAS){const o=s[k]||{},d=o.diario||[],by={};d.forEach(q=>by[(q.candle||q.dia).slice(0,10)]=q.valor);
-    R.s[id]={v:d.length?d[d.length-1].valor:10,in:(o.btc>0)||(o.qtd>0),moeda:o.moeda?o.moeda.replace('USDT',''):null,raw:o,serie:Object.entries(by).map(([d,v])=>({d,v}))};}
+    R.s[id]={v:d.length?d[d.length-1].valor:CAP0,in:(o.btc>0)||(o.qtd>0),moeda:o.moeda?o.moeda.replace('USDT',''):null,raw:o,serie:Object.entries(by).map(([d,v])=>({d,v}))};}
   R.ia={v:(ia.usdt||0)+(ia.btc||0)*px,btc:ia.btc||0,ops:ia.operacoes||[],custo:Object.values(ia.custo||{}).slice(-1)[0]||0,
     news:(ia.recentes||[]).filter(n=>/cripto/i.test(n.fonte)).sort((a,b)=>b.impacto-a.impacto).slice(0,4),
     leituras:lines.filter(l=>l.k==='IA_FILTRO').slice(-6).reverse().map(l=>({t:l.t,novas:+g(l.x,'novas'),imp:+g(l.x,'impacto'),dir:g(l.x,'direcao')})),
@@ -941,7 +943,7 @@ function ingest(){
   M.h4e=ema(D.h4.map(k=>k.close),200);
   const dt=RAW.daytrade||{},dr=dt.real||{};
   R.dt={v:(dr.usdt||0)+(dr.btc||0)*px,btc:dr.btc||0,ops:dr.operacoes||[],dias:dt.diario||[],hoje:dr.tendencia_hoje,aval:dr.dia_avaliado};
-  R.caca=Object.entries((RAW.caca||{}).sombras||{}).map(([k,o])=>({k,moeda:o.moeda?o.moeda.replace('USDT',''):null,ops:o.ops||0,v:o.moeda?(o.qtd||0)*(o.entrada||0):(o.usd||10)}));
+  R.caca=Object.entries((RAW.caca||{}).sombras||{}).map(([k,o])=>({k,moeda:o.moeda?o.moeda.replace('USDT',''):null,ops:o.ops||0,v:o.moeda?(o.usd||0)+(o.qtd||0)*(o.entrada||0):(o.usd||CAP0)}));
   R.feed=diario(lines);
 }
 const CACA_NOMES={foguete:'Foguete (altcoins)',forca:'Força (altcoins)',rodizio:'Rodízio BTC/ETH/SOL/BNB',solana:'Solana em tendência',bnb:'BNB em tendência',suporte:'Suporte e resistência (BTC 4h)'};
@@ -1006,7 +1008,7 @@ async function startLive(){
 /* ============ tripulacao: cada agente le o estado real do robo ============ */
 const TV=(sym,iv)=>'https://www.tradingview.com/chart/?symbol='+encodeURIComponent(sym)+'&interval='+iv;
 const inout=(x,f)=>x?['Comprad'+(f?'a':'o')+' em Bitcoin','up']:['Fora, esperando em dólar','flat'];
-const cart=v=>us(v,2)+' ('+(Math.abs(v-10)<.005?'parado':pct((v-10)*10))+')';
+const cart=v=>us(v,2)+' ('+(Math.abs(v-CAP0)<.005?'parado':pct((v/CAP0-1)*100))+')';
 const lastN=a=>a[a.length-1];
 const AG=[
  {id:'capitao',nome:'Capitão',papel:'Robô principal · tendência do Bitcoin',curto:'tendência do Bitcoin',cor:'#2f9fd6',desk:[22,72],plano:'Órbita',
@@ -1044,7 +1046,7 @@ const AG=[
   st:()=>inout(R.s.formiga.in,1),
   fala:()=>['Todo mês, mais 10 dólares na conta.','Devagar e sempre.'],
   say:()=>'Sigo a mesma regra do Capitão, com uma diferença: todo mês entram mais 10 dólares de mentira na minha carteira. Sirvo para mostrar o efeito de aportar com constância.',
-  fatos:()=>[['Carteira (no papel)',us(R.s.formiga.v,2)],['Já aportei',us(R.s.formiga.raw.aportado||10,2)],['Tenho',fmt(R.s.formiga.raw.btc||0,8)+' BTC']],
+  fatos:()=>[['Carteira (no papel)',us(R.s.formiga.v,2)],['Já aportei',us(R.s.formiga.raw.aportado||CAP0,2)],['Tenho',fmt(R.s.formiga.raw.btc||0,8)+' BTC']],
   chart:{tf:'d1',sym:'BINANCE:BTCUSDT',iv:'D',titulo:'Bitcoin · diário',lines:[['sma200','#6fe0ff','Média de 200 dias']]}},
  {id:'surfista',nome:'Surfista',papel:'Sombra · caça moedas em disparada',curto:'caça moedas em disparada',cor:'#ff6fae',desk:[174,126],plano:'Galáxia',
   st:()=>R.s.surfista.in?['Surfando '+R.s.surfista.moeda,'up']:['Varrendo o mercado, sem onda','flat'],
@@ -1291,7 +1293,7 @@ function Backtest(){
 function Board(){
   const el=$('#board');
   function render(){
-    el.innerHTML=R.board.map(b=>{const a=byId[b.id],d=(b.v-10)/10*100,w=Math.max(.8,Math.min(50,Math.abs(d)/5*50));
+    el.innerHTML=R.board.map(b=>{const a=byId[b.id],d=(b.v/CAP0-1)*100,w=Math.max(.8,Math.min(50,Math.abs(d)/5*50));
       return '<div class="brow'+(b.main?' main':'')+'"><div class="who"><b>'+a.nome+(b.main?' · robô principal':'')+'</b><small>'+a.curto+' · '+(b.in?'Em '+(b.moeda==='BTC'?'Bitcoin':b.moeda):'Fora, em dólar')+'</small></div><div class="bar"><i style="'+(d>=0?'left:50%':'right:50%')+';width:'+w+'%;background:'+(d>0?C.up:d<0?C.down:C.muted)+'"></i></div><div class="val">'+us(b.v,2)+'<small class="'+(d>0?'up':d<0?'down':'')+'">'+(Math.abs(d)<.005?'parado':pct(d))+'</small></div></div>';}).join('');
     $('#vivoeyebrow').textContent='Ao vivo · dia '+R.dias+' de teste · arquivo do robô de '+brt(R.fileT);
     $('#vivonote').textContent=R.dias+' dias não provam nada sobre lucro. Esta fase serve para conferir se a máquina roda todo dia sem quebrar. Para julgar o resultado de verdade, vale olhar meses, não dias.';
@@ -1541,7 +1543,7 @@ function Painel(){
     data:i=>LD[i]==='agora'?iso(M.n):LD[i],modo:()=>'day',base:()=>10,baseTitulo:'início',fmt:v=>'$'+fmt(v,2),periodo:t=>dm(tStr(t))});
   function stat(a,e){const q=equity(M[a],M.i2020,e,10);return {fim:q[q.length-1],dd:maxDD(q),ops:tradesPerYear(M[a],M.i2020,e)/2,tin:timeIn(M[a],M.i2020,e)};}
   function render(){
-    const r=R.robo,d=(r.pat-10)*10,e=M.n-1;
+    const r=R.robo,d=(r.pat/CAP0-1)*100,e=M.n-1;
     $('#statusbar').innerHTML='<div class="stat'+(M.live?' on':'')+'"><i></i><div><b>Bitcoin '+us(M.now)+' · '+pct(M.chg,2)+' hoje</b><span>'+(M.live?'Mercado ao vivo, atualizado às '+hm(M.stamp):'Retrato do mercado de '+brt(M.stamp))+'</span></div></div>'+
       '<div class="stat'+(R.fresh?' on':'')+'"><i></i><div><b>Arquivo do robô: '+brt(R.fileT)+'</b><span>'+(R.fresh?'Servidor publicando normalmente':'Aguardando o servidor publicar dados novos')+'</span></div></div>'+
       '<div class="stat on"><i></i><div><b id="cd">—</b><span>Próxima decisão do robô, às 21h05 de Brasília</span></div></div>';
@@ -1588,7 +1590,7 @@ function Painel(){
       [-80,-60,-40,-20].forEach(v=>{c.strokeStyle='rgba(158,176,255,.09)';c.beginPath();c.moveTo(X(v),m.t);c.lineTo(X(v),H-m.b);c.stroke();c.fillStyle=C.muted;c.textAlign='center';c.textBaseline='top';c.fillText(v+'%',X(v),H-m.b+8);});
       c.fillStyle=C.muted;c.textAlign='center';c.fillText('maior tombo no caminho (mais à direita, caiu menos)',m.l+(W-m.l-m.r)/2,H-14);
       PT.forEach(([n,p,cor])=>{const x=X(p.dd),y=Y(p.fim);c.fillStyle=cor;c.strokeStyle='#0e1126';c.lineWidth=2;c.beginPath();c.arc(x,y,6.5,0,6.283);c.fill();c.stroke();c.fillStyle=C.ink;c.textAlign=x>W*.7?'right':'left';c.textBaseline='middle';c.font='600 12px Figtree,sans-serif';c.fillText(n,x+(x>W*.7?-11:11),y-1);c.font='11px "JetBrains Mono",monospace';});})();
-    const liveOf=id=>{const b=R.board.find(x=>x.id===id);return b?pct((b.v-10)*10):'—';},pos=id=>byId[id].st()[0];
+    const liveOf=id=>{const b=R.board.find(x=>x.id===id);return b?pct((b.v/CAP0-1)*100):'—';},pos=id=>byId[id].st()[0];
     const rows=[['Só comprar e segurar','Compra uma vez e não mexe',us(E.hold.fim,0),fmt(E.hold.dd,0)+'%','0','100%','—','Sempre comprado'],
       ['Capitão','Preço acima da média e do preço de '+M.L+' dias atrás',us(E.regra.fim,0),fmt(E.regra.dd,0)+'%',fmt(E.regra.ops,0),fmt(E.regra.tin,0)+'%',liveOf('capitao'),pos('capitao')],
       ['Conselho','Três de quatro regras precisam concordar',us(E.cons.fim,0),fmt(E.cons.dd,0)+'%',fmt(E.cons.ops,0),fmt(E.cons.tin,0)+'%',liveOf('conselho'),pos('conselho')],
@@ -1597,7 +1599,7 @@ function Painel(){
       ['Trio*','A mais forte entre BTC, ETH e SOL','inflado','−55%','—','—',liveOf('trio'),pos('trio')],
       ['Pepê*','A memecoin mais forte de seis','inflado','−86%','—','—',liveOf('pepe'),pos('pepe')],
       ['Surfista*','Moedas que subiram 50% na semana','79% perderam','até −97%','—','—',liveOf('surfista'),pos('surfista')],
-      ['Robô IA','Notícias lidas por inteligência artificial','sem teste possível','—','—','—',pct((R.ia.v-10)*10),pos('analista')]];
+      ['Robô IA','Notícias lidas por inteligência artificial','sem teste possível','—','—','—',pct((R.ia.v/CAP0-1)*100),pos('analista')]];
     $('#tcomp').innerHTML='<tr><th>Estratégia</th><th>Como decide</th><th class="n">10 dólares viraram</th><th class="n">Maior tombo</th><th class="n">Compras por ano</th><th class="n">Tempo comprado</th><th class="n">Ao vivo</th><th>Hoje</th></tr>'+rows.map(r=>'<tr><td><b>'+r[0]+'</b></td><td>'+r[1]+'</td><td class="n">'+r[2]+'</td><td class="n">'+r[3]+'</td><td class="n">'+r[4]+'</td><td class="n">'+r[5]+'</td><td class="n">'+r[6]+'</td><td>'+r[7]+'</td></tr>').join('');
     $('#tsig').innerHTML='<tr><th>Dia</th><th class="n">Fechamento</th><th class="n">Média</th><th class="n">'+M.L+' dias</th><th>Decisão</th><th class="n">Carteira</th></tr>'+(R.sinais.length?R.sinais.map(s=>'<tr><td>'+dm(s.dia)+'</td><td class="n">'+fmt(s.fech,0)+'</td><td class="n">'+fmt(s.ma,0)+'</td><td class="n '+(s.ret>=0?'up':'down')+'">'+pct(s.ret)+'</td><td>'+(s.quer?'Ficar comprado':'Ficar em dólar')+'</td><td class="n">'+(s.pat!=null?fmt(s.pat,2):'—')+'</td></tr>').join(''):'<tr><td colspan="6">Sem decisões no arquivo.</td></tr>')+r.ops.slice(-3).reverse().map(o=>'<tr><td>'+brt(new Date(o.quando)).split(' ')[0]+'</td><td class="n" colspan="3">'+(o.lado==='BUY'?'Compra':'Venda')+' de '+fmt(o.btc,5)+' BTC a '+us(o.preco)+'</td><td>'+(o.lado==='BUY'?'Entrar':'Sair')+'</td><td class="n">'+fmt(o.usdt,2)+'</td></tr>').join('');
     $('#tia').innerHTML='<tr><th>Quando</th><th class="n">Manchetes novas</th><th class="n">Nota (0 a 10)</th><th>Direção</th></tr>'+(R.ia.leituras.length?R.ia.leituras.map(i=>'<tr><td>'+brt(i.t)+'</td><td class="n">'+i.novas+'</td><td class="n">'+i.imp+'</td><td>'+i.dir+'</td></tr>').join(''):'<tr><td colspan="4">Sem leituras no arquivo.</td></tr>');
@@ -1724,7 +1726,7 @@ $$('[data-candles]').forEach(Candles);
 function Modo(){
   const real=(R.modo||{}).principal==='real';
   $('#footmodo').textContent=real?'O robô principal opera com dinheiro real. As demais carteiras do placar são simuladas com os preços reais do mercado e as mesmas taxas. Testes históricos são simulações.':'Os resultados ao vivo exibidos aqui são de ambiente de teste, com dinheiro fictício. Testes históricos são simulações.';
-  $('#vivolead').textContent=real?'Desde 6 de novembro de 2026 a tripulação roda ao vivo. O Capitão opera com dinheiro real; os outros robôs mostram a carteira simulada com os preços reais do mercado. Cada um começou com 10 dólares.':'Desde 6 de novembro de 2026 toda a tripulação roda ao vivo, com os preços reais do mercado, em ambiente de teste com dinheiro fictício. Cada robô começou com 10 dólares. São os mesmos robôs que você liga na sua conta ao assinar.';
+  $('#vivolead').textContent=real?'Desde 6 de novembro de 2026 a tripulação roda ao vivo. O Capitão opera com dinheiro real; os outros robôs mostram a carteira simulada com os preços reais do mercado. Cada um começa com '+fmt(CAP0,0)+' dólares.':'Desde 6 de novembro de 2026 toda a tripulação roda ao vivo, com os preços reais do mercado, em ambiente de teste com dinheiro fictício'+((R.modo||{}).sombras==='demo'?', todos com ordens de verdade na conta de teste da Binance':'')+'. Cada robô começa com '+fmt(CAP0,0)+' dólares'+(CAP0>10?' (até 22/11 eram 10; os valores antigos foram dobrados, então as porcentagens não mudaram)':'')+'. São os mesmos robôs que você liga na sua conta ao assinar.';
   $('#faqreal').textContent=real?'O Capitão opera com dinheiro real. Os outros robôs do placar mostram a carteira simulada com os preços reais do mercado e as mesmas taxas. O gráfico de 2020 a 2026 é uma simulação com preços históricos. Na sua conta, todos operam com o seu dinheiro de verdade.':'Não. O placar ao vivo vem do ambiente de teste da Binance, com dinheiro fictício e preços reais, desde novembro de 2026. O gráfico de 2020 a 2026 é uma simulação com preços históricos. Na sua conta, o robô opera com o seu dinheiro de verdade.';
 }
 Modo();onData.push(Modo);
