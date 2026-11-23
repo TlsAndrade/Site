@@ -226,7 +226,7 @@ body.aba .col{opacity:0;pointer-events:none}
 
 <div id="cfg" class="modal"><div class="box">
   <h2>AJUSTES DA ANDRÔMEDA</h2>
-  <label>Relatório a cada <select id="oInt"><option value="15">15 minutos</option><option value="30">30 minutos</option><option value="60">1 hora</option><option value="120">2 horas</option></select></label>
+  <label>Relatório a cada <select id="oInt"><option value="15">15 minutos (boletim curto, relatório completo de hora em hora)</option><option value="30">30 minutos</option><option value="60">1 hora</option><option value="120">2 horas</option></select></label>
   <label>Falar em voz alta <input type="checkbox" id="oVoz"></label>
   <label>Voz <select id="oVozNome"></select></label>
   <label>Silêncio à noite (23h às 7h) <input type="checkbox" id="oSil"></label>
@@ -386,7 +386,7 @@ function infoAndromeda(){
   const ag=Date.now(),vendo=st.rosto&&ag-st.rosto.t<3000;
   const cam=!cfg.camera?'desligada':vendo?'<b>te vendo agora</b>':st.camSt==='ligada'?'procurando você':(st.camSt||'desligada');
   const mic=st.rec?(st.recManual?'<b>ouvindo</b>':'ligado'):(cfg.micSempre?'pausado':'desligado (toque em FALAR)');
-  $('#petInfo').innerHTML=`Humor: <b>${estadoTexto()}</b> · Câmera: ${cam}<br>Microfone: ${mic}`;
+  $('#petInfo').innerHTML=`Humor: <b>${estadoTexto()}</b> · Câmera: ${cam}<br>Microfone: ${mic} · Alexa: ${st.alexaSt||'desligada'}`;
 }
 const ANIMS={olhaRedor:3200,inclina:2600,bocejo:2800,piscadela:1300,risada:1800,danca:3600,espirro:2000,cochilo:4200,pulo:1200};
 function anima(tipo){
@@ -560,6 +560,14 @@ async function relatorio(){
   escondePainel();agenda();
   await falar(`Fim do relatório. O próximo é às ${hhmm(st.proximo)}.`);
   st.rel=false;
+}
+async function boletimCurto(){
+  const t=st.tick.BTCUSDT,g=gatilho(),prox=eventosHoje().find(e=>e.i>Date.now()),s=proximaSessao();
+  let txt=`Boletim das ${hhmm(Date.now())}. `;if(t)txt+=`Bitcoin em ${falaUSD(t.p)}, ${t.c>=0?'subindo':'caindo'} ${falaPct(t.c)} em 24 horas. `;
+  if(g)txt+=g.comprado?'O Capitão segue com Bitcoin. ':`O Capitão segue em dólar, a ${falaPct(g.dist)} do gatilho. `;
+  if(prox)txt+=`Próximo compromisso: ${limpaT(prox.t)}, às ${hhmm(prox.i)}. `;
+  if(s&&!st.timer)txt+=`Sessão ${s.n} de estudo esperando por você.`;
+  agenda();await falar(txt.trim());
 }
 function pedeRelatorio(manual){if(st.pedido)return;st.pedido=true;enfileira(async()=>{st.manual=!!manual;try{await relatorio();}finally{st.manual=false;st.pedido=false;}});}
 function agenda(){const iv=cfg.intervalo*60e3;st.proximo=Math.ceil((Date.now()+30e3)/iv)*iv;}
@@ -862,7 +870,7 @@ st.timer=(()=>{try{return JSON.parse(localStorage.getItem('andromeda_timer')||'n
 const salvaTimer=()=>{try{localStorage.setItem('andromeda_timer',JSON.stringify(st.timer))}catch(e){}};
 const conectado=()=>!!(PESS.url&&PESS.chave);
 async function atualizaPessoal(){
-  if(!conectado())return renderAba();
+  if(!conectado())return renderAba();ligaAlexa();
   try{const j=await J(PESS.url+(PESS.url.includes('?')?'&':'?')+'chave='+encodeURIComponent(PESS.chave));
     if(j.erro){st.pessErro=j.erro==='chave'?'chave errada':j.erro;}else{st.pess=j;st.pessErro=null;}}
   catch(e){st.pessErro='não consegui falar com o Apps Script';}
@@ -1009,6 +1017,30 @@ function avisosAgenda(){
     if(['hospital','treino','ingles','planejar'].includes(c)&&min<=15&&min>12&&!st.avisados[k]){st.avisados[k]=1;
       enfileira(()=>falar(`Daqui a 15 minutos: ${limpaT(e.t)}${e.local?', em '+e.local.split(',')[0]:''}.`));}
   });
+}
+
+
+/* ---------- ponte com a Alexa: o que você pergunta ao Echo aparece aqui ---------- */
+async function topicoAlexa(){if(!PESS.chave)return null;const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode('andromeda:'+PESS.chave));return 'andromeda-'+Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,'0')).join('').slice(0,24);}
+async function ligaAlexa(){
+  if(st.alexaES||!PESS.chave||!window.EventSource)return;const tp=await topicoAlexa();if(!tp)return;
+  const es=new EventSource('https://ntfy.sh/'+tp+'/sse');st.alexaES=es;st.alexaSt='conectando';
+  es.onopen=()=>{st.alexaSt='ligada';infoAndromeda();};
+  es.onerror=()=>{st.alexaSt='reconectando';};
+  es.onmessage=ev=>{try{const d=JSON.parse(ev.data);if(d.event!=='message')return;const m=JSON.parse(d.message);if(m.tipo==='alexa')recebeAlexa(m);}catch(e){}};
+}
+function falarMudo(txt){return new Promise(res=>{legenda(txt);st.falando=true;st.pular=null;setTimeout(()=>{st.falando=false;st.fimFala=Date.now();res();},Math.max(2500,txt.length*62));});}
+function cenaPara(m){const t=sem((m.pergunta||'')+' '+(m.mostrar||''));
+  if(/monte ?carlo|para onde|previs/.test(t))return cenaMC();if(/placar|carteira|ranking/.test(t))return cenaRanking();if(/noticia/.test(t))return cenaNoticia();
+  if(/medo|ganancia/.test(t))return cenaFNG();const s=achaMoeda(t);if(s&&s!=='BTC')return cenaMoedaSym(s);if(/bitcoin|btc|robo|capitao|mercado|status/.test(t))return cenaBTC();return null;}
+async function recebeAlexa(m){
+  if(!st.acordada)return;st.ultAlexa=Date.now();anima('pulo');flash();
+  if(st.falando&&st.pular)st.pular();
+  const t=sem((m.pergunta||'')+' '+(m.mostrar||''));
+  if(/estud|sessao|testa|pergunta de prova/.test(t))trocaAba('estudo');
+  else if(/agenda|compromisso|tenho hoje/.test(t))trocaAba('agenda');
+  const c=cenaPara(m);
+  enfileira(async()=>{if(c){st.rel=true;mostraPainel(c.painel);}await falarMudo(m.texto||'');if(c){await espera(6000);escondePainel();st.rel=false;}});
 }
 
 /* ---------- desenho: fundo, moedas e rosto ---------- */
@@ -1292,7 +1324,7 @@ addEventListener('resize',()=>renderAba());
 setInterval(()=>{if(Math.random()<.5)animaOciosa();},15e3);
 setInterval(atualizaMC,60*60e3);
 setInterval(()=>{if(st.btcLongo)calculaMC();},10*60e3);
-setInterval(()=>{if(st.acordada&&st.proximo&&Date.now()>=st.proximo&&!st.rel){if(silencio()){agenda();return;}pedeRelatorio(false);}},5e3);
+setInterval(()=>{if(st.acordada&&st.proximo&&Date.now()>=st.proximo&&!st.rel&&!st.pedido){if(silencio()){agenda();return;}if(cfg.intervalo<60&&new Date().getMinutes()>=5){st.pedido=true;enfileira(async()=>{try{await boletimCurto();}finally{st.pedido=false;}});}else pedeRelatorio(false);}},5e3);
 setInterval(()=>{if(st.acordada&&!st.falando&&!st.rel&&Math.random()<.4)burst(4);},50e3);
 </script>
 </body>
