@@ -930,6 +930,8 @@ function ingest(){
   R.s={};
   for(const [id,k] of SOMBRAS){const o=s[k]||{},d=o.diario||[],by={};d.forEach(q=>by[(q.candle||q.dia).slice(0,10)]=q.valor);
     R.s[id]={v:d.length?d[d.length-1].valor:CAP0,in:(o.btc>0)||(o.qtd>0),moeda:o.moeda?o.moeda.replace('USDT',''):null,raw:o,serie:Object.entries(by).map(([d,v])=>({d,v}))};}
+  {const q=s.esquadra;if(q&&q.diario&&q.diario.length){const k=CAP0/(q.base||3*CAP0),by={};q.diario.forEach(x=>by[(x.candle||'').slice(0,10)]=x.valor*k);
+    R.s.esquadra={v:q.diario[q.diario.length-1].valor*k,real:q.diario[q.diario.length-1].valor,base:q.base,in:Object.keys(q.pos||{}).length>0,moeda:Object.keys(q.pos||{}).map(m=>m.replace('USDT','')).join(', ')||null,raw:q,serie:Object.entries(by).map(([d,v])=>({d,v}))};}}
   R.ia={v:(ia.usdt||0)+(ia.btc||0)*px,btc:ia.btc||0,ops:ia.operacoes||[],custo:Object.values(ia.custo||{}).slice(-1)[0]||0,
     news:(ia.recentes||[]).filter(n=>/cripto/i.test(n.fonte)).sort((a,b)=>b.impacto-a.impacto).slice(0,4),
     leituras:lines.filter(l=>l.k==='IA_FILTRO').slice(-6).reverse().map(l=>({t:l.t,novas:+g(l.x,'novas'),imp:+g(l.x,'impacto'),dir:g(l.x,'direcao')})),
@@ -939,7 +941,7 @@ function ingest(){
   R.sinais=R.sinais.reverse().slice(0,6);
   const cv=[...lines].reverse().find(l=>l.k==='CONSELHO');R.votos=cv?(cv.x.match(/True|False/g)||[]).map(v=>v==='True'):M.votes;
   R.erros=lines.filter(l=>l.k==='ERRO'&&R.fileT-l.t<72*3600e3).reverse().slice(0,4);
-  R.board=[{id:'capitao',v:R.robo.pat,in:R.robo.comprado,main:true,moeda:'BTC'}].concat(SOMBRAS.map(([id])=>({id,v:R.s[id].v,in:R.s[id].in,moeda:R.s[id].moeda||(R.s[id].in?'BTC':null)}))).sort((a,b)=>b.v-a.v);
+  R.board=[{id:'capitao',v:R.robo.pat,in:R.robo.comprado,main:true,moeda:'BTC'}].concat(SOMBRAS.map(([id])=>({id,v:R.s[id].v,in:R.s[id].in,moeda:R.s[id].moeda||(R.s[id].in?'BTC':null)}))).concat(R.s.esquadra?[{id:'esquadra',v:R.s.esquadra.v,in:R.s.esquadra.in,moeda:R.s.esquadra.moeda}]:[]).sort((a,b)=>b.v-a.v);
   M.h4e=ema(D.h4.map(k=>k.close),200);
   const dt=RAW.daytrade||{},dr=dt.real||{};
   R.dt={v:(dr.usdt||0)+(dr.btc||0)*px,btc:dr.btc||0,ops:dr.operacoes||[],dias:dt.diario||[],hoje:dr.tendencia_hoje,aval:dr.dia_avaliado};
@@ -1010,6 +1012,7 @@ const TV=(sym,iv)=>'https://www.tradingview.com/chart/?symbol='+encodeURICompone
 const inout=(x,f)=>x?['Comprad'+(f?'a':'o')+' em Bitcoin','up']:['Fora, esperando em dólar','flat'];
 const cart=v=>us(v,2)+' ('+(Math.abs(v-CAP0)<.005?'parado':pct((v/CAP0-1)*100))+')';
 const lastN=a=>a[a.length-1];
+const DEMO=()=>(R.modo||{}).sombras==='demo',CARTL=()=>DEMO()?'Carteira (conta Demo)':'Carteira (no papel)';
 const AG=[
  {id:'capitao',nome:'Capitão',papel:'Robô principal · tendência do Bitcoin',curto:'tendência do Bitcoin',cor:'#2f9fd6',desk:[22,72],plano:'Órbita',
   st:()=>inout(R.robo.comprado),
@@ -1017,43 +1020,43 @@ const AG=[
   say:()=>'Sou o robô principal, o do plano Órbita. Uma vez por dia comparo o preço do Bitcoin com a média dos últimos '+M.N+' dias e com o preço de '+M.L+' dias atrás. '+(R.robo.comprado?'Na última conferência os dois deram sim, então sigo comprado.':'Na última conferência um deles deu não, então estou em dólar.')+' Se o dia fechasse agora, eu '+(M.read.acima&&M.read.sobe?'ficaria comprado.':'ficaria em dólar.'),
   fatos:()=>[['Carteira',cart(R.robo.pat)],['Tenho',fmt(R.robo.btc,8)+' BTC + '+us(R.robo.usdt,2)]].concat(R.robo.entrada?[['Comprei em',brt(R.robo.entradaT)+', a '+us(R.robo.entrada)]]:[],[['Preço agora',us(M.now)],['Média de '+M.N+' dias',us(M.read.ma)+' (preço '+pct(M.read.dist)+')'],['Contra '+M.L+' dias atrás',pct(M.read.ret)],['Gatilho de venda','fechar abaixo de '+us(M.read.gatilho)+' ('+pct((M.read.gatilho/M.now-1)*100)+')'],['Próxima conferência','21h05 de Brasília']]),
   chart:{tf:'d1',sym:'BINANCE:BTCUSDT',iv:'D',titulo:'Bitcoin · diário',lines:[['sma200','#6fe0ff','Média de 200 dias']],mark:true}},
- {id:'faisca',nome:'Faísca',papel:'Sombra · cruzamento de médias rápidas',curto:'cruzamento de médias rápidas',cor:'#e2b93b',desk:[98,72],plano:'Constelação',
+ {id:'faisca',nome:'Faísca',papel:'Teste · cruzamento de médias rápidas',curto:'cruzamento de médias rápidas',cor:'#e2b93b',desk:[98,72],plano:'Constelação',
   st:()=>inout(R.s.faisca.in,1),
   fala:()=>M.votes[1]?['A média rápida passou por cima da lenta.']:['A média rápida ainda está embaixo da lenta.','Espero o cruzamento para entrar.'],
   say:()=>'Olho duas médias curtas, a de 9 e a de 21 dias. Só compro quando a rápida passa por cima da lenta. Hoje ela está por '+(M.votes[1]?'cima.':'baixo, então fico em dólar.'),
-  fatos:()=>[['Carteira (no papel)',cart(R.s.faisca.v)],['Média de 9 dias',us(lastN(M.e9))],['Média de 21 dias',us(lastN(M.e21))],['No teste desde 2020','rendeu mais, mas caiu 61%']],
+  fatos:()=>[[CARTL(),cart(R.s.faisca.v)],['Média de 9 dias',us(lastN(M.e9))],['Média de 21 dias',us(lastN(M.e21))],['No teste desde 2020','rendeu mais, mas caiu 61%']],
   chart:{tf:'d1',sym:'BINANCE:BTCUSDT',iv:'D',titulo:'Bitcoin · diário',lines:[['e9','#ffd84d','Média de 9 dias'],['e21','#ff8a5c','Média de 21 dias']]}},
- {id:'mare',nome:'Maré',papel:'Sombra · tendência no gráfico de 4 horas',curto:'tendência no gráfico de 4 horas',cor:'#5cc8ff',desk:[174,72],plano:'Constelação',
+ {id:'mare',nome:'Maré',papel:'Teste · tendência no gráfico de 4 horas',curto:'tendência no gráfico de 4 horas',cor:'#5cc8ff',desk:[174,72],plano:'Constelação',
   st:()=>inout(R.s.mare.in,1),
   fala:()=>['Confiro o gráfico a cada 4 horas.',M.now>lastN(M.h4e)?'Preço acima da média longa.':'Preço abaixo da média longa. Ainda não.'],
   say:()=>'Trabalho num relógio mais rápido: olho o gráfico de 4 em 4 horas. Só entro com tendência de alta e preço acima da média longa. Agora o preço está '+(M.now>lastN(M.h4e)?'acima':'abaixo')+' dela.',
-  fatos:()=>[['Carteira (no papel)',cart(R.s.mare.v)],['Preço agora',us(M.now)],['Média de 200 velas de 4h',us(lastN(M.h4e))]],
+  fatos:()=>[[CARTL(),cart(R.s.mare.v)],['Preço agora',us(M.now)],['Média de 200 velas de 4h',us(lastN(M.h4e))]],
   chart:{tf:'h4',sym:'BINANCE:BTCUSDT',iv:'240',titulo:'Bitcoin · 4 horas',lines:[['h4e','#5cc8ff','Média de 200 velas']]}},
- {id:'pepe',nome:'Pepê',papel:'Sombra · rodízio de memecoins',curto:'rodízio de memecoins',cor:'#4cbf5a',desk:[250,72],plano:'Galáxia',
+ {id:'pepe',nome:'Pepê',papel:'Teste · rodízio de memecoins',curto:'rodízio de memecoins',cor:'#4cbf5a',desk:[250,72],plano:'Galáxia',
   st:()=>R.s.pepe.in?['Apostando em '+R.s.pepe.moeda,'up']:['Fora, esperando em dólar','flat'],
   fala:()=>R.s.pepe.in?['Sou o mais arriscado daqui.','Rodízio do dia: sigo em '+R.s.pepe.moeda+'.']:['Nenhuma memecoin com força hoje.'],
   say:()=>'Fico trocando entre seis moedas-piada (DOGE, SHIB, PEPE, FLOKI, BONK e WIF), sempre na que está com mais força. '+(R.s.pepe.in?'Agora estou em '+R.s.pepe.moeda+'.':'Agora estou em dólar.'),
   warn:'Experimento de laboratório. No teste histórico esta ideia chegou a cair 86% e os números bonitos vêm de moedas que sobreviveram. Só no plano Galáxia, para quem aceita risco muito alto.',
-  fatos:()=>{const o=R.s.pepe.raw.operacoes||[],b=lastN(o);return [['Carteira (no papel)',cart(R.s.pepe.v)],['Moeda atual',R.s.pepe.moeda||'nenhuma']].concat(b?[['Entrada',dm(b.candle)+', a US$ '+fmt(b.preco,8)]]:[],[['PEPE agora','US$ '+fmt(lastN(D.pepe).close,8)]]);},
+  fatos:()=>{const o=R.s.pepe.raw.operacoes||[],b=lastN(o);return [[CARTL(),cart(R.s.pepe.v)],['Moeda atual',R.s.pepe.moeda||'nenhuma']].concat(b?[['Entrada',dm(b.candle)+', a US$ '+fmt(b.preco,8)]]:[],[['PEPE agora','US$ '+fmt(lastN(D.pepe).close,8)]]);},
   chart:{tf:'pepe',sym:'BINANCE:PEPEUSDT',iv:'D',titulo:'PEPE · diário',lines:[]}},
- {id:'trio',nome:'Trio',papel:'Sombra · rodízio Bitcoin, Ethereum e Solana',curto:'rodízio Bitcoin, Ethereum e Solana',cor:'#a58bff',desk:[22,126],plano:'Constelação',
+ {id:'trio',nome:'Trio',papel:'Teste · rodízio Bitcoin, Ethereum e Solana',curto:'rodízio Bitcoin, Ethereum e Solana',cor:'#a58bff',desk:[22,126],plano:'Constelação',
   st:()=>R.s.trio.in?['Em '+R.s.trio.moeda,'up']:['Fora, esperando em dólar','flat'],
   fala:()=>R.s.trio.in?['Hoje a mais forte é '+R.s.trio.moeda+'.']:['Nenhuma das três passou no filtro.','Bitcoin, Ethereum ou Solana? Hoje, nenhuma.'],
   say:()=>'Escolho a mais forte entre Bitcoin, Ethereum e Solana, mas só se ela estiver em tendência de alta. '+(R.s.trio.in?'Hoje estou em '+R.s.trio.moeda+'.':'Hoje nenhuma das três passou no filtro, então fico em dólar.'),
-  fatos:()=>[['Carteira (no papel)',cart(R.s.trio.v)],['Moeda escolhida',R.s.trio.moeda||'nenhuma']],
+  fatos:()=>[[CARTL(),cart(R.s.trio.v)],['Moeda escolhida',R.s.trio.moeda||'nenhuma']],
   chart:{tf:'d1',sym:'BINANCE:BTCUSDT',iv:'D',titulo:'Bitcoin · diário',lines:[['sma50','#a58bff','Média de 50 dias']]}},
- {id:'formiga',nome:'Formiga',papel:'Sombra · mesma regra, com aporte todo mês',curto:'mesma regra, com aporte mensal',cor:'#ff9d5c',desk:[98,126],plano:'Constelação',
+ {id:'formiga',nome:'Formiga',papel:'Teste · mesma regra, com aporte todo mês',curto:'mesma regra, com aporte mensal',cor:'#ff9d5c',desk:[98,126],plano:'Constelação',
   st:()=>inout(R.s.formiga.in,1),
   fala:()=>['Todo mês, mais 10 dólares na conta.','Devagar e sempre.'],
   say:()=>'Sigo a mesma regra do Capitão, com uma diferença: todo mês entram mais 10 dólares de mentira na minha carteira. Sirvo para mostrar o efeito de aportar com constância.',
-  fatos:()=>[['Carteira (no papel)',us(R.s.formiga.v,2)],['Já aportei',us(R.s.formiga.raw.aportado||CAP0,2)],['Tenho',fmt(R.s.formiga.raw.btc||0,8)+' BTC']],
+  fatos:()=>[[CARTL(),us(R.s.formiga.v,2)],['Já aportei',us(R.s.formiga.raw.aportado||CAP0,2)],['Tenho',fmt(R.s.formiga.raw.btc||0,8)+' BTC']],
   chart:{tf:'d1',sym:'BINANCE:BTCUSDT',iv:'D',titulo:'Bitcoin · diário',lines:[['sma200','#6fe0ff','Média de 200 dias']]}},
- {id:'surfista',nome:'Surfista',papel:'Sombra · caça moedas em disparada',curto:'caça moedas em disparada',cor:'#ff6fae',desk:[174,126],plano:'Galáxia',
+ {id:'surfista',nome:'Surfista',papel:'Teste · caça moedas em disparada',curto:'caça moedas em disparada',cor:'#ff6fae',desk:[174,126],plano:'Galáxia',
   st:()=>R.s.surfista.in?['Surfando '+R.s.surfista.moeda,'up']:['Varrendo o mercado, sem onda','flat'],
   fala:()=>R.s.surfista.in?['Peguei uma onda!']:['Varri tudo. Nenhuma onda hoje.','Só entro se subir 50% na semana.'],
   say:()=>'Todo dia varro o mercado atrás de moedas que subiram mais de 50% em uma semana com o dobro do volume normal. '+(R.s.surfista.in?'Estou em '+R.s.surfista.moeda+'.':'Por enquanto, nenhuma apareceu.'),
   warn:'Experimento de laboratório. No teste histórico, 79% das versões desta ideia terminaram no prejuízo. Só no plano Galáxia, para quem aceita risco muito alto.',
-  fatos:()=>[['Carteira (no papel)',cart(R.s.surfista.v)],['Última varredura',R.s.surfista.raw.ultimo_dia?dm(R.s.surfista.raw.ultimo_dia):'sem registro'],['Regra de saída','+200%, −30% ou −30% do topo']]},
+  fatos:()=>[[CARTL(),cart(R.s.surfista.v)],['Última varredura',R.s.surfista.raw.ultimo_dia?dm(R.s.surfista.raw.ultimo_dia):'sem registro'],['Regra de saída','+200%, −30% ou −30% do topo']]},
  {id:'reporter',nome:'Repórter',papel:'Inteligência artificial · lê as notícias',curto:'lê as notícias',cor:'#ffc778',desk:[250,126],plano:'Galáxia',
   st:()=>['Lendo manchetes a cada 15 minutos','up'],
   fala:()=>{const l=R.ia.leituras[0];return l?[l.novas+' manchetes novas. Nota '+l.imp+' de 10.','Separando notícia de barulho.']:['Separando notícia de barulho.'];},
@@ -1076,12 +1079,18 @@ const AG=[
   fala:()=>['Domingo eu confiro tudo.','Regra é regra: três meses antes de promover alguém.'],
   say:()=>'Uma vez por semana leio todos os arquivos do robô, escrevo o laudo e posso fazer ajustes de um cardápio seguro: pausar o robô se o alarme de saúde disparar ou trocar a estratégia principal quando uma sombra cumprir a regra combinada. Cada ajuste chega explicado, e dá para desfazer com um comando.',
   fatos:()=>[['Laudo','domingo, 09h00'],['Regra para promover uma sombra','3 meses ao vivo, ganhando e caindo menos'],['Não posso','ver chaves nem alterar o código']]},
- {id:'conselho',nome:'Conselho',papel:'Sombra · quatro regras votam',curto:'quatro regras votam',cor:'#c8842a',fixed:[214,196],plano:'Constelação',
+ {id:'conselho',nome:'Conselho',papel:'Teste · quatro regras votam',curto:'quatro regras votam',cor:'#c8842a',fixed:[214,196],plano:'Constelação',
   st:()=>{const v=R.votos.filter(Boolean).length;return [v+' de 4 votos. '+(R.s.conselho.in?'Comprado':'Fica fora'),R.s.conselho.in?'up':'flat'];},
   fala:()=>{const v=R.votos.filter(Boolean).length;return v>=3?['Maioria formada. Compramos.']:[v+' a '+(4-v)+'. Sem maioria, sem compra.','Precisamos de três votos.'];},
   say:()=>'Somos quatro regras diferentes em volta da mesa. Só compramos quando pelo menos três votam sim. No teste de 2020 até hoje, fomos quem menos caiu.',
-  fatos:()=>{const s=b=>b?'sim':'não',v=R.votos;return [['Carteira (no papel)',cart(R.s.conselho.v)],['Regra do Capitão',s(v[0])],['Médias de 9 e 21 dias',s(v[1])],['Três médias alinhadas (12, 26, 100)',s(v[2])],['Média de 50 acima da de 200',s(v[3])],['Placar',v.filter(Boolean).length+' de 4 (precisa de 3)']];},
+  fatos:()=>{const s=b=>b?'sim':'não',v=R.votos;return [[CARTL(),cart(R.s.conselho.v)],['Regra do Capitão',s(v[0])],['Médias de 9 e 21 dias',s(v[1])],['Três médias alinhadas (12, 26, 100)',s(v[2])],['Média de 50 acima da de 200',s(v[3])],['Placar',v.filter(Boolean).length+' de 4 (precisa de 3)']];},
   chart:{tf:'d1',sym:'BINANCE:BTCUSDT',iv:'D',titulo:'Bitcoin · diário',lines:[['sma50','#c8842a','Média de 50 dias'],['sma200','#6fe0ff','Média de 200 dias']]}},
+ {id:'esquadra',nome:'Esquadra',papel:'Teste · rotação entre 10 moedas grandes',curto:'10 moedas',cor:'#c39bff',plano:'Galáxia',
+  st:()=>{const q=R.s.esquadra;return !q?['Começando','flat']:(q.in?['Com '+q.moeda,'up']:['Em dólar, esperando o Bitcoin subir','flat']);},
+  fala:()=>[],
+  say:()=>'Sou a Esquadra. Olho 10 moedas grandes: Bitcoin, Ethereum, Solana, BNB, XRP, Doge, Cardano, Avalanche, Chainlink e Tron. Quando o Bitcoin está em tendência de alta (a mesma regra do Capitão), fico nas 3 que mais subiram no último mês, entre as que estão em alta, e troco no máximo uma vez por semana. Quando a tendência acaba, vendo tudo e fico em dólar.',
+  warn:'Em teste desde 22/11/2026. No teste de 2020 a 2026 ela só ganhou com folga do Capitão por causa da temporada de altcoins de 2021; escolhendo as moedas sem saber o futuro, empatou com ele e caiu mais no caminho.',
+  fatos:()=>{const q=R.s.esquadra;return q?[[CARTL(),us(q.real,2)+' de '+us(q.base,0)],['Na escala dos outros',cart(q.v)],['Moedas agora',q.moeda||'nenhuma, está em dólar'],['Operações',''+(q.raw.operacoes||[]).length]]:[['Situação','começa a operar na primeira atualização diária']];}},
  {id:'relampago',nome:'Relâmpago',papel:'Day trade · opera de verdade no teste',curto:'day trade',cor:'#ffc778',plano:'Galáxia',
   st:()=>R.dt.btc*R.robo.px>=5?['Comprado, vende às 20h','up']:(R.dt.aval===new Date().toISOString().slice(0,10)&&R.dt.hoje===false?['Sem tendência hoje, ficou de fora','flat']:['Em dólar, decide às 21h','flat']),
   fala:()=>[],
@@ -1091,8 +1100,8 @@ const AG=[
  {id:'batedores',nome:'Batedores',papel:'Caçadores · vasculham altcoins e memecoins',curto:'caçam altcoins',cor:'#56d99a',plano:'Galáxia',
   st:()=>{const n=R.caca.filter(c=>c.moeda).length;return n?[n+' em posição agora','up']:['Vasculhando, nenhum em posição','flat'];},
   fala:()=>[],
-  say:()=>'Somos seis caçadores no papel. De hora em hora olhamos as 40 moedas com mais volume na Binance, inclusive memecoins, e cada um segue a sua regra: a que mais subiu no dia, a mais forte da semana, o rodízio entre as grandes, Solana, BNB e o suporte do Bitcoin. Nenhum opera dinheiro ainda: primeiro precisamos provar ao vivo.',
-  warn:'Experimento. No teste, a melhor regra (Foguete) só funcionou num horário específico, o que pode ser sorte. Por isso fica no papel.',
+  say:()=>'Somos seis caçadores'+(DEMO()?', cada um com '+fmt(CAP0,0)+' dólares e ordens de verdade na conta de teste da Binance':' no papel')+'. De hora em hora olhamos as 40 moedas com mais volume na Binance, inclusive memecoins, e cada um segue a sua regra: a que mais subiu no dia, a mais forte da semana, o rodízio entre as grandes, Solana, BNB e o piso e teto do Bitcoin. Nenhum opera dinheiro de cliente: primeiro precisamos provar ao vivo.',
+  warn:'Experimento. No teste, a melhor regra (Foguete) só funcionou num horário específico, o que pode ser sorte. Por isso ainda é só teste.',
   fatos:()=>R.caca.length?R.caca.map(c=>[CACA_NOMES[c.k]||c.k,(c.moeda?'em '+c.moeda+' · ':cart(c.v)+' · ')+c.ops+' op.']):[['Situação','começando a caçar']]},
  {id:'servidor',nome:'Servidor',papel:'Computador na nuvem, ligado 24 horas',curto:'servidor',cor:'#6fe0ff',thing:true,
   st:()=>R.fresh?['Ligado','up']:['Último arquivo: '+brt(R.fileT),'flat'],fala:()=>[],
