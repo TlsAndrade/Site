@@ -1027,7 +1027,7 @@ async function ligaAlexa(){
   const es=new EventSource('https://ntfy.sh/'+tp+'/sse');st.alexaES=es;st.alexaSt='conectando';
   es.onopen=()=>{st.alexaSt='ligada';infoAndromeda();};
   es.onerror=()=>{st.alexaSt='reconectando';};
-  es.onmessage=ev=>{try{const d=JSON.parse(ev.data);if(d.event!=='message')return;const m=JSON.parse(d.message);if(m.tipo==='alexa')recebeAlexa(m);}catch(e){}};
+  es.onmessage=ev=>{try{const d=JSON.parse(ev.data);if(d.event!=='message')return;const m=JSON.parse(d.message);if(m.tipo==='alexa')recebeAlexa(m);else if(m.tipo==='comando'&&st.acordada){st.ultAlexa=Date.now();anima('pulo');flash();if(st.falando&&st.pular)st.pular();enfileira(()=>comando(m.texto||''));}}catch(e){}};
 }
 function falarMudo(txt){return new Promise(res=>{legenda(txt);st.falando=true;st.pular=null;setTimeout(()=>{st.falando=false;st.fimFala=Date.now();res();},Math.max(2500,txt.length*62));});}
 function cenaPara(m){const t=sem((m.pergunta||'')+' '+(m.mostrar||''));
