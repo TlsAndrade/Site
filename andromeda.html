@@ -227,12 +227,12 @@ body.aba .col{opacity:0;pointer-events:none}
   <label>Silêncio à noite (23h às 7h) <input type="checkbox" id="oSil"></label>
   <label>Olhar para mim pela câmera <input type="checkbox" id="oCam"></label>
   <label>Sentir toques e pancadas <input type="checkbox" id="oMov"></label>
-  <label>Ouvir "Ei, Andrômeda" <input type="checkbox" id="oEsc"></label>
+  <label>Microfone sempre ligado para "Ei, Andrômeda" <input type="checkbox" id="oEsc"></label>
   <label>Endereço do Apps Script <input type="text" id="oUrl" placeholder="https://script.google.com/macros/s/…/exec"></label>
   <label>Chave do Apps Script <input type="text" id="oChave" placeholder="a mesma CHAVE das propriedades" autocomplete="off"></label>
   <div class="dica" id="sensSt"></div>
   <div class="linha"><button id="bTeste">TESTAR VOZ</button><button id="bTela">TELA CHEIA</button><button id="bFecha">SALVAR E FECHAR</button></div>
-  <div class="dica">Diga "Ei, Andrômeda" e faça o pedido, ou toque em FALAR. Toque no rosto para ela reagir e segure o dedo no rosto para pedir um relatório. Toque em qualquer ponto da tela e ela olha para lá. Cutucar muitas vezes seguidas deixa ela brava, chacoalhar o iPad deixa tonta e uma batidinha na mesa dá susto. Ela só lê dados públicos do robô: não tem acesso a chaves nem dá ordens.</div>
+  <div class="dica">Toque em FALAR e faça o pedido. Se ligar o microfone sempre ligado, basta dizer "Ei, Andrômeda" (ela desliga o microfone enquanto fala e à noite). Toque no rosto para ela reagir e segure o dedo no rosto para pedir um relatório. Toque em qualquer ponto da tela e ela olha para lá. Cutucar muitas vezes seguidas deixa ela brava, chacoalhar o iPad deixa tonta e uma batidinha na mesa dá susto. Ela só lê dados públicos do robô: não tem acesso a chaves nem dá ordens.</div>
 </div></div>
 
 <div id="acertos" class="modal"><div class="box"><h2 id="acTit">QUANTOS % VOCÊ ACERTOU?</h2><div id="acGrade"></div><div class="linha"><button onclick="document.getElementById('acertos').classList.remove('on');st.esperaAcertos=false">DEPOIS</button></div></div></div>
@@ -240,7 +240,7 @@ body.aba .col{opacity:0;pointer-events:none}
   <h2>CASA</h2>
   <div id="casaGrade"></div>
   <div class="linha"><button id="bCasaEd">EDITAR BOTÕES</button><button id="bCasaFecha">FECHAR</button></div>
-  <div class="dica">Cada botão roda um atalho do app Atalhos do iPad com o nome escrito embaixo dele. O atalho é quem liga o aparelho: luzes e tomadas inteligentes pelo app Casa, ar-condicionado por um controle infravermelho inteligente, e assim por diante. Crie o atalho com exatamente o mesmo nome e o botão passa a funcionar.</div>
+  <div class="dica">Os botões apagados dependem de um aparelho que ainda não existe aí: o ar e a TV precisam do controle infravermelho com Wi-Fi, e a luz precisa de uma lâmpada inteligente. Quando eles chegarem, viram botões de verdade pela Alexa. Em ADICIONAR ATALHO você pode pôr qualquer atalho que já tenha no app Atalhos do iPad.</div>
 </div></div>
 
 <script>
@@ -253,7 +253,7 @@ const st={robo:null,btcK:[],ethK:[],solK:[],btcH:[],tick:{},fng:null,hist:[],ops
   falando:false,amp:0,humor:'calmo',rel:false,pular:null,proximo:0,idx:0,acordada:false,moedas:[],estouro:[],parts:[],stIdx:0,
   emo:null,olho:{x:0,y:0},alvoOlho:{x:0,y:0},rosto:null,vistoEm:0,ausenteDesde:Date.now(),piscar:0,proxPiscar:0,toques:[],carinhoDist:0,ultToque:0,
   ditos:{},mastiga:0,gIdx:0};
-const cfg=Object.assign({intervalo:60,voz:true,silencio:true,vozNome:'',camera:true,movimento:true,escuta:true},(()=>{try{return JSON.parse(localStorage.getItem('andromeda_cfg')||'{}')}catch(e){return{}}})());
+const cfg=Object.assign({intervalo:60,voz:true,silencio:true,vozNome:'',camera:true,movimento:true,escuta:true,micSempre:false},(()=>{try{return JSON.parse(localStorage.getItem('andromeda_cfg')||'{}')}catch(e){return{}}})());
 const salvar=()=>{try{localStorage.setItem('andromeda_cfg',JSON.stringify(cfg))}catch(e){}};
 
 /* ---------- formatação ---------- */
@@ -380,7 +380,8 @@ function estadoTexto(){return {feliz:'animada',brava:'brava',sono:'dormindo',ton
 function infoAndromeda(){
   const ag=Date.now(),vendo=st.rosto&&ag-st.rosto.t<3000;
   const cam=!cfg.camera?'desligada':vendo?'<b>te vendo agora</b>':st.camSt==='ligada'?'procurando você':(st.camSt||'desligada');
-  $('#petInfo').innerHTML=`Humor: <b>${estadoTexto()}</b> · Câmera: ${cam}`;
+  const mic=st.rec?(st.recManual?'<b>ouvindo</b>':'ligado'):(cfg.micSempre?'pausado':'desligado (toque em FALAR)');
+  $('#petInfo').innerHTML=`Humor: <b>${estadoTexto()}</b> · Câmera: ${cam}<br>Microfone: ${mic}`;
 }
 const ANIMS={olhaRedor:3200,inclina:2600,bocejo:2800,piscadela:1300,risada:1800,danca:3600,espirro:2000,cochilo:4200,pulo:1200};
 function anima(tipo){
@@ -428,8 +429,8 @@ const enfileira=fn=>(fila=fila.then(fn).catch(e=>console.log(e)));
 function legenda(txt){const el=$('#fala');el.textContent='';let i=0;clearInterval(legenda.t);legenda.t=setInterval(()=>{i+=2;el.textContent=txt.slice(0,i);if(i>=txt.length)clearInterval(legenda.t);},38);}
 function falar(txt){
   return new Promise(res=>{
-    legenda(txt);st.falando=true;
-    const fim=()=>{if(fim.ok)return;fim.ok=1;st.falando=false;st.fimFala=Date.now();clearTimeout(seg);st.pular=null;res();};
+    desligaMic();legenda(txt);st.falando=true;
+    const fim=()=>{if(fim.ok)return;fim.ok=1;st.falando=false;st.fimFala=Date.now();setTimeout(()=>{if(st.falando||st.rec)return;if(st.ouvindo&&Date.now()<st.ouvAte)ligaEscuta(true);else if(sempre())ligaEscuta(false);},800);clearTimeout(seg);st.pular=null;res();};
     const dur=Math.max(1800,txt.length*68),seg=setTimeout(fim,dur+6000);
     st.pular=()=>{try{speechSynthesis.cancel()}catch(e){}fim();};
     if(!cfg.voz||silencio()||!window.speechSynthesis){setTimeout(fim,dur);return;}
@@ -754,9 +755,13 @@ async function traduzManchetes(){
 const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
 const sem=s=>s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'');
 st.ouvindo=false;st.escutaLigada=false;
-function ligaEscuta(){
-  if(!SR||!cfg.escuta){st.escSt=SR?'desligada':'este navegador não reconhece voz';infoAndromeda();return;}
-  if(st.rec)return;const r=new SR();r.lang='pt-BR';r.continuous=true;r.interimResults=true;st.rec=r;
+const sempre=()=>!!cfg.micSempre&&!silencio()&&!document.hidden;
+function desligaMic(){const r=st.rec;if(!r)return;st.rec=null;st.escutaLigada=false;try{r.onend=null;r.onresult=null;r.abort();}catch(e){}infoAndromeda();}
+function ligaEscuta(manual){
+  if(!SR){st.escSt='este navegador não reconhece voz';infoAndromeda();return;}
+  if(!manual&&!sempre()){st.escSt=cfg.micSempre?'pausada':'só quando você tocar em FALAR';infoAndromeda();return;}
+  if(st.rec||st.falando)return;
+  const r=new SR();r.lang='pt-BR';r.continuous=!manual;r.interimResults=true;st.rec=r;st.recManual=!!manual;
   r.onresult=ev=>{
     if(st.falando||Date.now()-(st.fimFala||0)<900)return;let fin='',tmp='';
     for(let i=ev.resultIndex;i<ev.results.length;i++){const t=ev.results[i][0].transcript;if(ev.results[i].isFinal)fin+=t;else tmp+=t;}
@@ -769,11 +774,16 @@ function ligaEscuta(){
       else if(!pedido){enfileira(()=>falar('Pode falar.'));}}
   };
   r.onerror=e=>{st.escSt=e.error==='not-allowed'?'sem permissão do microfone':'reiniciando';};
-  r.onend=()=>{st.rec=null;st.escutaLigada=false;if(cfg.escuta&&st.acordada)setTimeout(ligaEscuta,st.falando?1500:400);};
-  try{r.start();st.escutaLigada=true;st.escSt='ligada';}catch(e){st.rec=null;st.escSt='não ligou';}
+  r.onend=()=>{if(st.rec!==r)return;st.rec=null;st.escutaLigada=false;infoAndromeda();
+    if(!st.acordada||st.falando)return;
+    if(st.ouvindo&&Date.now()<st.ouvAte)setTimeout(()=>ligaEscuta(true),250);
+    else if(sempre())setTimeout(()=>ligaEscuta(false),500);};
+  try{r.start();st.escutaLigada=true;st.escSt=manual?'ouvindo agora':'ligada';}catch(e){st.rec=null;st.escSt='não ligou';}
   infoAndromeda();
 }
-function ouvirAgora(){if(!SR){falar('Este navegador não deixa eu ouvir.');return;}if(!st.rec)ligaEscuta();st.ouvindo=true;st.ouvAte=Date.now()+9000;sente('curiosa',9000);$('#fala').innerHTML='<span class="ia">●</span> Ouvindo…';}
+function ouvirAgora(){if(!SR){falar('Este navegador não deixa eu ouvir.');return;}if(st.falando&&st.pular)st.pular();desligaMic();st.ouvindo=true;st.ouvAte=Date.now()+9000;sente('curiosa',9000);$('#fala').innerHTML='<span class="ia">●</span> Ouvindo…';ligaEscuta(true);}
+setInterval(()=>{if(!st.acordada)return;if(st.rec&&!st.recManual&&!sempre())desligaMic();else if(!st.rec&&!st.falando&&sempre())ligaEscuta(false);},30e3);
+document.addEventListener('visibilitychange',()=>{if(document.hidden)desligaMic();});
 setInterval(()=>{if(st.ouvindo&&Date.now()>st.ouvAte){st.ouvindo=false;if(!st.falando)$('#fala').textContent='';}},1000);
 
 const abrir=u=>{setTimeout(()=>{location.href=u;},900);};
@@ -830,7 +840,7 @@ function statusOcioso(){
   if(g)lin.push(g.comprado?`Capitão com Bitcoin. De olho no ponto de venda.`:`Capitão protegido em dólar. Falta ${pct(g.dist)} para o gatilho.`);
   if(cs.length){const m=cs.slice().sort((a,b)=>b.ret-a.ret)[0];lin.push(`Cuidando de ${cs.length} carteiras. A melhor agora é ${FEM.has(m.id)?'a':'o'} ${m.nome}, ${pct(m.ret)}.`);}
   if(st.mc)lin.push(`Monte Carlo: em 30 dias, metade dos futuros fica entre $${nf(st.mc.bandas[30][1]/1000,0)} mil e $${nf(st.mc.bandas[30][3]/1000,0)} mil.`);
-  if(cfg.escuta&&st.escutaLigada)lin.push('Diga "Ei, Andrômeda" e me peça alguma coisa.');
+  lin.push(cfg.micSempre&&st.escutaLigada?'Diga "Ei, Andrômeda" e me peça alguma coisa.':'Toque em FALAR e me peça alguma coisa.');
   if(st.ouvindo)return;if(!lin.length)return;$('#fala').innerHTML=`<span class="ia">›</span> `+lin[st.stIdx++%lin.length];
 }
 
@@ -1199,27 +1209,36 @@ async function ligaCamera(){
 }
 
 /* ---------- casa ---------- */
-const CASA_PADRAO=[['❄️','Ar-condicionado','Ligar ar'],['💡','Luz da sala','Luz da sala'],['🛏️','Luz do quarto','Luz do quarto'],['🖥️','Computador','Ligar computador'],['📺','TV','Ligar TV'],['📚','Modo estudo','Modo estudo']];
-let casa=(()=>{try{const c=JSON.parse(localStorage.getItem('andromeda_casa')||'null');return Array.isArray(c)?c:CASA_PADRAO;}catch(e){return CASA_PADRAO;}})(),casaEd=false;
+const CASA_PADRAO=[
+ ['📚','Modo estudo','estudo','Começa a próxima sessão com o cronômetro'],
+ ['🎧','Música para estudar','url:https://open.spotify.com/search/lofi%20estudo','Abre o Spotify'],
+ ['❄️','Ar-condicionado','pendente:Para eu ligar o ar, falta o controle infravermelho com Wi-Fi, aquele de uns 80 a 100 reais. Quando ele chegar, eu ligo o ar pela Alexa.','precisa do controle infravermelho'],
+ ['📺','TV e decodificador','pendente:A TV e o decodificador da Claro também precisam do controle infravermelho com Wi-Fi no mesmo cômodo.','precisa do controle infravermelho'],
+ ['💡','Luz','pendente:Para a luz, falta uma lâmpada ou tomada inteligente compatível com a Alexa.','precisa de lâmpada inteligente'],
+ ['🗣️','Alexa','pendente:A ligação com a Alexa é o próximo passo que estamos montando.','em construção']];
+let casa=(()=>{try{const c=JSON.parse(localStorage.getItem('andromeda_casa2')||'null');return Array.isArray(c)?c:CASA_PADRAO;}catch(e){return CASA_PADRAO;}})(),casaEd=false;
 function montaCasa(){
-  $('#casaGrade').innerHTML=casa.map((c,i)=>casaEd
-    ?`<div class="tile"><span>${c[0]}</span><input type="text" data-i="${i}" data-k="1" value="${c[1]}"><input type="text" data-i="${i}" data-k="2" value="${c[2]}" placeholder="nome do atalho"></div>`
-    :`<div class="tile" data-i="${i}"><span>${c[0]}</span>${c[1]}<small>atalho: ${c[2]}</small></div>`).join('');
-  $('#bCasaEd').textContent=casaEd?'SALVAR BOTÕES':'EDITAR BOTÕES';
+  $('#casaGrade').innerHTML=casa.map((c,i)=>{const pend=c[2].startsWith('pendente:');
+    return casaEd&&c[2].startsWith('atalho:')?`<div class="tile"><span>${c[0]}</span><input type="text" data-i="${i}" value="${c[1]}"><input type="text" data-i="${i}" data-at="1" value="${c[2].slice(7)}" placeholder="nome do atalho"></div>`
+    :`<div class="tile" data-i="${i}" style="${pend?'opacity:.5':''}"><span>${c[0]}</span>${c[1]}<small>${c[3]||''}</small></div>`;}).join('');
+  $('#bCasaEd').textContent=casaEd?'SALVAR':'ADICIONAR ATALHO';
 }
 $('#casaGrade').addEventListener('click',ev=>{
-  if(casaEd)return;const t=ev.target.closest('.tile');if(!t)return;const c=casa[+t.dataset.i];
-  sente('feliz',2000);legenda(`Executando: ${c[1]}.`);
-  location.href='shortcuts://run-shortcut?name='+encodeURIComponent(c[2]);
+  if(casaEd)return;const t=ev.target.closest('.tile');if(!t)return;const c=casa[+t.dataset.i],a=c[2];
+  if(a==='estudo'){$('#casa').classList.remove('on');comecaSessao();return;}
+  if(a.startsWith('pendente:')){enfileira(()=>falar(a.slice(9)));return;}
+  if(a.startsWith('url:')){sente('feliz',2000);location.href=a.slice(4);return;}
+  if(a.startsWith('atalho:')){sente('feliz',2000);legenda(`Executando: ${c[1]}.`);location.href='shortcuts://run-shortcut?name='+encodeURIComponent(a.slice(7));}
 });
-$('#bCasaEd').onclick=()=>{if(casaEd){document.querySelectorAll('#casaGrade input').forEach(inp=>{casa[+inp.dataset.i][+inp.dataset.k]=inp.value.trim()||casa[+inp.dataset.i][+inp.dataset.k];});try{localStorage.setItem('andromeda_casa',JSON.stringify(casa))}catch(e){}}casaEd=!casaEd;montaCasa();};
+$('#bCasaEd').onclick=()=>{if(casaEd){document.querySelectorAll('#casaGrade input').forEach(inp=>{const c=casa[+inp.dataset.i];if(inp.dataset.at)c[2]='atalho:'+(inp.value.trim()||c[2].slice(7));else c[1]=inp.value.trim()||c[1];});try{localStorage.setItem('andromeda_casa2',JSON.stringify(casa))}catch(e){}casaEd=false;montaCasa();return;}
+  const nome=prompt('Nome do atalho do app Atalhos (exatamente como está no app):');if(nome){casa.push(['⚡',nome,'atalho:'+nome,'atalho: '+nome]);try{localStorage.setItem('andromeda_casa2',JSON.stringify(casa))}catch(e){}montaCasa();}};
 $('#bCasaFecha').onclick=()=>{casaEd=false;$('#casa').classList.remove('on');};
 $('#btCasa').onclick=()=>{montaCasa();$('#casa').classList.add('on');};
 
 /* ---------- ajustes ---------- */
-$('#btCfg').onclick=()=>{$('#oUrl').value=PESS.url;$('#oChave').value=PESS.chave;$('#oInt').value=cfg.intervalo;$('#oVoz').checked=cfg.voz;$('#oSil').checked=cfg.silencio;$('#oCam').checked=cfg.camera;$('#oMov').checked=cfg.movimento;$('#oEsc').checked=cfg.escuta;carregaVozes();
+$('#btCfg').onclick=()=>{$('#oUrl').value=PESS.url;$('#oChave').value=PESS.chave;$('#oInt').value=cfg.intervalo;$('#oVoz').checked=cfg.voz;$('#oSil').checked=cfg.silencio;$('#oCam').checked=cfg.camera;$('#oMov').checked=cfg.movimento;$('#oEsc').checked=!!cfg.micSempre;carregaVozes();
   $('#sensSt').textContent=`Câmera: ${st.camSt||'desligada'}. Sensores de movimento: ${st.movSt||'desligados'}${st.movSt==='ligados'&&!movOk?' (ainda sem leitura)':''}. Escuta: ${st.escSt||'desligada'}.`;$('#cfg').classList.add('on');};
-$('#bFecha').onclick=()=>{cfg.intervalo=+$('#oInt').value;cfg.voz=$('#oVoz').checked;cfg.silencio=$('#oSil').checked;cfg.camera=$('#oCam').checked;cfg.movimento=$('#oMov').checked;cfg.escuta=$('#oEsc').checked;if(cfg.escuta)ligaEscuta();else if(st.rec){try{st.rec.abort()}catch(e){}}
+$('#bFecha').onclick=()=>{cfg.intervalo=+$('#oInt').value;cfg.voz=$('#oVoz').checked;cfg.silencio=$('#oSil').checked;cfg.camera=$('#oCam').checked;cfg.movimento=$('#oMov').checked;cfg.micSempre=$('#oEsc').checked;if(cfg.micSempre)ligaEscuta(false);else desligaMic();
   const v=$('#oVozNome').value;if(vozes.some(x=>x.name===v))cfg.vozNome=v;salvar();PESS.url=$('#oUrl').value.trim();PESS.chave=$('#oChave').value.trim();salvaPess();atualizaPessoal();agenda();mercadoHUD();if(cfg.camera)ligaCamera();$('#cfg').classList.remove('on');};
 $('#bTeste').onclick=()=>{cfg.vozNome=$('#oVozNome').value;cfg.voz=true;$('#oVoz').checked=true;const s=cfg.silencio;cfg.silencio=false;falar('Oi, Thales. Esta é a minha voz.').then(()=>cfg.silencio=s);};
 $('#bTela').onclick=()=>{const d=document.documentElement;try{(d.requestFullscreen||d.webkitRequestFullscreen).call(d);}catch(e){}};
@@ -1239,7 +1258,7 @@ $('#inicio').addEventListener('click',async()=>{
   atualizaMC();ligaEscuta();atualizaPessoal();if(st.recemConectado)setTimeout(()=>enfileira(()=>falar('Pronto, Thales. Agora eu enxergo sua agenda e sua planilha de estudo.')),9000);mercadoHUD();calculaHumor();agenda();burst(24);giraGrafico();giraManchete();infoAndromeda();
   const cs=carteiras(),primeira=(()=>{try{const v=localStorage.getItem('andromeda_viu');localStorage.setItem('andromeda_viu','1');return !v;}catch(e){return false;}})();sente('feliz',5000);
   enfileira(()=>falar(primeira
-    ?`${saudacao()}, Thales! Eu sou a Andrômeda. Vou cuidar do Bitcoin, das moedas, das ${cs.length} carteiras do robô e das notícias para você. Quando precisar de mim, é só dizer: Ei, Andrômeda.`
+    ?`${saudacao()}, Thales! Eu sou a Andrômeda. Vou cuidar do Bitcoin, das moedas, das ${cs.length} carteiras do robô e das notícias para você. Quando precisar de mim, toque em falar.`
     :`${saudacao()}, Thales! Andrômeda acordada. Estou de olho no Bitcoin, nas ${cs.length} carteiras e nas notícias.`));
 });
 
