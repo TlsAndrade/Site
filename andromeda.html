@@ -57,7 +57,7 @@ body{background:radial-gradient(ellipse at 50% 45%,#06223a 0%,#03101d 45%,#01040
 .bar div{height:7px;border:1px solid var(--c2);position:relative;overflow:hidden}
 .bar div i{position:absolute;left:0;top:0;bottom:0;background:var(--c);box-shadow:0 0 8px var(--c);transition:width 1s}
 .bar div i.baixo{background:#ff6d86;box-shadow:0 0 8px #ff6d86}
-#petInfo{font-family:var(--mono);font-size:11px;opacity:.7;margin-top:6px}
+#petInfo{font-family:var(--mono);font-size:11.5px;line-height:1.6;color:#bfefff}
 #capst{font-size:12.5px;line-height:1.45;color:#e9fbff;margin-top:8px;padding-top:8px;border-top:1px solid var(--c2)}
 .bts{display:flex;gap:6px;margin-top:10px}
 .bt{flex:1;text-align:center;font-family:var(--mono);font-size:11px;letter-spacing:.08em;border:1px solid var(--c2);padding:8px 4px;color:var(--c);cursor:pointer;background:rgba(2,16,30,.5)}
@@ -156,12 +156,9 @@ body.sono #escuro{opacity:.5}
   </div>
   <div id="cPet" class="card">
     <div class="lbl">Andrômeda</div>
-    <div class="bar"><span>Barriga</span><div><i id="bFome"></i></div><span id="vFome"></span></div>
-    <div class="bar"><span>Carinho</span><div><i id="bCar"></i></div><span id="vCar"></span></div>
-    <div class="bar"><span>Energia</span><div><i id="bEn"></i></div><span id="vEn"></span></div>
     <div id="petInfo"></div>
     <div id="capst">carregando…</div>
-    <div class="bts"><div class="bt" id="btRel">RELATÓRIO</div><div class="bt" id="btCasa">CASA</div><div class="bt" id="btCfg">AJUSTES</div></div>
+    <div class="bts"><div class="bt" id="btFalar">FALAR</div><div class="bt" id="btRel">RELATÓRIO</div><div class="bt" id="btCasa">CASA</div><div class="bt" id="btCfg">AJUSTES</div></div>
   </div>
 </div>
 
@@ -181,7 +178,7 @@ body.sono #escuro{opacity:.5}
 <div id="inicio">
   <h1>ANDRÔMEDA</h1>
   <p>TOQUE PARA DESPERTAR</p>
-  <small>Assistente do RoboBTC. Ao despertar, o iPad pede a câmera (para os olhos dela te seguirem) e os sensores de movimento (para ela sentir toques e pancadas). As imagens da câmera ficam só no iPad e não são enviadas para lugar nenhum.</small>
+  <small>Assistente do RoboBTC. Ao despertar, o iPad pede a câmera (para os olhos dela te seguirem), os sensores de movimento (para ela sentir pancadas) e o microfone (para ouvir "Ei, Andrômeda"). As imagens da câmera ficam só no iPad e não são enviadas para lugar nenhum.</small>
 </div>
 
 <div id="cfg" class="modal"><div class="box">
@@ -192,9 +189,10 @@ body.sono #escuro{opacity:.5}
   <label>Silêncio à noite (23h às 7h) <input type="checkbox" id="oSil"></label>
   <label>Olhar para mim pela câmera <input type="checkbox" id="oCam"></label>
   <label>Sentir toques e pancadas <input type="checkbox" id="oMov"></label>
+  <label>Ouvir "Ei, Andrômeda" <input type="checkbox" id="oEsc"></label>
   <div class="dica" id="sensSt"></div>
   <div class="linha"><button id="bTeste">TESTAR VOZ</button><button id="bTela">TELA CHEIA</button><button id="bFecha">SALVAR E FECHAR</button></div>
-  <div class="dica">Como cuidar dela: toque nas moedas que flutuam para alimentar; passe o dedo no rosto para fazer carinho; cutucar muitas vezes seguidas deixa ela brava; chacoalhar o iPad deixa ela tonta; uma batidinha na mesa dá susto. À noite ela dorme e recupera a energia. Ela só lê dados públicos do robô: não tem acesso a chaves nem dá ordens.</div>
+  <div class="dica">Diga "Ei, Andrômeda" e faça o pedido, ou toque em FALAR. Toque no rosto para ela reagir e segure o dedo no rosto para pedir um relatório. Toque em qualquer ponto da tela e ela olha para lá. Cutucar muitas vezes seguidas deixa ela brava, chacoalhar o iPad deixa tonta e uma batidinha na mesa dá susto. Ela só lê dados públicos do robô: não tem acesso a chaves nem dá ordens.</div>
 </div></div>
 
 <div id="casa" class="modal"><div class="box">
@@ -214,7 +212,7 @@ const st={robo:null,btcK:[],ethK:[],solK:[],btcH:[],tick:{},fng:null,hist:[],ops
   falando:false,amp:0,humor:'calmo',rel:false,pular:null,proximo:0,idx:0,acordada:false,moedas:[],estouro:[],parts:[],stIdx:0,
   emo:null,olho:{x:0,y:0},alvoOlho:{x:0,y:0},rosto:null,vistoEm:0,ausenteDesde:Date.now(),piscar:0,proxPiscar:0,toques:[],carinhoDist:0,ultToque:0,
   ditos:{},mastiga:0,gIdx:0};
-const cfg=Object.assign({intervalo:60,voz:true,silencio:true,vozNome:'',camera:true,movimento:true},(()=>{try{return JSON.parse(localStorage.getItem('andromeda_cfg')||'{}')}catch(e){return{}}})());
+const cfg=Object.assign({intervalo:60,voz:true,silencio:true,vozNome:'',camera:true,movimento:true,escuta:true},(()=>{try{return JSON.parse(localStorage.getItem('andromeda_cfg')||'{}')}catch(e){return{}}})());
 const salvar=()=>{try{localStorage.setItem('andromeda_cfg',JSON.stringify(cfg))}catch(e){}};
 
 /* ---------- formatação ---------- */
@@ -267,7 +265,7 @@ async function atualizaRobo(){
 }
 async function atualizaPrecos(){
   try{
-    const t=await J(BN+'ticker/24hr?symbols='+encodeURIComponent('["BTCUSDT","ETHUSDT","SOLUSDT"]'));
+    const t=await J(BN+'ticker/24hr?symbols='+encodeURIComponent(JSON.stringify(MOEDAS.map(m=>m[0]+'USDT'))));
     t.forEach(x=>st.tick[x.symbol]={p:+x.lastPrice,c:+x.priceChangePercent});
     const p=st.tick.BTCUSDT.p;st.hist.push({t:Date.now(),p});st.hist=st.hist.filter(h=>Date.now()-h.t<75*60e3);
   }catch(e){console.log('ticker',e)}
@@ -278,6 +276,8 @@ async function atualizaGraficos(){
     const m=k=>({d:new Date(k[0]).toISOString().slice(0,10),c:+k[4],t:k[0]});
     st.btcK=b.map(m);st.ethK=e.map(m);st.solK=s.map(m);st.btcH=h.map(m);
   }catch(e){console.log('klines',e)}
+  try{const ks=await Promise.all(MOEDAS.map(([s])=>J(BN+'klines?symbol='+s+'USDT&interval=1d&limit=61').catch(()=>null)));
+    ks.forEach((k,i)=>{if(k)st.k[MOEDAS[i][0]]=k.map(x=>({d:new Date(x[0]).toISOString().slice(0,10),c:+x[4],t:x[0]}));});}catch(e){}
   try{const f=await J('https://api.alternative.me/fng/?limit=1');st.fng={v:+f.data[0].value,txt:FNG[f.data[0].value_classification]||f.data[0].value_classification};}catch(e){}
 }
 const preco=()=>st.tick.BTCUSDT?st.tick.BTCUSDT.p:(st.btcK.length?st.btcK[st.btcK.length-1].c:0);
@@ -319,38 +319,44 @@ function ultimaNoticia(){
   const l=ls[ls.length-1],m=l.match(/^\[(.+?) UTC\].*?impacto=(\d+).*?direcao=(\S+).*?resumo=(.*?)(?: relevantes=|$)/);if(!m)return null;
   return {linha:l,quando:Date.parse(m[1].replace(' ','T')+'Z'),impacto:+m[2],dir:m[3],resumo:m[4].trim()};
 }
-const frases=(t,n)=>{let p=(t.replace(/\s*\([^)]*\)/g,'').match(/[^.!?]+[.!?]+/g)||[t]).map(x=>x.trim());const boa=p.filter(x=>!/^Lote|ru[ií]do|repeti[çc]/i.test(x));if(boa.length)p=boa;return p.slice(0,n).join(' ').replace(/\bBTC\b/g,'Bitcoin').replace(/\bETH\b/g,'Ethereum').trim();};
+const frases=(t,n)=>{let p=(t.replace(/\s*\([^)]*\)/g,'').replace(/\s*\([^)]*$/,'.').match(/[^.!?]+[.!?]+/g)||[t]).map(x=>x.trim());const boa=p.filter(x=>!/^Lote|ru[ií]do|repeti[çc]/i.test(x));if(boa.length)p=boa;return p.slice(0,n).join(' ').replace(/\bBTC\b/g,'Bitcoin').replace(/\bETH\b/g,'Ethereum').trim();};
 
 
 
-/* ---------- bichinho: necessidades ---------- */
-const pet=Object.assign({fome:75,carinho:70,energia:85,nasc:Date.now(),ult:Date.now(),xp:0},(()=>{try{return JSON.parse(localStorage.getItem('andromeda_pet')||'{}')}catch(e){return{}}})());
-const salvaPet=()=>{try{localStorage.setItem('andromeda_pet',JSON.stringify(pet))}catch(e){}};
-const lim=v=>Math.max(0,Math.min(100,v));
-function tempoPet(){
-  const h=(Date.now()-pet.ult)/3600e3;if(h<=0)return;pet.ult=Date.now();
-  pet.fome=lim(pet.fome-5*h);pet.carinho=lim(pet.carinho-4*h);
-  pet.energia=lim(pet.energia+(dormindo()?14:-3.5)*h);salvaPet();barrasPet();
-}
-function nivel(){return 1+Math.floor(Math.sqrt(pet.xp/20));}
-function barrasPet(){
-  [['Fome','fome'],['Car','carinho'],['En','energia']].forEach(([k,c])=>{const v=Math.round(pet[c]);$('#b'+k).style.width=v+'%';$('#b'+k).className=v<25?'baixo':'';$('#v'+k).textContent=v;});
-  const dias=Math.floor((Date.now()-pet.nasc)/864e5);
-  $('#petInfo').textContent=`${dias===0?'Nasceu hoje':dias===1?'1 dia de vida':dias+' dias de vida'} · nível ${nivel()} · ${estadoTexto()}`;
-}
-function estadoTexto(){const e=emocao();return {feliz:'feliz',amor:'apaixonada',brava:'brava',triste:'tristinha',fome:'com fome',sono:'dormindo',tonta:'tonta',susto:'assustada',doente:'sem sinal do robô',tedio:'entediada',preocupada:'preocupada',neutra:'tranquila',comendo:'comendo'}[e]||e;}
+/* ---------- emoções e animações ---------- */
 function dormindo(){return silencio()&&!st.falando&&!st.rel&&!(st.emo&&Date.now()<st.emo.ate);}
 function sente(tipo,ms){st.emo={tipo,ate:Date.now()+ms};}
 function emocao(){
   if(st.emo&&Date.now()<st.emo.ate)return st.emo.tipo;
   if(dormindo())return 'sono';
   if(st.humor==='erro')return 'doente';
-  if(pet.fome<22)return 'fome';
-  if(pet.carinho<20)return 'triste';
   if(cfg.camera&&st.rosto===false&&Date.now()-st.vistoEm>20*60e3)return 'tedio';
   if(st.humor==='queda')return 'preocupada';
-  if(st.humor==='alta'||pet.carinho>80)return 'feliz';
+  if(st.humor==='alta')return 'feliz';
   return 'neutra';
+}
+function estadoTexto(){return {feliz:'animada',brava:'brava',sono:'dormindo',tonta:'tonta',susto:'assustada',doente:'sem sinal do robô',tedio:'entediada',preocupada:'preocupada',neutra:'tranquila',curiosa:'curiosa'}[emocao()]||'tranquila';}
+function infoAndromeda(){
+  const ag=Date.now(),vendo=st.rosto&&ag-st.rosto.t<3000;
+  const cam=!cfg.camera?'desligada':vendo?'<b>te vendo agora</b>':st.camSt==='ligada'?'procurando você':(st.camSt||'desligada');
+  $('#petInfo').innerHTML=`Humor: <b>${estadoTexto()}</b> · Câmera: ${cam}`;
+}
+const ANIMS={olhaRedor:3200,inclina:2600,bocejo:2800,piscadela:1300,risada:1800,danca:3600,espirro:2000,cochilo:4200,pulo:1200};
+function anima(tipo){
+  st.anim={tipo,ini:Date.now(),dur:ANIMS[tipo]};
+  const curta=t=>{if(!st.falando&&!st.rel)$('#fala').textContent=t;};
+  if(tipo==='espirro')setTimeout(()=>curta('Atchim!'),1250);
+  if(tipo==='bocejo')curta('Aaaah…');
+  if(tipo==='danca')curta('♪ Bitcoin subindo, eu dançando ♪');
+}
+function animaOciosa(){
+  if(!st.acordada||st.falando||st.rel||st.anim)return;const e=emocao();let op;
+  if(e==='sono'||e==='doente')return;
+  if(e==='tedio')op=['cochilo','bocejo','olhaRedor'];
+  else if(e==='feliz')op=['danca','risada','pulo','olhaRedor','piscadela'];
+  else if(e==='preocupada')op=['olhaRedor','inclina','olhaRedor'];
+  else op=['olhaRedor','inclina','piscadela','bocejo','espirro','risada','olhaRedor'];
+  anima(op[Math.floor(Math.random()*op.length)]);
 }
 function diz(chave,txt,intervalo){const a=st.ditos[chave]||0;if(Date.now()-a<intervalo||st.falando||st.rel||silencio())return;st.ditos[chave]=Date.now();enfileira(()=>falar(txt));}
 
@@ -382,7 +388,7 @@ function legenda(txt){const el=$('#fala');el.textContent='';let i=0;clearInterva
 function falar(txt){
   return new Promise(res=>{
     legenda(txt);st.falando=true;
-    const fim=()=>{if(fim.ok)return;fim.ok=1;st.falando=false;clearTimeout(seg);st.pular=null;res();};
+    const fim=()=>{if(fim.ok)return;fim.ok=1;st.falando=false;st.fimFala=Date.now();clearTimeout(seg);st.pular=null;res();};
     const dur=Math.max(1800,txt.length*68),seg=setTimeout(fim,dur+6000);
     st.pular=()=>{try{speechSynthesis.cancel()}catch(e){}fim();};
     if(!cfg.voz||silencio()||!window.speechSynthesis){setTimeout(fim,dur);return;}
@@ -398,7 +404,7 @@ function mostraPainel(o){
   $('#legenda').innerHTML=(o.legenda||[]).map(l=>`<span><i style="background:${l[2]?'repeating-linear-gradient(90deg,'+l[1]+' 0 4px,transparent 4px 7px)':l[1]}"></i>${l[0]}</span>`).join('');
   const g=$('#gwrap'),tx=$('#ptexto');
   if(o.texto){g.style.display='none';tx.style.display='block';tx.innerHTML=o.texto;}
-  else{tx.style.display='none';g.style.display='block';requestAnimationFrame(()=>grafico($('#graf'),o.series,o));}
+  else{tx.style.display='none';g.style.display='block';requestAnimationFrame(()=>o.desenha?o.desenha($('#graf')):grafico($('#graf'),o.series,o));}
   document.body.classList.add('rel');
 }
 function escondePainel(){document.body.classList.remove('rel');}
@@ -492,7 +498,7 @@ function cenaNoticia(){
   const tit=((st.robo.ia&&st.robo.ia.recentes)||[]).slice(-12).sort((a,b)=>(b.impacto||0)-(a.impacto||0)).slice(0,3);
   return {fala:`Nas notícias. ${frases(n.resumo,2)} ${viés}`,painel:{tag:'NOTÍCIAS · LIDAS ÀS '+hhmm(n.quando),titulo:'O que está mexendo com o mercado',
     chips:[['IMPACTO',n.impacto+' de 10',n.impacto>=7?'dn':''],['DIREÇÃO',n.dir]],
-    texto:`<p>${frases(n.resumo,3)}</p><ul>${tit.map(t=>`<li>${(t.titulo||'').replace(/</g,'&lt;')}</li>`).join('')}</ul>`}};
+    texto:`<p>${frases(n.resumo,3)}</p><ul>${tit.map(t=>{const p=partes(t);return `<li>${(TRAD[p.tit]||p.tit).replace(/</g,'&lt;')} <span style="opacity:.6">· ${p.fonte.replace(/</g,'&lt;')}</span></li>`;}).join('')}</ul>`}};
 }
 
 function saudacao(){const h=new Date().getHours();return h<12?'Bom dia':h<18?'Boa tarde':'Boa noite';}
@@ -501,9 +507,10 @@ async function relatorio(){
   const d=new Date(),mm=d.getMinutes();
   await falar(`${saudacao()}, Thales. São ${d.getHours()} horas${mm?' e '+mm:''}. Hora do relatório.`);
   const meio=(Math.floor(Date.now()/3600e3)%2===0)?cenaETH:cenaFNG;
-  const cenas=[cenaBTC(),meio()||cenaETH(),cenaCarteira(),cenaNoticia()].filter(Boolean);
+  const quarto=(Math.floor(Date.now()/3600e3)%2===0)?cenaRanking:cenaCarteira;
+  const cenas=[cenaBTC(),cenaMC(),meio()||cenaETH(),quarto()||cenaCarteira(),cenaNoticia()].filter(Boolean);
   for(const c of cenas){mostraPainel(c.painel);await espera(700);await falar(c.fala);await espera(2000);}
-  escondePainel();agenda();pet.xp+=3;salvaPet();
+  escondePainel();agenda();
   await falar(`Fim do relatório. O próximo é às ${hhmm(st.proximo)}.`);
   st.rel=false;
 }
@@ -570,46 +577,209 @@ function montaTicker(){
   if(n){$('#notRes').textContent=frases(n.resumo,3);
     $('#notDir').textContent=`IMPACTO ${n.impacto}/10 · ${({alta:'VIÉS DE ALTA',baixa:'VIÉS DE BAIXA'})[n.dir]||'SEM DIREÇÃO CLARA'} · ${hhmm(n.quando)}`;}
   st.manchetes=((st.robo&&st.robo.ia&&st.robo.ia.recentes)||[]).slice(-16).reverse().filter((x,i,a)=>x.titulo&&a.findIndex(y=>y.titulo===x.titulo)===i);
+  traduzManchetes();
 }
 function giraManchete(){
   const m=st.manchetes||[];if(!m.length)return;const x=m[(st.mIdx=(st.mIdx||0)+1)%m.length],el=$('#notTit');
   const y=m[(st.mIdx+1)%m.length];
-  const um=x=>{const i=x.titulo.lastIndexOf(' - '),tit=i>0?x.titulo.slice(0,i):x.titulo,fonte=i>0?x.titulo.slice(i+3):(x.fonte||'');return `<div style="margin-bottom:10px"><b>${tit.replace(/</g,'&lt;')}</b><small>${fonte.replace(/</g,'&lt;')}${x.impacto?' · impacto '+x.impacto:''}</small></div>`;};
+  const um=x=>{const p=partes(x),tit=TRAD[p.tit]||p.tit,fonte=p.fonte;return `<div style="margin-bottom:10px"><b>${tit.replace(/</g,'&lt;')}</b><small>${fonte.replace(/</g,'&lt;')}${x.impacto?' · impacto '+x.impacto:''}</small></div>`;};
   el.style.opacity=0;setTimeout(()=>{el.innerHTML='<div class="lbl" style="margin-bottom:6px">Manchetes</div>'+um(x)+(m.length>1?um(y):'');el.style.opacity=1;},600);
 }
 /* carrossel de gráficos */
-const GRAFS=[
- ()=>{const K=st.btcH;if(K.length<5)return null;const a=K[0].c,b=preco()||K[K.length-1].c,v=(b/a-1)*100;
+/* ---------- moedas, Monte Carlo e comparativos ---------- */
+const MOEDAS=[['BTC','Bitcoin','#ffb547'],['ETH','Ethereum','#a58bff'],['SOL','Solana','#4dffa6'],['BNB','BNB','#f3ba2f'],['XRP','XRP','#7fd4ff'],['DOGE','Dogecoin','#e0c070'],['ADA','Cardano','#6f9bff'],['AVAX','Avalanche','#ff7a7a'],['LINK','Chainlink','#5c7cff'],['TRX','Tron','#ff5a8a']];
+st.k={};st.mc=null;
+async function atualizaMC(){
+  try{const b=await J(BN+'klines?symbol=BTCUSDT&interval=1d&limit=1000');st.btcLongo=b.map(k=>+k[4]);calculaMC();}catch(e){console.log('mc',e)}
+}
+function calculaMC(){
+  const c=st.btcLongo;if(!c||c.length<200)return;const r=[];for(let i=1;i<c.length;i++)r.push(Math.log(c[i]/c[i-1]));
+  const dias=30,n=2000,bloco=5,p0=preco()||c[c.length-1],g=gatilho(),perc=Array.from({length:dias+1},()=>[]);let acima=0,toca=0,cai20=0;
+  for(let j=0;j<n;j++){let v=p0,d=0,toc=false;perc[0].push(v);
+    while(d<dias){const s=Math.floor(Math.random()*(r.length-bloco));for(let b=0;b<bloco&&d<dias;b++){v*=Math.exp(r[s+b]);d++;perc[d].push(v);if(g&&v>=g.alvo)toc=true;}}
+    if(v>p0)acima++;if(toc)toca++;if(v<p0*.8)cai20++;}
+  const q=(a,p)=>a[Math.floor(p*(a.length-1))];
+  const bandas=perc.map(a=>{a.sort((x,y)=>x-y);return [q(a,.05),q(a,.25),q(a,.5),q(a,.75),q(a,.95)];});
+  st.mc={bandas,p0,acima:acima/n*100,toca:g?toca/n*100:null,cai20:cai20/n*100,alvo:g?g.alvo:null,anos:(c.length/365).toFixed(1).replace('.',',')};
+}
+function leque(cv,o){
+  const m=st.mc;if(!m)return;const dpr=window.devicePixelRatio||1,W=cv.clientWidth,H=cv.clientHeight;cv.width=W*dpr;cv.height=H*dpr;
+  const x=cv.getContext('2d');x.setTransform(dpr,0,0,dpr,0,0);const cor=st.cor||HUMOR.calmo;
+  const hist=st.btcK.slice(-31).map(k=>k.c).slice(0,-1).concat([m.p0]),nh=hist.length-1,nf=m.bandas.length-1;
+  let lo=Math.min(...hist,m.bandas[nf][0]),hi=Math.max(...hist,m.bandas[nf][4]);if(m.alvo)hi=Math.max(hi,m.alvo);const pd=(hi-lo)*.06;lo-=pd;hi+=pd;
+  const L=4,R=o.mini?52:110,T=10,B=o.mini?20:26,X=i=>L+(W-L-R)*i/(nh+nf),Y=v=>T+(H-T-B)*(1-(v-lo)/(hi-lo));
+  const t0=performance.now(),fonte=(o.mini?'10px ':'12px ')+'ui-monospace,Menlo';
+  (function q(agora){
+    const k=Math.min(1,(agora-t0)/2000),e=1-Math.pow(1-k,3);x.clearRect(0,0,W,H);x.font=fonte;x.textBaseline='middle';
+    for(let g=0;g<=4;g++){const v=lo+(hi-lo)*g/4,y=Y(v);x.strokeStyle='rgba(120,200,255,.1)';x.beginPath();x.moveTo(L,y);x.lineTo(W-R+4,y);x.stroke();}
+    x.fillStyle='rgba(190,235,255,.55)';x.textAlign='left';x.fillText('30 dias atrás',L,H-8);x.textAlign='center';x.fillText('hoje',X(nh),H-8);x.textAlign='right';x.fillText('+30 dias',W-R,H-8);
+    x.strokeStyle='rgba(190,235,255,.25)';x.setLineDash([2,4]);x.beginPath();x.moveTo(X(nh),T);x.lineTo(X(nh),H-B);x.stroke();x.setLineDash([]);
+    const mf=Math.max(1,Math.round(nf*e)),faixa=(a,b,alpha)=>{x.beginPath();for(let i=0;i<=mf;i++)x.lineTo(X(nh+i),Y(m.bandas[i][a]));for(let i=mf;i>=0;i--)x.lineTo(X(nh+i),Y(m.bandas[i][b]));x.closePath();x.fillStyle=cor+alpha;x.fill();};
+    faixa(0,4,'22');faixa(1,3,'44');
+    x.beginPath();for(let i=0;i<=mf;i++)x.lineTo(X(nh+i),Y(m.bandas[i][2]));x.strokeStyle=cor;x.setLineDash([5,4]);x.lineWidth=1.8;x.stroke();x.setLineDash([]);
+    x.beginPath();hist.forEach((v,i)=>x.lineTo(X(i),Y(v)));x.strokeStyle='#e9fbff';x.lineWidth=2.2;x.shadowColor=cor;x.shadowBlur=8;x.stroke();x.shadowBlur=0;
+    if(m.alvo){const y=Y(m.alvo);x.strokeStyle='#ffb547';x.setLineDash([6,5]);x.lineWidth=1.4;x.beginPath();x.moveTo(L,y);x.lineTo(W-R,y);x.stroke();x.setLineDash([]);x.fillStyle='#ffb547';x.textAlign='left';x.fillText(o.mini?'gatilho':'gatilho do Capitão',L+4,y-10);}
+    if(k>=1){const fim=m.bandas[nf],et=[[fim[4],'muito bom'],[fim[2],'meio'],[fim[0],'muito ruim']];x.textAlign='left';
+      let ult=-99;et.forEach(([v,n])=>{let y=Y(v);if(y-ult<14)y=ult+14;ult=y;x.fillStyle=n==='meio'?cor:'rgba(220,245,255,.8)';x.fillText(o.mini?'$'+nf_(v/1000,0)+'k':`$${nf_(v,0)} · ${n}`,W-R+8,y);});}
+    if(k<1)requestAnimationFrame(q);
+  })(t0);
+}
+const nf_=(v,d)=>nf(v,d);
+function barras(cv,itens,o){
+  const dpr=window.devicePixelRatio||1,W=cv.clientWidth,H=cv.clientHeight;cv.width=W*dpr;cv.height=H*dpr;const x=cv.getContext('2d');x.setTransform(dpr,0,0,dpr,0,0);
+  const n=itens.length,lh=Math.min(o.mini?22:32,(H-22)/n),lw=o.mini?96:160,vw=o.mini?52:80,vals=itens.map(i=>i.v).concat(o.ref?[o.ref.v]:[]);
+  const vmin=Math.min(0,...vals),vmax=Math.max(0,...vals),esc=(W-lw-vw-8)/((vmax-vmin)||1),z=lw+(-vmin)*esc;
+  const t0=performance.now(),fonte=(o.mini?'10.5px ':'13px ')+'ui-monospace,Menlo,monospace';
+  (function q(agora){const k=Math.min(1,(agora-t0)/1200),e=1-Math.pow(1-k,3);x.clearRect(0,0,W,H);x.font=fonte;x.textBaseline='middle';
+    itens.forEach((it,i)=>{const y=6+i*lh+lh/2,w=it.v*esc*e,c=it.v>=0?'#4dffa6':'#ff6d86';
+      x.fillStyle='rgba(225,247,255,.9)';x.textAlign='right';x.fillText(it.nome,lw-8,y);
+      x.fillStyle=c;x.globalAlpha=.8;rrect(x,Math.min(z,z+w),y-lh*.3,Math.max(2,Math.abs(w)),lh*.6,3);x.fill();x.globalAlpha=1;
+      x.fillStyle=c;x.textAlign='right';x.fillText(pct(it.v),W-2,y);});
+    x.strokeStyle='rgba(190,235,255,.4)';x.beginPath();x.moveTo(z,2);x.lineTo(z,6+n*lh);x.stroke();
+    if(o.ref){const rx=z+o.ref.v*esc;x.strokeStyle='#aab0d0';x.setLineDash([4,4]);x.lineWidth=1.5;x.beginPath();x.moveTo(rx,2);x.lineTo(rx,8+n*lh);x.stroke();x.setLineDash([]);x.lineWidth=1;
+      x.fillStyle='#aab0d0';x.textAlign='center';x.fillText(o.ref.txt+' '+pct(o.ref.v),Math.max(lw+40,Math.min(W-vw-40,rx)),Math.min(H-8,16+n*lh));}
+    if(k<1)requestAnimationFrame(q);})(t0);
+}
+function var30k(sym){const K=st.k[sym];if(!K||K.length<31)return null;return (K[K.length-1].c/K[K.length-31].c-1)*100;}
+function rankMoedas(){return MOEDAS.map(([s,n])=>({nome:n,v:var30k(s)})).filter(i=>i.v!==null).sort((a,b)=>b.v-a.v);}
+function rankCarteiras(){const cs=carteiras();const mex=cs.filter(c=>c.mexeu||c.id==='capitao').sort((a,b)=>b.ret-a.ret);
+  const cap=cs.find(c=>c.id==='capitao');return {itens:mex.slice(0,o_max()).map(c=>({nome:c.nome,v:c.ret})),paradas:cs.length-mex.length,hold:cap?cap.hold:null};}
+const o_max=()=>14;
+let mIdx=0,cIdx=0;
+const altMoedas=()=>{const s=MOEDAS.slice(1)[mIdx++%9];return s;};
+const G={
+ btc24:()=>{const K=st.btcH;if(K.length<5)return null;const a=K[0].c,b=preco()||K[K.length-1].c,v=(b/a-1)*100;
    return {tag:'Bitcoin · últimas 24 horas',tit:usd(b),sub:[pct(v)+' em 24 horas',cls(v)],series:[{pts:K.map(k=>k.c).slice(0,-1).concat([b]),cor:'hud'}],fmt:v=>'$'+nf(v/1000,1)+'k',datas:[hhmm(K[0].t),'agora']};},
- ()=>{const K=st.btcK.slice(-60),g=gatilho();if(K.length<10)return null;const v=var30(st.btcK);
+ btc60:()=>{const K=st.btcK.slice(-60),g=gatilho();if(K.length<10)return null;const v=var30(st.btcK);
    return {tag:'Bitcoin · 60 dias',tit:'Tendência do Bitcoin',sub:[pct(v)+' em 30 dias',cls(v)],series:[{pts:K.map(k=>k.c).slice(0,-1).concat([preco()]),cor:'hud'}],fmt:v=>'$'+nf(v/1000,0)+'k',datas:[diaCurto(K[0].d),'hoje'],ref:g?{y:g.alvo,txt:'gatilho do Capitão'}:null};},
- ()=>{const K=st.ethK.slice(-30);if(K.length<10)return null;const t=st.tick.ETHUSDT,v=var30(st.ethK);
-   return {tag:'Ethereum · 30 dias',tit:t?usd(t.p):'Ethereum',sub:[pct(v)+' em 30 dias',cls(v)],series:[{pts:K.map(k=>k.c),cor:'#a58bff'}],fmt:v=>'$'+nf(v,0),datas:[diaCurto(K[0].d),'hoje']};},
- ()=>{const K=st.solK.slice(-30);if(K.length<10)return null;const t=st.tick.SOLUSDT,v=var30(st.solK);
-   return {tag:'Solana · 30 dias',tit:t?usd(t.p):'Solana',sub:[pct(v)+' em 30 dias',cls(v)],series:[{pts:K.map(k=>k.c),cor:'#4dffa6'}],fmt:v=>'$'+nf(v,0),datas:[diaCurto(K[0].d),'hoje']};},
- ()=>{const cs=carteiras();if(!cs.length)return null;const c=cs[(st.gCart=(st.gCart||0)+1)%cs.length];
+ mc:()=>{if(!st.mc)return null;const m=st.mc,f=m.bandas[30];
+   return {tag:'Monte Carlo · próximos 30 dias',tit:'Para onde o Bitcoin pode ir',sub:[`metade dos futuros entre $${nf(f[1]/1000,0)}k e $${nf(f[3]/1000,0)}k`,''],desenha:cv=>leque(cv,{mini:1})};},
+ moeda:()=>{const [s,n,c]=altMoedas(),K=st.k[s];if(!K||K.length<31)return null;const K30=K.slice(-31),B=st.k.BTC?st.k.BTC.slice(-31):null,t=st.tick[s+'USDT'],v=var30k(s),vb=var30k('BTC');
+   const series=[{pts:K30.map(k=>(k.c/K30[0].c-1)*100),cor:c}];if(B)series.push({pts:B.map(k=>(k.c/B[0].c-1)*100),cor:'#8a90b0',trac:true});
+   return {tag:n+' · 30 dias contra o Bitcoin',tit:t?usd(t.p):n,sub:[`${pct(v)} em 30 dias · Bitcoin ${vb!==null?pct(vb):'—'}`,cls(v)],series,fmt:v=>pct(v),datas:[diaCurto(K30[0].d),'hoje']};},
+ rMoedas:()=>{const it=rankMoedas();if(it.length<3)return null;return {tag:'Comparativo · 10 moedas',tit:'Quem foi melhor em 30 dias',sub:[`melhor: ${it[0].nome} ${pct(it[0].v)}`,cls(it[0].v)],desenha:cv=>barras(cv,it,{mini:1})};},
+ rCart:()=>{const r=rankCarteiras();if(!r.itens.length)return null;return {tag:'Comparativo · carteiras do robô',tit:'Carteiras contra só segurar',sub:[`${r.paradas} carteiras ainda paradas em dólar`,''],desenha:cv=>barras(cv,r.itens,{mini:1,ref:r.hold!==null?{v:r.hold,txt:'só segurar BTC'}:null})};},
+ carteira:()=>{const cs=carteiras().filter(c=>c.mexeu);if(!cs.length)return null;const c=cs[cIdx++%cs.length];
    const fech={};st.btcK.forEach(k=>fech[k.d]=k.c);const b0=fech[c.d0];
    const series=[{pts:c.serie.map(p=>(p.v/c.v0-1)*100),cor:'hud'}];if(b0)series.push({pts:c.serie.map(p=>((fech[p.d]||preco())/b0-1)*100),cor:'#8a90b0',trac:true});
    return {tag:'Carteira · '+c.curto,tit:c.nome,sub:[`${pct(c.ret)} · só segurar ${c.hold!==null?pct(c.hold):'—'}`,cls(c.ret)],series,fmt:v=>pct(v),datas:[diaCurto(c.d0),'hoje']};},
- ()=>{if(!st.fng)return null;return {tag:'Humor do mercado',tit:'Medo e ganância',sub:[st.fng.txt,st.fng.v<45?'dn':st.fng.v>55?'up':''],html:medidor(st.fng.v)};}
-];
+ fng:()=>{if(!st.fng)return null;return {tag:'Humor do mercado',tit:'Medo e ganância',sub:[st.fng.txt,st.fng.v<45?'dn':st.fng.v>55?'up':''],html:medidor(st.fng.v)};}
+};
+const SEQ=['btc24','moeda','btc60','rMoedas','moeda','mc','carteira','moeda','rCart','moeda','fng','moeda'];
 function giraGrafico(){
-  if(st.rel)return;let o=null,tent=0;while(!o&&tent<GRAFS.length){st.gIdx=(st.gIdx+1)%GRAFS.length;o=GRAFS[st.gIdx]();tent++;}if(!o)return;
+  if(st.rel)return;let o=null,tent=0;while(!o&&tent<SEQ.length){st.gIdx=(st.gIdx+1)%SEQ.length;o=G[SEQ[st.gIdx]]();tent++;}if(!o)return;
   const box=$('#gBox');box.style.opacity=0;
   setTimeout(()=>{$('#gTag').textContent=o.tag;$('#gTit').textContent=o.tit;$('#gSub').textContent=o.sub[0];$('#gSub').className=o.sub[1];
     if(o.html){$('#gCv').style.display='none';$('#gHtml').style.display='flex';$('#gHtml').innerHTML=o.html;}
-    else{$('#gHtml').style.display='none';$('#gCv').style.display='block';grafico($('#gCv'),o.series,Object.assign({mini:1},o));}
-    $('#gDots').innerHTML=GRAFS.map((_,i)=>`<i class="${i===st.gIdx?'on':''}"></i>`).join('');box.style.opacity=1;},500);
+    else{$('#gHtml').style.display='none';$('#gCv').style.display='block';if(o.desenha)o.desenha($('#gCv'));else grafico($('#gCv'),o.series,Object.assign({mini:1},o));}
+    $('#gDots').innerHTML=SEQ.map((_,i)=>`<i class="${i===st.gIdx?'on':''}"></i>`).join('');box.style.opacity=1;},500);
 }
+function cenaMC(){
+  const m=st.mc;if(!m)return null;const f=m.bandas[30];
+  let fala=`Agora, para onde o Bitcoin pode ir. Sorteei 2 mil futuros possíveis para os próximos 30 dias, usando o jeito como ele sobe e desce nos últimos ${m.anos} anos. Na metade do meio desses futuros, ele termina o mês entre ${falaUSD(f[1])} e ${falaUSD(f[3])}. Em 9 de cada 10, fica entre ${falaUSD(f[0])} e ${falaUSD(f[4])}. A chance de terminar acima do preço de hoje é de ${Math.round(m.acima)} por cento, e a de cair mais de 20 por cento é de ${Math.round(m.cai20)} por cento. `;
+  if(m.toca!==null)fala+=`O preço passa do gatilho do Capitão, a linha amarela, em algum momento em ${Math.round(m.toca)} por cento dos futuros. `;
+  fala+='Isso não é previsão. Mostra o tamanho do sobe e desce normal do Bitcoin.';
+  return {fala,painel:{tag:'MONTE CARLO · 2.000 FUTUROS · 30 DIAS',titulo:'Para onde o Bitcoin pode ir',
+    chips:[['METADE DOS FUTUROS',`$${nf(f[1]/1000,1)}k a $${nf(f[3]/1000,1)}k`],['ACIMA DE HOJE',Math.round(m.acima)+'%'],['QUEDA > 20%',Math.round(m.cai20)+'%','dn']].concat(m.toca!==null?[['PASSA DO GATILHO',Math.round(m.toca)+'%']]:[]),
+    desenha:cv=>leque(cv,{}),legenda:[['preço real','#e9fbff'],['futuro do meio',st.cor||HUMOR.calmo,1],['faixas: metade e 9 de 10',(st.cor||HUMOR.calmo)+'88']]}};
+}
+function cenaRanking(){
+  const r=rankCarteiras(),it=rankMoedas();if(!r.itens.length)return null;const m=r.itens[0],p=r.itens[r.itens.length-1];
+  const art=n=>FEM.has((carteiras().find(c=>c.nome===n)||{}).id)?'a':'o';
+  let fala=`Agora o placar das carteiras. A melhor até aqui é ${art(m.nome)} ${m.nome}, que ${subiu(m.v)} ${falaPct(m.v)}, e a pior é ${art(p.nome)} ${p.nome}, que ${subiu(p.v)} ${falaPct(p.v)}. `;
+  if(r.hold!==null)fala+=`Quem só segurou Bitcoin no mesmo período ${subiu(r.hold)} ${falaPct(r.hold)}, a linha cinza. `;
+  if(r.paradas)fala+=`${r.paradas} carteiras ainda estão paradas em dólar, esperando o sinal delas. `;
+  if(it.length)fala+=`Entre as moedas, a melhor do mês foi ${it[0].nome} e a pior foi ${it[it.length-1].nome}.`;
+  return {fala:fala.replace(/%/g,' por cento'),painel:{tag:'COMPARATIVO · CARTEIRAS CONTRA SÓ SEGURAR',titulo:'Placar das carteiras',chips:[['MELHOR',m.nome+' '+pct(m.v),cls(m.v)],['SÓ SEGURAR',r.hold!==null?pct(r.hold):'—',cls(r.hold||0)],['PARADAS',''+r.paradas]],
+    desenha:cv=>barras(cv,r.itens,{ref:r.hold!==null?{v:r.hold,txt:'só segurar Bitcoin'}:null})}};
+}
+/* ---------- tradução das manchetes ---------- */
+const TRAD=(()=>{try{return JSON.parse(localStorage.getItem('andromeda_trad')||'{}')}catch(e){return{}}})();
+async function traduz(t){
+  if(!t||TRAD[t])return TRAD[t]||t;
+  try{const r=await fetch('https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=pt&dt=t&q='+encodeURIComponent(t));const j=await r.json();
+    const s=(j[0]||[]).map(x=>x[0]).join('').trim();if(s){TRAD[t]=s;const ks=Object.keys(TRAD);if(ks.length>400)delete TRAD[ks[0]];try{localStorage.setItem('andromeda_trad',JSON.stringify(TRAD))}catch(e){}}return s||t;}catch(e){return t;}
+}
+function partes(x){const i=x.titulo.lastIndexOf(' - ');return {tit:i>0?x.titulo.slice(0,i):x.titulo,fonte:i>0?x.titulo.slice(i+3):(x.fonte||'')};}
+async function traduzManchetes(){
+  if(st.traduzindo)return;const falta=[...new Set((st.manchetes||[]).slice(0,16).map(x=>partes(x).tit).filter(t=>!TRAD[t]))];if(!falta.length)return;st.traduzindo=true;
+  try{const r=await fetch('https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=pt&dt=t&q='+encodeURIComponent(falta.join('\n')));const j=await r.json();
+    const out=(j[0]||[]).map(x=>x[0]).join('').split('\n').map(x=>x.trim());
+    if(out.length===falta.length){falta.forEach((t,i)=>{if(out[i])TRAD[t]=out[i];});try{localStorage.setItem('andromeda_trad',JSON.stringify(TRAD))}catch(e){}}
+  }catch(e){console.log('trad',e);setTimeout(traduzManchetes,40e3);}finally{st.traduzindo=false;}
+}
+
+/* ---------- "Ei, Andrômeda": escuta e comandos ---------- */
+const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+const sem=s=>s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'');
+st.ouvindo=false;st.escutaLigada=false;
+function ligaEscuta(){
+  if(!SR||!cfg.escuta){st.escSt=SR?'desligada':'este navegador não reconhece voz';infoAndromeda();return;}
+  if(st.rec)return;const r=new SR();r.lang='pt-BR';r.continuous=true;r.interimResults=true;st.rec=r;
+  r.onresult=ev=>{
+    if(st.falando||Date.now()-(st.fimFala||0)<900)return;let fin='',tmp='';
+    for(let i=ev.resultIndex;i<ev.results.length;i++){const t=ev.results[i][0].transcript;if(ev.results[i].isFinal)fin+=t;else tmp+=t;}
+    const ag=sem(fin||tmp);
+    if(!st.ouvindo&&/andr[oô]?m[e]?da|andromeda|andrometa/.test(ag)){st.ouvindo=true;st.ouvAte=Date.now()+9000;sente('curiosa',9000);st.anim=null;$('#fala').innerHTML='<span class="ia">●</span> Ouvindo…';}
+    if(st.ouvindo&&!fin&&tmp)$('#fala').innerHTML='<span class="ia">●</span> '+tmp;
+    if(st.ouvindo&&fin){const pedido=fin.replace(/^.*?(ei|hey|oi|e a[ií])?\s*andr[oôó]?m[eê]?d[a]?[,!.]?\s*/i,'').trim();
+      if(pedido.split(/\s+/).filter(Boolean).length>=2||/^(relat|para|chega|cala)/.test(sem(pedido))){st.ouvindo=false;st.emo=null;enfileira(()=>comando(pedido));}
+      else if(Date.now()>st.ouvAte){st.ouvindo=false;}
+      else if(!pedido){enfileira(()=>falar('Pode falar.'));}}
+  };
+  r.onerror=e=>{st.escSt=e.error==='not-allowed'?'sem permissão do microfone':'reiniciando';};
+  r.onend=()=>{st.rec=null;st.escutaLigada=false;if(cfg.escuta&&st.acordada)setTimeout(ligaEscuta,st.falando?1500:400);};
+  try{r.start();st.escutaLigada=true;st.escSt='ligada';}catch(e){st.rec=null;st.escSt='não ligou';}
+  infoAndromeda();
+}
+function ouvirAgora(){if(!SR){falar('Este navegador não deixa eu ouvir.');return;}if(!st.rec)ligaEscuta();st.ouvindo=true;st.ouvAte=Date.now()+9000;sente('curiosa',9000);$('#fala').innerHTML='<span class="ia">●</span> Ouvindo…';}
+setInterval(()=>{if(st.ouvindo&&Date.now()>st.ouvAte){st.ouvindo=false;if(!st.falando)$('#fala').textContent='';}},1000);
+
+const abrir=u=>{setTimeout(()=>{location.href=u;},900);};
+function achaMoeda(t){const nomes={bitcoin:'BTC',btc:'BTC',ethereum:'ETH',eth:'ETH',solana:'SOL',bnb:'BNB',binance:'BNB',xrp:'XRP',ripple:'XRP',doge:'DOGE',dogecoin:'DOGE',cardano:'ADA',ada:'ADA',avalanche:'AVAX',avax:'AVAX',chainlink:'LINK',link:'LINK',tron:'TRX',trx:'TRX'};
+  for(const k in nomes)if(new RegExp('\\b'+k+'\\b').test(t))return nomes[k];return null;}
+function achaCarteira(t){const cs=carteiras();return cs.find(c=>t.includes(sem(c.nome)));}
+function cenaMoedaSym(s){
+  const K=(st.k[s]||[]).slice(-60);if(K.length<10)return null;const [_,n,c]=MOEDAS.find(m=>m[0]===s),t=st.tick[s+'USDT']||{p:K[K.length-1].c,c:0},v=var30k(s);
+  return {fala:`${n} está em ${falaUSD(t.p)}. Em 24 horas ${subiu(t.c)} ${falaPct(t.c)}, e em 30 dias ${subiu(v||0)} ${falaPct(v||0)}.`,
+    painel:{tag:n.toUpperCase()+' · 60 DIAS',titulo:n,chips:[['PREÇO',usd(t.p)],['24 HORAS',pct(t.c),cls(t.c)],['30 DIAS',pct(v||0),cls(v||0)]],series:[{pts:K.map(k=>k.c),cor:c}],fmt:v=>'$'+nf(v,v<10?3:v<1000?1:0),datas:[diaCurto(K[0].d),'hoje']}};
+}
+async function mostraCena(c){if(!c){await falar('Ainda não tenho esses dados carregados.');return;}st.rel=true;mostraPainel(c.painel);await espera(600);await falar(c.fala);await espera(5000);escondePainel();st.rel=false;}
+async function comando(pedido){
+  const t=sem(pedido);legenda('“'+pedido+'”');await espera(500);
+  let m;
+  if(/^(para|chega|cala|silencio|fica quieta)/.test(t)){try{speechSynthesis.cancel()}catch(e){}return;}
+  if(/relatorio/.test(t))return relatorio();
+  if(/monte ?carlo|para onde|previs|futuro/.test(t))return mostraCena(cenaMC());
+  if(/placar|ranking|compar|melhor carteira|carteiras/.test(t))return mostraCena(cenaRanking());
+  if(/noticia|manchete/.test(t))return mostraCena(cenaNoticia());
+  if(/medo|ganancia|humor do mercado/.test(t))return mostraCena(cenaFNG());
+  if(/capitao|robo principal/.test(t)){const c=cenaBTC();return mostraCena(c);}
+  if((m=t.match(/(?:pesquis|procur|busc|google)\w*\s+(?:sobre|por|no google)?\s*(.+)/))){await falar('Pesquisando '+m[1]+'.');return abrir('https://www.google.com/search?q='+encodeURIComponent(m[1]));}
+  if((m=t.match(/(?:youtube|video)\w*\s+(?:de|do|da|sobre)?\s*(.+)/))){await falar('Abrindo no YouTube.');return abrir('https://www.youtube.com/results?search_query='+encodeURIComponent(m[1]));}
+  if((m=t.match(/(?:toca|tocar|coloca|bota)\s+(?:a musica|musica|um som|o som)?\s*(.+)/))){await falar('Procurando no Spotify.');return abrir('https://open.spotify.com/search/'+encodeURIComponent(m[1]));}
+  if((m=t.match(/(?:como chego|rota|mapa|caminho)\w*\s+(?:para|pra|ate|de)?\s*(.+)/))){await falar('Abrindo o mapa.');return abrir('https://maps.apple.com/?q='+encodeURIComponent(m[1]));}
+  if((m=t.match(/(?:atalho|executa|roda)\s+(?:o atalho)?\s*(.+)/))){await falar('Executando o atalho '+m[1]+'.');return abrir('shortcuts://run-shortcut?name='+encodeURIComponent(m[1]));}
+  if(/\b(liga|desliga|acende|apaga|abre|fecha)\b/.test(t)){const c=casa.find(c=>t.includes(sem(c[1]).split(' ')[0])||t.includes(sem(c[1])));if(c){await falar('Certo: '+c[1]+'.');return abrir('shortcuts://run-shortcut?name='+encodeURIComponent(c[2]));}}
+  if(/que horas/.test(t)){const d=new Date();return falar(`São ${d.getHours()} horas e ${d.getMinutes()} minutos.`);}
+  if(/que dia|data de hoje/.test(t))return falar('Hoje é '+new Date().toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long'})+'.');
+  if(/dorm|boa noite/.test(t)){sente('sono',30*60e3);return falar('Boa noite, Thales. Vou descansar um pouco.');}
+  if(/acorda|bom dia/.test(t)){st.emo=null;anima('pulo');return falar(saudacao()+', Thales! Tô aqui.');}
+  const s=achaMoeda(t);if(s)return mostraCena(s==='BTC'?cenaBTC():cenaMoedaSym(s));
+  const c=achaCarteira(t);if(c){const fem=FEM.has(c.id);return falar(`${fem?'A':'O'} ${c.nome}, desde ${diaFala(c.d0)}, ${subiu(c.ret)} ${falaPct(c.ret)}. Só segurar Bitcoin no mesmo período ${subiu(c.hold||0)} ${falaPct(c.hold||0)}.`);}
+  sente('curiosa',3000);
+  return falar('Ainda não sei fazer isso sozinha. Por enquanto eu mostro o mercado, as moedas, as carteiras, o Monte Carlo e as notícias, pesquiso na internet, abro vídeos, músicas e mapas, e rodo seus atalhos.');
+}
+
 function statusOcioso(){
   if(st.falando||st.rel)return;const g=gatilho(),cs=carteiras(),lin=[],e=emocao();
-  if(e==='fome')lin.push('Tô com fome… toca numa moedinha pra mim?');
-  if(e==='triste')lin.push('Faz tempo que ninguém faz carinho em mim.');
   if(e==='sono')lin.push('Zzz… dormindo até as 7h.');
   if(st.tick.BTCUSDT)lin.push(`Bitcoin em ${usd(preco())}, ${pct(st.tick.BTCUSDT.c)} em 24 horas.`);
   if(g)lin.push(g.comprado?`Capitão com Bitcoin. De olho no ponto de venda.`:`Capitão protegido em dólar. Falta ${pct(g.dist)} para o gatilho.`);
   if(cs.length){const m=cs.slice().sort((a,b)=>b.ret-a.ret)[0];lin.push(`Cuidando de ${cs.length} carteiras. A melhor agora é ${FEM.has(m.id)?'a':'o'} ${m.nome}, ${pct(m.ret)}.`);}
-  if(!lin.length)return;$('#fala').innerHTML=`<span class="ia">›</span> `+lin[st.stIdx++%lin.length];
+  if(st.mc)lin.push(`Monte Carlo: em 30 dias, metade dos futuros fica entre $${nf(st.mc.bandas[30][1]/1000,0)} mil e $${nf(st.mc.bandas[30][3]/1000,0)} mil.`);
+  if(cfg.escuta&&st.escutaLigada)lin.push('Diga "Ei, Andrômeda" e me peça alguma coisa.');
+  if(st.ouvindo)return;if(!lin.length)return;$('#fala').innerHTML=`<span class="ia">›</span> `+lin[st.stIdx++%lin.length];
 }
 
 /* ---------- desenho: fundo, moedas e rosto ---------- */
@@ -632,57 +802,72 @@ function coracao(x,cx,cy,s){x.beginPath();x.moveTo(cx,cy+s*.35);x.bezierCurveTo(
 function rrect(x,X,Y,w,h,r){r=Math.min(r,w/2,h/2);x.beginPath();x.moveTo(X+r,Y);x.arcTo(X+w,Y,X+w,Y+h,r);x.arcTo(X+w,Y+h,X,Y+h,r);x.arcTo(X,Y+h,X,Y,r);x.arcTo(X,Y,X+w,Y,r);x.closePath();}
 
 function desenhaRosto(t,cx,cy,R,cor){
-  const e=emocao(),agora=Date.now();
-  // piscar
-  if(agora>st.proxPiscar){st.piscar=agora;st.proxPiscar=agora+2200+Math.random()*4500;}
+  let e=emocao();const agora=Date.now();
+  if(agora>st.proxPiscar){st.piscar=agora;st.proxPiscar=agora+2000+Math.random()*4000;}
   const pb=(agora-st.piscar)/140,blink=pb<1?Math.abs(Math.cos(pb*Math.PI*.5+Math.PI*.5)):1;
-  // olhar
-  let alvo=st.alvoOlho;if(st.rosto&&agora-st.rosto.t<1500)alvo={x:st.rosto.x,y:st.rosto.y};
+  const vendo=st.rosto&&agora-st.rosto.t<1500;let alvo;
+  if(vendo)alvo={x:st.rosto.x,y:st.rosto.y};
   else if(agora-st.ultToque<2500&&st.toqueOlho)alvo=st.toqueOlho;
-  else if(!st.vagar||agora>st.vagar){st.vagar=agora+1800+Math.random()*3500;st.alvoOlho={x:(Math.random()-.5)*1.4,y:(Math.random()-.5)*.8};alvo=st.alvoOlho;}
+  else{if(!st.vagar||agora>st.vagar){st.vagar=agora+1500+Math.random()*3000;st.alvoOlho={x:(Math.random()-.5)*1.6,y:(Math.random()-.5)*.9};}alvo=st.alvoOlho;}
+  let hx=0,hy=0,tilt=0,esc=1,wink=0,abreF=null,boca=null;const A=st.anim;
+  if(A){const p=(agora-A.ini)/A.dur;if(p>=1)st.anim=null;else{const s=Math.sin(p*Math.PI);
+    switch(A.tipo){
+      case 'olhaRedor':alvo={x:Math.sin(p*Math.PI*2)*1.3,y:-.25+Math.sin(p*Math.PI*4)*.15};break;
+      case 'inclina':tilt=s*.38;e='curiosa';alvo={x:.6,y:-.5};break;
+      case 'bocejo':abreF=1-s*.85;boca='bocejo';tilt=s*.12;hy=-s*R*.03;break;
+      case 'piscadela':if(p>.2&&p<.75)wink=1;e='alegre';break;
+      case 'risada':e='feliz';hy=-Math.abs(Math.sin(p*Math.PI*6))*R*.05;boca='risada';break;
+      case 'danca':e='feliz';hx=Math.sin(p*Math.PI*4)*R*.1;tilt=Math.sin(p*Math.PI*4)*.2;hy=-Math.abs(Math.sin(p*Math.PI*8))*R*.03;break;
+      case 'espirro':if(p<.6){abreF=1-p/.6*.8;hy=-p/.6*R*.05;tilt=-p/.6*.1;}else if(p<.78){abreF=.08;hy=R*.06;esc=1.12;boca='espirro';}else{e='susto';}break;
+      case 'cochilo':abreF=.12;hy=Math.pow(Math.sin(p*Math.PI*3),2)*R*.06;break;
+      case 'pulo':hy=-s*R*.16;esc=1+s*.08;e='feliz';break;
+    }}}
   if(e==='tonta')alvo={x:Math.cos(t*6)*.8,y:Math.sin(t*6)*.6};
-  st.olho.x+=(alvo.x-st.olho.x)*.12;st.olho.y+=(alvo.y-st.olho.y)*.12;
-  const lx=st.olho.x*R*.09,ly=st.olho.y*R*.06;
-  const W=fc.width/(window.devicePixelRatio||1),H=fc.height/(window.devicePixelRatio||1);fx.clearRect(0,0,W,H);
+  const k=vendo?.2:.1;st.olho.x+=(alvo.x-st.olho.x)*k;st.olho.y+=(alvo.y-st.olho.y)*k;
+  const gx=st.olho.x,gy=st.olho.y;
+  hx+=gx*R*.08;hy+=gy*R*.06;tilt+=gx*.12;
+  const lx=gx*R*.13,ly=gy*R*.09;
+  const dp=window.devicePixelRatio||1,W=fc.width/dp,H=fc.height/dp;fx.clearRect(0,0,W,H);
+  fx.save();fx.translate(cx+hx,cy+hy);fx.rotate(tilt);fx.scale(esc,esc);fx.translate(-cx,-cy);
   fx.fillStyle=cor;fx.strokeStyle=cor;fx.shadowColor=cor;fx.shadowBlur=R*.08;
   const ew=R*.2,eh0=R*.28,gap=R*.19,ey=cy-R*.07+ly,bob=Math.sin(t*1.4)*R*.008;
   let abre=blink;
-  if(e==='sono')abre=.08;else if(e==='tedio')abre=.45;else if(e==='preocupada'||e==='triste'||e==='fome')abre=Math.min(abre,.85);
-  if(e==='susto')abre=1;
+  if(e==='sono')abre=.08;else if(e==='tedio')abre=.45;else if(e==='preocupada')abre=Math.min(abre,.85);
+  if(e==='susto')abre=1;if(abreF!==null)abre=Math.min(abre,abreF);
   const lados=[-1,1];
   lados.forEach(s=>{
-    const ex=cx+s*gap+lx-ew/2+(e==='brava'?-s*R*.01:0);let eh=eh0*(e==='susto'?1.2:1),y0=ey+bob;
-    if(e==='feliz'&&!st.falando||e==='comendo'){fx.lineWidth=R*.045;fx.lineCap='round';fx.beginPath();fx.arc(ex+ew/2,y0+eh*.18,ew*.48,Math.PI*1.12,Math.PI*1.88);fx.stroke();return;}
-    if(e==='amor'){coracao(fx,ex+ew/2,y0,ew*.62*(1+.08*Math.sin(t*8)));return;}
-    if(e==='tonta'){fx.lineWidth=R*.022;fx.beginPath();for(let a=0;a<14;a+=.2){const rr=a*ew*.035;fx.lineTo(ex+ew/2+Math.cos(a+t*8*s)*rr,y0+Math.sin(a+t*8*s)*rr);}fx.stroke();return;}
-    if(e==='doente'){fx.lineWidth=R*.035;fx.lineCap='round';const c0=ex+ew/2,d=ew*.35;fx.beginPath();fx.moveTo(c0-d,y0-d);fx.lineTo(c0+d,y0+d);fx.moveTo(c0+d,y0-d);fx.lineTo(c0-d,y0+d);fx.stroke();return;}
-    const h=Math.max(R*.018,eh*abre);rrect(fx,ex,y0-h/2,ew,h,ew*.42);fx.fill();
-    if(h>eh*.5){fx.save();fx.shadowBlur=0;fx.fillStyle='rgba(255,255,255,.75)';fx.beginPath();fx.arc(ex+ew*.68+lx*.2,y0-h*.22,ew*.11,0,7);fx.fill();fx.restore();}
+    const persp=1+s*gx*.16,cur=e==='curiosa'?(s<0?1.2:.8):1,ewS=ew*persp,eh=eh0*(e==='susto'?1.2:1)*persp*cur;
+    const ex=cx+s*gap+lx-ewS/2+(e==='brava'?-s*R*.01:0),y0=ey+bob;
+    if((e==='feliz'&&!st.falando)||(wink&&s>0)){fx.lineWidth=R*.045;fx.lineCap='round';fx.beginPath();fx.arc(ex+ewS/2,y0+eh*.18,ewS*.48,Math.PI*1.12,Math.PI*1.88);fx.stroke();return;}
+    if(e==='tonta'){fx.lineWidth=R*.022;fx.beginPath();for(let a=0;a<14;a+=.2){const rr=a*ew*.035;fx.lineTo(ex+ewS/2+Math.cos(a+t*8*s)*rr,y0+Math.sin(a+t*8*s)*rr);}fx.stroke();return;}
+    if(e==='doente'){fx.lineWidth=R*.035;fx.lineCap='round';const c0=ex+ewS/2,d=ew*.35;fx.beginPath();fx.moveTo(c0-d,y0-d);fx.lineTo(c0+d,y0+d);fx.moveTo(c0+d,y0-d);fx.lineTo(c0-d,y0+d);fx.stroke();return;}
+    const h=Math.max(R*.018,eh*abre);rrect(fx,ex,y0-h/2,ewS,h,ewS*.42);fx.fill();
+    if(h>eh*.5){fx.save();fx.shadowBlur=0;fx.fillStyle='rgba(255,255,255,.8)';fx.beginPath();fx.arc(ex+ewS*(.62+gx*.12),y0-h*(.22-gy*.08),ew*.11,0,7);fx.fill();fx.beginPath();fx.arc(ex+ewS*(.38+gx*.12),y0+h*.18,ew*.05,0,7);fx.fill();fx.restore();}
   });
-  // pálpebras (bravo / triste) apagando parte do olho
-  if(['brava','triste','preocupada','fome'].includes(e)){
+  if(e==='brava'||e==='preocupada'){
     fx.save();fx.globalCompositeOperation='destination-out';fx.shadowBlur=0;
-    lados.forEach(s=>{const x0=cx+s*gap+lx-ew/2-4,x1=x0+ew+8,top=ey+bob-eh0*.62,inc=eh0*(e==='brava'?.55:.42);
+    lados.forEach(s=>{const x0=cx+s*gap+lx-ew/2-8,x1=x0+ew+16,top=ey+bob-eh0*.7,inc=eh0*(e==='brava'?.6:.45);
       fx.beginPath();if((e==='brava')===(s<0)){fx.moveTo(x0,top);fx.lineTo(x1,top);fx.lineTo(x1,top+inc);fx.lineTo(x0,top+inc*.15);}
       else{fx.moveTo(x0,top);fx.lineTo(x1,top);fx.lineTo(x1,top+inc*.15);fx.lineTo(x0,top+inc);}fx.closePath();fx.fill();});
     fx.restore();
   }
-  // boca
-  const my=cy+R*.15+ly*.5,mw=R*.09;fx.lineWidth=R*.028;fx.lineCap='round';fx.shadowBlur=R*.05;
-  if(st.falando){const a=.25+.75*Math.abs(Math.sin(t*11))*Math.abs(Math.sin(t*3.7))+st.amp*.2;rrect(fx,cx-mw*.7+lx*.5,my-R*.02*a,mw*1.4,R*.02+R*.07*a,R*.03);fx.fill();}
-  else if(e==='comendo'){const a=Math.abs(Math.sin(t*14));rrect(fx,cx-mw*.6+lx*.5,my-R*.03*a,mw*1.2,R*.015+R*.06*a,R*.03);fx.fill();}
-  else if(e==='susto'||e==='tonta'){fx.beginPath();fx.arc(cx+lx*.5,my+R*.01,R*.035,0,7);fx.stroke();}
-  else if(e==='sono'){fx.beginPath();fx.moveTo(cx-mw*.4,my);fx.lineTo(cx+mw*.4,my);fx.stroke();}
-  else if(e==='brava'){fx.beginPath();fx.moveTo(cx-mw*.8+lx*.5,my+R*.02);for(let i=1;i<=6;i++)fx.lineTo(cx-mw*.8+lx*.5+i*mw*1.6/6,my+R*.02+(i%2?-1:1)*R*.012);fx.stroke();}
-  else{const sorr={feliz:1,amor:1,neutra:.45,tedio:0,preocupada:-.45,triste:-.8,fome:-.6,doente:-.3}[e]??.4;
-    fx.beginPath();fx.moveTo(cx-mw+lx*.5,my);fx.quadraticCurveTo(cx+lx*.5,my+sorr*R*.085,cx+mw+lx*.5,my);fx.stroke();}
-  // bochechas quando feliz
-  if(['feliz','amor','comendo'].includes(e)){fx.save();fx.shadowBlur=0;fx.fillStyle='rgba(255,140,190,.35)';lados.forEach(s=>{fx.beginPath();fx.ellipse(cx+s*gap*1.45+lx,my-R*.03,R*.05,R*.025,0,0,7);fx.fill();});fx.restore();}
+  const my=cy+R*.15+ly*.5,mw=R*.09,mx=cx+lx*.5;fx.lineWidth=R*.028;fx.lineCap='round';fx.shadowBlur=R*.05;
+  if(st.falando){const a=.25+.75*Math.abs(Math.sin(t*11))*Math.abs(Math.sin(t*3.7))+st.amp*.2;rrect(fx,mx-mw*.7,my-R*.02*a,mw*1.4,R*.02+R*.07*a,R*.03);fx.fill();}
+  else if(boca==='bocejo'){const s=Math.sin(((agora-A.ini)/A.dur)*Math.PI);fx.beginPath();fx.ellipse(mx,my+R*.02,mw*.55,R*.015+R*.075*s,0,0,7);fx.fill();}
+  else if(boca==='risada'){fx.beginPath();fx.moveTo(mx-mw,my-R*.01);fx.quadraticCurveTo(mx,my+R*.13,mx+mw,my-R*.01);fx.closePath();fx.fill();}
+  else if(boca==='espirro'||e==='susto'||e==='tonta'){fx.beginPath();fx.arc(mx,my+R*.01,R*.035,0,7);fx.stroke();}
+  else if(e==='curiosa'){fx.beginPath();fx.arc(mx+mw*.3,my+R*.01,R*.025,0,7);fx.stroke();}
+  else if(e==='sono'){fx.beginPath();fx.moveTo(mx-mw*.4,my);fx.lineTo(mx+mw*.4,my);fx.stroke();}
+  else if(e==='brava'){fx.beginPath();fx.moveTo(mx-mw*.8,my+R*.02);for(let i=1;i<=6;i++)fx.lineTo(mx-mw*.8+i*mw*1.6/6,my+R*.02+(i%2?-1:1)*R*.012);fx.stroke();}
+  else{const sorr={feliz:1,alegre:1,neutra:.45,tedio:0,preocupada:-.5,doente:-.3}[e]??.4;
+    fx.beginPath();fx.moveTo(mx-mw,my);fx.quadraticCurveTo(mx,my+sorr*R*.085,mx+mw,my);fx.stroke();}
+  if(['feliz','alegre'].includes(e)){fx.save();fx.shadowBlur=0;fx.fillStyle='rgba(255,140,190,.3)';lados.forEach(s=>{fx.beginPath();fx.ellipse(cx+s*gap*1.45+lx,my-R*.03,R*.05,R*.025,0,0,7);fx.fill();});fx.restore();}
+  fx.restore();
   ox.drawImage(fc,0,0,W,H);
-  // extras
-  if(e==='sono'){ox.fillStyle=cor;ox.font=`600 ${R*.09}px -apple-system,system-ui`;for(let i=0;i<3;i++){const k=((t*.35+i/3)%1);ox.globalAlpha=1-k;ox.fillText('z',cx+R*.3+k*R*.25,cy-R*.25-k*R*.35);}ox.globalAlpha=1;}
-  if(e==='triste'||e==='fome'){const k=(t*.6)%1;ox.fillStyle='#7fd4ff';ox.globalAlpha=1-k;ox.beginPath();ox.arc(cx+gap+lx+ew*.3,ey+eh0*.35+k*R*.18,R*.018,0,7);ox.fill();ox.globalAlpha=1;}
-  if(e==='brava'){ox.strokeStyle='#ff5a4d';ox.lineWidth=R*.012;const bx0=cx+R*.32,by0=cy-R*.32;for(let i=0;i<4;i++){const a=i*Math.PI/2+.78;ox.beginPath();ox.moveTo(bx0+Math.cos(a)*R*.02,by0+Math.sin(a)*R*.02);ox.lineTo(bx0+Math.cos(a)*R*.06,by0+Math.sin(a)*R*.06);ox.stroke();}}
+  if(e==='sono'){ox.fillStyle=cor;ox.font=`600 ${R*.09}px -apple-system,system-ui`;for(let i=0;i<3;i++){const q=((t*.35+i/3)%1);ox.globalAlpha=1-q;ox.fillText('z',cx+R*.3+q*R*.25,cy-R*.25-q*R*.35);}ox.globalAlpha=1;}
+  if(e==='brava'){ox.strokeStyle='#ff5a4d';ox.lineWidth=R*.012;const b0=cx+R*.32+hx,b1=cy-R*.32+hy;for(let i=0;i<4;i++){const a=i*Math.PI/2+.78;ox.beginPath();ox.moveTo(b0+Math.cos(a)*R*.02,b1+Math.sin(a)*R*.02);ox.lineTo(b0+Math.cos(a)*R*.06,b1+Math.sin(a)*R*.06);ox.stroke();}}
+  if(e==='tonta'){ox.fillStyle='#ffd877';ox.font=`${R*.07}px -apple-system,system-ui`;for(let i=0;i<4;i++){const a=t*3+i*Math.PI/2;ox.fillText('✦',cx+hx+Math.cos(a)*R*.38,cy+hy-R*.3+Math.sin(a)*R*.08);}}
+  st.cabeca={x:hx,y:hy};
 }
 
 let t0=performance.now();
@@ -697,16 +882,16 @@ function quadro(agora){
   // núcleo
   const r=oc.getBoundingClientRect(),dp=window.devicePixelRatio||1;
   if(Math.abs(oc.width-r.width*dp)>1||Math.abs(oc.height-r.height*dp)>1){oc.width=r.width*dp;oc.height=r.height*dp;ox.setTransform(dp,0,0,dp,0,0);fc.width=oc.width;fc.height=oc.height;fx.setTransform(dp,0,0,dp,0,0);}
-  const S=Math.min(r.width,r.height),cx=r.width/2,cy=r.height/2,R=S*.46;ox.clearRect(0,0,r.width,r.height);
+  const S=Math.min(r.width,r.height),cx=r.width/2,cy=r.height/2,R=S*.46;ox.clearRect(0,0,r.width,r.height);const cb=st.cabeca||{x:0,y:0};
   st.amp*=.9;const fala=st.falando?(.35+.35*Math.abs(Math.sin(t*9.3))*Math.abs(Math.sin(t*3.1))+st.amp*.3):0;
-  const e=emocao(),resp=.5+.5*Math.sin(t*1.3),vel=e==='sono'?.2:e==='brava'?2.6:e==='tonta'?4:st.humor==='calmo'?1:1.7;
+  const e=emocao(),resp=.5+.5*Math.sin(t*1.3),vel=(e==='sono'?.2:e==='brava'?2.6:e==='tonta'?4:st.humor==='calmo'?1:1.7)*(st.anim&&/pulo|danca|risada/.test(st.anim.tipo)?2.5:1)+(st.ouvindo?1.5:0);
   const g=ox.createRadialGradient(cx,cy,0,cx,cy,R*.66);g.addColorStop(0,cor+'55');g.addColorStop(.6,cor+'1c');g.addColorStop(1,cor+'00');
   ox.fillStyle=g;ox.beginPath();ox.arc(cx,cy,R*(.6+.03*resp+.06*fala),0,7);ox.fill();
   ox.fillStyle='rgba(2,10,20,.55)';ox.beginPath();ox.arc(cx,cy,R*.5,0,7);ox.fill();
   ox.strokeStyle=cor;ox.shadowColor=cor;ox.shadowBlur=12;
   [[.62,9,.55,3,1],[.74,24,-.35,1.5,.75],[.86,3,.2,4,.9],[.97,60,-.08,1,.5]].forEach(([rr,seg,v,lw,al],j)=>{
     ox.globalAlpha=al;ox.lineWidth=lw;const rot=t*v*vel,gp=j===3?.02:.18;
-    for(let s=0;s<seg;s++){const a0=rot+s*6.283/seg,a1=a0+6.283/seg*(1-gp)*(j===2?.6:1);ox.beginPath();ox.arc(cx,cy,R*rr,a0,a1);ox.stroke();}});
+    for(let s=0;s<seg;s++){const a0=rot+s*6.283/seg,a1=a0+6.283/seg*(1-gp)*(j===2?.6:1);ox.beginPath();ox.arc(cx+cb.x*(.5-j*.12),cy+cb.y*(.5-j*.12),R*rr,a0,a1);ox.stroke();}});
   ox.globalAlpha=.85;ox.lineWidth=2;const nb=64;
   for(let i=0;i<nb;i++){const a=i/nb*6.283+t*.2,h=R*(.02+(fala?fala*(.06+.1*Math.abs(Math.sin(i*1.7+t*14))):.01*(1+Math.sin(i+t*2))));
     const r0=R*.52;ox.beginPath();ox.moveTo(cx+Math.cos(a)*r0,cy+Math.sin(a)*r0);ox.lineTo(cx+Math.cos(a)*(r0+h),cy+Math.sin(a)*(r0+h));ox.stroke();}
@@ -720,39 +905,28 @@ function quadro(agora){
   requestAnimationFrame(quadro);
 }
 
-/* ---------- toque, carinho e alimentação ---------- */
-const core=$('#core');let dedo=null;
-function relCore(ev){const c=centroCore();return {dx:(ev.clientX-c.x)/c.r,dy:(ev.clientY-c.y)/c.r};}
+/* ---------- toque ---------- */
+let dedo=null;
+function olharPara(ev){const c=centroCore();st.toqueOlho={x:Math.max(-1.3,Math.min(1.3,(ev.clientX-c.x)/c.r)),y:Math.max(-1,Math.min(1,(ev.clientY-c.y)/c.r))};st.ultToque=Date.now();}
 document.addEventListener('pointerdown',ev=>{
-  if(!st.acordada||ev.target.closest('.modal,.bt,#inicio'))return;st.ultToque=Date.now();
-  const c=centroCore();st.toqueOlho={x:Math.max(-1,Math.min(1,(ev.clientX-c.x)/c.r)),y:Math.max(-1,Math.min(1,(ev.clientY-c.y)/c.r))};
-  // moeda tocada?
-  const alvo=st.moedas.find(m=>!m.comida&&Math.hypot(m.x-ev.clientX,m.y-ev.clientY)<26*m.z+10);
-  if(alvo){alimenta(alvo);return;}
-  const r=relCore(ev);if(Math.hypot(r.dx,r.dy)<1){dedo={x:ev.clientX,y:ev.clientY,t:Date.now(),dist:0};}
+  if(!st.acordada||ev.target.closest('.modal,.bt,#inicio,.card'))return;olharPara(ev);
+  const c=centroCore();dedo={x:ev.clientX,y:ev.clientY,t:Date.now(),dist:0,dentro:Math.hypot(ev.clientX-c.x,ev.clientY-c.y)<c.r};
+  clearTimeout(st.segurar);if(dedo.dentro)st.segurar=setTimeout(()=>{if(dedo&&dedo.dist<20){dedo.longo=1;sente('feliz',1500);if(!st.rel)pedeRelatorio(true);}},800);
 });
-document.addEventListener('pointermove',ev=>{
-  if(!st.acordada)return;const c=centroCore();st.toqueOlho={x:Math.max(-1,Math.min(1,(ev.clientX-c.x)/c.r)),y:Math.max(-1,Math.min(1,(ev.clientY-c.y)/c.r))};
-  if(dedo){st.ultToque=Date.now();dedo.dist+=Math.hypot(ev.clientX-dedo.x,ev.clientY-dedo.y);dedo.x=ev.clientX;dedo.y=ev.clientY;
-    if(dedo.dist>60&&Math.random()<.25)st.parts.push({x:ev.clientX,y:ev.clientY,vx:(Math.random()-.5)*1.5,vy:-1-Math.random()*1.5,v:1,s:8+Math.random()*8});
-    if(dedo.dist>320&&!dedo.amor){dedo.amor=1;pet.carinho=lim(pet.carinho+10);pet.xp+=2;salvaPet();barrasPet();sente('amor',4500);
-      diz('carinho',['Hehe, gosto quando você faz isso.','Ai, que carinho bom.','Obrigada, Thales.'][Math.floor(Math.random()*3)],90e3);}}
-});
-document.addEventListener('pointerup',ev=>{
-  if(!st.acordada||!dedo){dedo=null;return;}const foi=dedo;dedo=null;if(foi.dist>40)return;
+document.addEventListener('pointermove',ev=>{if(!st.acordada)return;if(dedo){olharPara(ev);dedo.dist+=Math.hypot(ev.clientX-dedo.x,ev.clientY-dedo.y);dedo.x=ev.clientX;dedo.y=ev.clientY;}});
+document.addEventListener('pointerup',()=>{
+  clearTimeout(st.segurar);if(!st.acordada||!dedo){dedo=null;return;}const foi=dedo;dedo=null;
+  if(foi.longo||foi.dist>40)return;
+  if(!foi.dentro){if(!st.anim&&Math.random()<.4)anima('inclina');return;}
   if(st.rel&&st.pular){st.pular();return;}
   const ag=Date.now();st.toques=st.toques.filter(x=>ag-x<2500);st.toques.push(ag);
-  if(st.toques.length>=5){st.toques=[];pet.carinho=lim(pet.carinho-6);salvaPet();barrasPet();sente('brava',6000);
+  if(st.toques.length>=5){st.toques=[];st.anim=null;sente('brava',6000);
     diz('brava',['Ei! Para de me cutucar!','Assim não, Thales!','Tô ficando brava, hein.'][Math.floor(Math.random()*3)],20e3);}
-  else if(emocao()!=='brava'){sente(emocao()==='sono'?'susto':'feliz',1800);pet.carinho=lim(pet.carinho+1);barrasPet();
+  else if(emocao()==='sono'){sente('susto',1500);diz('acordou','Hã? Eu tava dormindo…',60e3);}
+  else if(emocao()!=='brava'&&!st.anim){anima(['risada','piscadela','pulo','inclina'][Math.floor(Math.random()*4)]);
     if(st.toques.length===1)diz('oi',['Oi!','Tô aqui.','Pode falar.','Hihi.'][Math.floor(Math.random()*4)],25e3);}
 });
-document.addEventListener('pointercancel',()=>dedo=null);
-function alimenta(m){
-  if(pet.fome>96){m.vy=-3;m.vx=(Math.random()-.5)*4;sente('neutra',1500);diz('cheia','Já tô cheia, obrigada!',40e3);return;}
-  m.comida=true;setTimeout(()=>{pet.fome=lim(pet.fome+12);pet.xp+=1;salvaPet();barrasPet();sente('comendo',1600);
-    setTimeout(()=>sente('feliz',2500),1600);diz('nhac',['Nhac! Que delícia.','Hum, bitcoin fresquinho!','Obrigada!'][Math.floor(Math.random()*3)],30e3);},350);
-}
+document.addEventListener('pointercancel',()=>{clearTimeout(st.segurar);dedo=null;});
 
 /* ---------- sensores de movimento ---------- */
 let picos=[],ultSusto=0,movOk=false;
@@ -764,7 +938,7 @@ function aoMover(ev){
   else{const g=ev.accelerationIncludingGravity;if(!g||g.x==null)return;const v=Math.hypot(g.x,g.y,g.z);m=Math.abs(v-(aoMover.ant||v));aoMover.ant=v;}
   const ag=Date.now();
   if(m>9){picos=picos.filter(x=>ag-x<1200);picos.push(ag);
-    if(picos.length>=4){picos=[];sente('tonta',5000);pet.carinho=lim(pet.carinho-3);barrasPet();diz('tonta',['Uou! Tá tudo girando!','Para de me chacoalhar!','Ai, que tontura…'][Math.floor(Math.random()*3)],25e3);}}
+    if(picos.length>=4){picos=[];st.anim=null;sente('tonta',5000);diz('tonta',['Uou! Tá tudo girando!','Para de me chacoalhar!','Ai, que tontura…'][Math.floor(Math.random()*3)],25e3);}}
   else if(m>2.2&&ag-ultSusto>4000&&emocao()!=='tonta'){ultSusto=ag;const dorm=emocao()==='sono';sente('susto',1500);
     diz('susto',dorm?'Hã? Ah, eu tava dormindo…':['Ai! Que susto!','Opa! O que foi isso?','Eita!'][Math.floor(Math.random()*3)],45e3);}
 }
@@ -824,13 +998,14 @@ $('#bCasaFecha').onclick=()=>{casaEd=false;$('#casa').classList.remove('on');};
 $('#btCasa').onclick=()=>{montaCasa();$('#casa').classList.add('on');};
 
 /* ---------- ajustes ---------- */
-$('#btCfg').onclick=()=>{$('#oInt').value=cfg.intervalo;$('#oVoz').checked=cfg.voz;$('#oSil').checked=cfg.silencio;$('#oCam').checked=cfg.camera;$('#oMov').checked=cfg.movimento;carregaVozes();
-  $('#sensSt').textContent=`Câmera: ${st.camSt||'desligada'}. Sensores de movimento: ${st.movSt||'desligados'}${st.movSt==='ligados'&&!movOk?' (ainda sem leitura)':''}.`;$('#cfg').classList.add('on');};
-$('#bFecha').onclick=()=>{cfg.intervalo=+$('#oInt').value;cfg.voz=$('#oVoz').checked;cfg.silencio=$('#oSil').checked;cfg.camera=$('#oCam').checked;cfg.movimento=$('#oMov').checked;
+$('#btCfg').onclick=()=>{$('#oInt').value=cfg.intervalo;$('#oVoz').checked=cfg.voz;$('#oSil').checked=cfg.silencio;$('#oCam').checked=cfg.camera;$('#oMov').checked=cfg.movimento;$('#oEsc').checked=cfg.escuta;carregaVozes();
+  $('#sensSt').textContent=`Câmera: ${st.camSt||'desligada'}. Sensores de movimento: ${st.movSt||'desligados'}${st.movSt==='ligados'&&!movOk?' (ainda sem leitura)':''}. Escuta: ${st.escSt||'desligada'}.`;$('#cfg').classList.add('on');};
+$('#bFecha').onclick=()=>{cfg.intervalo=+$('#oInt').value;cfg.voz=$('#oVoz').checked;cfg.silencio=$('#oSil').checked;cfg.camera=$('#oCam').checked;cfg.movimento=$('#oMov').checked;cfg.escuta=$('#oEsc').checked;if(cfg.escuta)ligaEscuta();else if(st.rec){try{st.rec.abort()}catch(e){}}
   const v=$('#oVozNome').value;if(vozes.some(x=>x.name===v))cfg.vozNome=v;salvar();agenda();mercadoHUD();if(cfg.camera)ligaCamera();$('#cfg').classList.remove('on');};
 $('#bTeste').onclick=()=>{cfg.vozNome=$('#oVozNome').value;cfg.voz=true;$('#oVoz').checked=true;const s=cfg.silencio;cfg.silencio=false;falar('Oi, Thales. Esta é a minha voz.').then(()=>cfg.silencio=s);};
 $('#bTela').onclick=()=>{const d=document.documentElement;try{(d.requestFullscreen||d.webkitRequestFullscreen).call(d);}catch(e){}};
 $('#btRel').onclick=()=>{if(st.acordada&&!st.rel)pedeRelatorio(true);};
+$('#btFalar').onclick=()=>{if(st.acordada)ouvirAgora();};
 
 /* ---------- despertar ---------- */
 async function travaTela(){try{if('wakeLock' in navigator)st.wl=await navigator.wakeLock.request('screen');}catch(e){}}
@@ -841,27 +1016,28 @@ $('#inicio').addEventListener('click',async()=>{
   $('#inicio').style.display='none';st.acordada=true;travaTela();ajusta();
   ligaCamera();await pm;
   await Promise.all([atualizaPrecos(),atualizaGraficos(),atualizaRobo()]);
-  tempoPet();mercadoHUD();calculaHumor();agenda();burst(24);giraGrafico();giraManchete();
-  const cs=carteiras(),dias=Math.floor((Date.now()-pet.nasc)/864e5);sente('feliz',5000);
-  enfileira(()=>falar(dias===0&&pet.xp===0
-    ?`${saudacao()}, Thales! Eu sou a Andrômeda. Vou cuidar do Bitcoin, das ${cs.length} carteiras do robô e das notícias para você. E você cuida de mim: me alimenta tocando nas moedinhas e faz carinho no meu rosto.`
+  atualizaMC();ligaEscuta();mercadoHUD();calculaHumor();agenda();burst(24);giraGrafico();giraManchete();infoAndromeda();
+  const cs=carteiras(),primeira=(()=>{try{const v=localStorage.getItem('andromeda_viu');localStorage.setItem('andromeda_viu','1');return !v;}catch(e){return false;}})();sente('feliz',5000);
+  enfileira(()=>falar(primeira
+    ?`${saudacao()}, Thales! Eu sou a Andrômeda. Vou cuidar do Bitcoin, das moedas, das ${cs.length} carteiras do robô e das notícias para você. Quando precisar de mim, é só dizer: Ei, Andrômeda.`
     :`${saudacao()}, Thales! Andrômeda acordada. Estou de olho no Bitcoin, nas ${cs.length} carteiras e nas notícias.`));
 });
 
 /* ---------- ciclo ---------- */
-ajusta();requestAnimationFrame(quadro);relogio();barrasPet();
+ajusta();requestAnimationFrame(quadro);relogio();
 setInterval(relogio,1000);
 setInterval(calculaHumor,2000);
-setInterval(()=>{tempoPet();if(!st.acordada)return;const e=emocao();
-  if(e==='fome')diz('fome','Thales, tô com fome. Toca numa moedinha pra mim?',40*60e3);
-  else if(e==='triste')diz('sozinha','Faz tempo que você não me dá atenção. Passa o dedo no meu rosto?',50*60e3);
-  else if(e==='doente')diz('doente','Não estou recebendo nada do robô. Pode ser que a máquina na Azure tenha parado.',3*3600e3);},60e3);
+setInterval(()=>{infoAndromeda();if(!st.acordada)return;const e=emocao();
+  if(e==='doente')diz('doente','Não estou recebendo nada do robô. Pode ser que a máquina na Azure tenha parado.',3*3600e3);},60e3);
 setInterval(async()=>{await atualizaPrecos();mercadoHUD();confereMovimento();},30e3);
 setInterval(async()=>{await atualizaGraficos();mercadoHUD();},10*60e3);
 setInterval(atualizaRobo,5*60e3);
 setInterval(statusOcioso,15e3);
 setInterval(giraGrafico,20e3);
 setInterval(giraManchete,9e3);
+setInterval(()=>{if(Math.random()<.5)animaOciosa();},15e3);
+setInterval(atualizaMC,60*60e3);
+setInterval(()=>{if(st.btcLongo)calculaMC();},10*60e3);
 setInterval(()=>{if(st.acordada&&st.proximo&&Date.now()>=st.proximo&&!st.rel){if(silencio()){agenda();return;}pedeRelatorio(false);}},5e3);
 setInterval(()=>{if(st.acordada&&!st.falando&&!st.rel&&Math.random()<.4)burst(4);},50e3);
 </script>
