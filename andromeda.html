@@ -837,6 +837,7 @@ function statusOcioso(){
 /* ---------- assistente pessoal: agenda, estudo, resumos ---------- */
 const PESS=Object.assign({url:'',chave:''},(()=>{try{return JSON.parse(localStorage.getItem('andromeda_pessoal')||'{}')}catch(e){return{}}})());
 const salvaPess=()=>{try{localStorage.setItem('andromeda_pessoal',JSON.stringify(PESS))}catch(e){}};
+(()=>{const h=location.hash.match(/conectar=([^|]+)\|(.+)$/);if(h){PESS.url=decodeURIComponent(h[1]);PESS.chave=decodeURIComponent(h[2]);salvaPess();history.replaceState(null,'',location.pathname);st.recemConectado=true;}})();
 st.pess=null;st.aba='mercado';st.avisados={};st.conversa=false;st.histIA=[];
 st.timer=(()=>{try{return JSON.parse(localStorage.getItem('andromeda_timer')||'null')}catch(e){return null}})();
 const salvaTimer=()=>{try{localStorage.setItem('andromeda_timer',JSON.stringify(st.timer))}catch(e){}};
@@ -1235,7 +1236,7 @@ $('#inicio').addEventListener('click',async()=>{
   $('#inicio').style.display='none';st.acordada=true;travaTela();ajusta();
   ligaCamera();await pm;
   await Promise.all([atualizaPrecos(),atualizaGraficos(),atualizaRobo()]);
-  atualizaMC();ligaEscuta();atualizaPessoal();mercadoHUD();calculaHumor();agenda();burst(24);giraGrafico();giraManchete();infoAndromeda();
+  atualizaMC();ligaEscuta();atualizaPessoal();if(st.recemConectado)setTimeout(()=>enfileira(()=>falar('Pronto, Thales. Agora eu enxergo sua agenda e sua planilha de estudo.')),9000);mercadoHUD();calculaHumor();agenda();burst(24);giraGrafico();giraManchete();infoAndromeda();
   const cs=carteiras(),primeira=(()=>{try{const v=localStorage.getItem('andromeda_viu');localStorage.setItem('andromeda_viu','1');return !v;}catch(e){return false;}})();sente('feliz',5000);
   enfileira(()=>falar(primeira
     ?`${saudacao()}, Thales! Eu sou a Andrômeda. Vou cuidar do Bitcoin, das moedas, das ${cs.length} carteiras do robô e das notícias para você. Quando precisar de mim, é só dizer: Ei, Andrômeda.`
