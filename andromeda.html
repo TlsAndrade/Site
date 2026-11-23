@@ -126,6 +126,10 @@ body.sono #escuro{opacity:.5}
 .tile small{display:block;font-family:var(--mono);font-size:10px;opacity:.6;margin-top:4px}
 .tile input{width:100%;max-width:none!important;margin-top:4px;font-size:12px!important}
 #cam{position:fixed;width:2px;height:2px;opacity:0;pointer-events:none}
+#digita{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);width:min(680px,92vw);z-index:25;display:none;border:1px solid var(--core);border-radius:16px;background:#0e1126;padding:12px 14px;box-shadow:0 10px 40px rgba(0,0,0,.5)}
+#digita.on{display:block}.dgtit{font-family:var(--mono);font-size:11.5px;color:var(--core);margin-bottom:8px;letter-spacing:.05em}
+.dglin{display:flex;gap:8px}#dgTxt{flex:1;font-size:18px;padding:10px 12px;border-radius:10px;border:1px solid var(--c2);background:#060714;color:#eef0ff;user-select:text;-webkit-user-select:text}
+#digita button{font-family:var(--mono);font-size:13px;border-radius:10px;border:0;padding:0 14px;background:var(--core);color:#1a1205;cursor:pointer}#digita #dgX{background:transparent;color:var(--muted);border:1px solid var(--c2)}
 #abas{position:fixed;top:max(18px,env(safe-area-inset-top));left:50%;transform:translateX(-50%);display:flex;gap:4px;padding:4px;border:1px solid var(--c2);border-radius:999px;background:rgba(14,17,38,.75);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:6}
 #abas .ab{font-family:var(--disp);font-size:11px;letter-spacing:.14em;text-transform:uppercase;padding:9px 16px;border-radius:999px;color:var(--muted);cursor:pointer;transition:all .3s}
 #abas .ab.on{background:var(--core);color:#1a1205;box-shadow:0 0 16px rgba(255,199,120,.45)}
@@ -210,6 +214,7 @@ body.aba .col{opacity:0;pointer-events:none}
   <section class="secao" id="s_estudo" style="display:none"><div class="relbox"><canvas id="es_rel"></canvas></div><div class="lista" id="es_info"></div></section>
   <section class="secao" id="s_resumos" style="display:none"><div class="lista full" id="rs_conteudo"></div></section>
 </div>
+<div id="digita"><div class="dgtit" id="dgTit">Toque no microfone do teclado e fale, ou digite</div><div class="dglin"><input id="dgTxt" type="text" enterkeyhint="send" autocomplete="off" placeholder="O que você quer, Thales?"><button id="dgOk">ENVIAR</button><button id="dgX">✕</button></div></div>
 <div id="flash"></div><div id="escuro"></div>
 <video id="cam" playsinline muted autoplay></video>
 
@@ -763,7 +768,7 @@ function ligaEscuta(manual){
   if(st.rec||st.falando)return;
   const r=new SR();r.lang='pt-BR';r.continuous=!manual;r.interimResults=true;st.rec=r;st.recManual=!!manual;
   r.onresult=ev=>{
-    if(st.falando||Date.now()-(st.fimFala||0)<900)return;let fin='',tmp='';
+    if(st.falando||Date.now()-(st.fimFala||0)<900)return;st.ouviuAlgo=true;st.falhasVoz=0;let fin='',tmp='';
     for(let i=ev.resultIndex;i<ev.results.length;i++){const t=ev.results[i][0].transcript;if(ev.results[i].isFinal)fin+=t;else tmp+=t;}
     const ag=sem(fin||tmp);
     if(!st.ouvindo&&/andr[oô]?m[e]?da|andromeda|andrometa/.test(ag)){st.ouvindo=true;st.ouvAte=Date.now()+9000;sente('curiosa',9000);st.anim=null;$('#fala').innerHTML='<span class="ia">●</span> Ouvindo…';}
@@ -773,7 +778,7 @@ function ligaEscuta(manual){
       else if(Date.now()>st.ouvAte){st.ouvindo=false;}
       else if(!pedido){enfileira(()=>falar('Pode falar.'));}}
   };
-  r.onerror=e=>{st.escSt=e.error==='not-allowed'?'sem permissão do microfone':'reiniciando';};
+  r.onerror=e=>{st.escSt=e.error==='not-allowed'?'sem permissão do microfone':e.error;if(st.recManual&&['not-allowed','service-not-allowed','audio-capture','network'].includes(e.error)){st.vozFalhou=e.error!=='network';abreDigita('O ditado do navegador não funcionou ('+e.error+'). Toque no microfone do teclado e fale');}};
   r.onend=()=>{if(st.rec!==r)return;st.rec=null;st.escutaLigada=false;infoAndromeda();
     if(!st.acordada||st.falando)return;
     if(st.ouvindo&&Date.now()<st.ouvAte)setTimeout(()=>ligaEscuta(true),250);
@@ -781,7 +786,11 @@ function ligaEscuta(manual){
   try{r.start();st.escutaLigada=true;st.escSt=manual?'ouvindo agora':'ligada';}catch(e){st.rec=null;st.escSt='não ligou';}
   infoAndromeda();
 }
-function ouvirAgora(){if(!SR){falar('Este navegador não deixa eu ouvir.');return;}if(st.falando&&st.pular)st.pular();desligaMic();st.ouvindo=true;st.ouvAte=Date.now()+9000;sente('curiosa',9000);$('#fala').innerHTML='<span class="ia">●</span> Ouvindo…';ligaEscuta(true);}
+function abreDigita(msg){if(st.falando&&st.pular)st.pular();desligaMic();st.ouvindo=false;$('#dgTit').textContent=msg||'Toque no microfone do teclado e fale, ou digite';$('#digita').classList.add('on');const i=$('#dgTxt');i.value='';setTimeout(()=>i.focus(),50);sente('curiosa',15000);}
+function fechaDigita(){$('#digita').classList.remove('on');$('#dgTxt').blur();}
+function enviaDigita(){const t=$('#dgTxt').value.trim();fechaDigita();if(!t)return;st.emo=null;enfileira(()=>comando(t));}
+$('#dgOk').onclick=enviaDigita;$('#dgX').onclick=fechaDigita;$('#dgTxt').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();enviaDigita();}});
+function ouvirAgora(){if(!SR||st.vozFalhou){abreDigita(st.vozFalhou?'O ditado do navegador não funciona aqui: toque no microfone do teclado e fale':'');return;}if(st.falando&&st.pular)st.pular();desligaMic();st.ouviuAlgo=false;clearTimeout(st.vigiaVoz);st.vigiaVoz=setTimeout(()=>{if(!st.ouviuAlgo&&st.ouvindo){st.falhasVoz=(st.falhasVoz||0)+1;if(st.falhasVoz>=2)st.vozFalhou=true;abreDigita('Não consegui te ouvir pelo navegador. Toque no microfone do teclado e fale');}},7000);st.ouvindo=true;st.ouvAte=Date.now()+9000;sente('curiosa',9000);$('#fala').innerHTML='<span class="ia">●</span> Ouvindo…';ligaEscuta(true);}
 setInterval(()=>{if(!st.acordada)return;if(st.rec&&!st.recManual&&!sempre())desligaMic();else if(!st.rec&&!st.falando&&sempre())ligaEscuta(false);},30e3);
 document.addEventListener('visibilitychange',()=>{if(document.hidden)desligaMic();});
 setInterval(()=>{if(st.ouvindo&&Date.now()>st.ouvAte){st.ouvindo=false;if(!st.falando)$('#fala').textContent='';}},1000);
@@ -1138,7 +1147,7 @@ function quadro(agora){
 let dedo=null;
 function olharPara(ev){const c=centroCore();st.toqueOlho={x:Math.max(-1.3,Math.min(1.3,(ev.clientX-c.x)/c.r)),y:Math.max(-1,Math.min(1,(ev.clientY-c.y)/c.r))};st.ultToque=Date.now();}
 document.addEventListener('pointerdown',ev=>{
-  if(!st.acordada||ev.target.closest('.modal,.bt,#inicio,.card'))return;olharPara(ev);
+  if(!st.acordada||ev.target.closest('.modal,.bt,#inicio,.card,#digita'))return;olharPara(ev);
   const c=centroCore();dedo={x:ev.clientX,y:ev.clientY,t:Date.now(),dist:0,dentro:Math.hypot(ev.clientX-c.x,ev.clientY-c.y)<c.r};
   clearTimeout(st.segurar);if(dedo.dentro)st.segurar=setTimeout(()=>{if(dedo&&dedo.dist<20){dedo.longo=1;sente('feliz',1500);if(!st.rel)pedeRelatorio(true);}},800);
 });
@@ -1244,6 +1253,7 @@ $('#bTeste').onclick=()=>{cfg.vozNome=$('#oVozNome').value;cfg.voz=true;$('#oVoz
 $('#bTela').onclick=()=>{const d=document.documentElement;try{(d.requestFullscreen||d.webkitRequestFullscreen).call(d);}catch(e){}};
 $('#btRel').onclick=()=>{if(st.acordada&&!st.rel)pedeRelatorio(true);};
 $('#btFalar').onclick=()=>{if(st.acordada)ouvirAgora();};
+$('#btFalar').addEventListener('contextmenu',e=>{e.preventDefault();abreDigita();});
 document.querySelectorAll('#abas .ab').forEach(b=>b.onclick=()=>trocaAba(b.dataset.a));
 
 /* ---------- despertar ---------- */
