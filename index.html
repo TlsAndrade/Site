@@ -64,7 +64,7 @@ button{font:inherit;color:inherit}
 @media (max-width:760px){.brand b{display:none}.tabs a{padding:7px 10px;font-size:.78rem}.navcta{display:none}.nav{gap:8px}}
 
 /* ---------- filme ---------- */
-.film{position:relative;height:calc(var(--stage)*10)}
+.film{position:relative;height:calc(var(--stage)*5.2)}
 .stage{position:sticky;top:0;height:var(--stage);overflow:hidden}
 #cosmos{position:absolute;inset:0;width:100%;height:100%;display:block}
 .cap{position:absolute;left:clamp(18px,6vw,90px);right:clamp(18px,6vw,90px);pointer-events:none;will-change:opacity,transform}
@@ -88,49 +88,23 @@ button{font:inherit;color:inherit}
 @keyframes drip{0%{transform:scaleY(0);transform-origin:top}50%{transform:scaleY(1);transform-origin:top}51%{transform-origin:bottom}100%{transform:scaleY(0);transform-origin:bottom}}
 .lb{position:absolute;left:0;right:0;height:9%;background:#000;z-index:2;transform:scaleY(0);transition:none;pointer-events:none}
 .lb.top{top:0;transform-origin:top}.lb.bot{bottom:0;transform-origin:bottom}
+
+#fundo{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
+main,footer{position:relative;z-index:1}
 .som{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line);background:rgba(14,17,38,.7);color:var(--muted);border-radius:999px;padding:7px 12px;font:600 .78rem/1 var(--f-mono);letter-spacing:.06em;cursor:pointer;transition:color .2s,border-color .2s}
 .som:hover,.som.on{color:var(--core);border-color:rgba(255,199,120,.5)}
 .som .eq{display:none;align-items:flex-end;gap:2px;height:12px}.som.on .eq{display:inline-flex}
 .som .eq b{width:2px;background:currentColor;animation:eq 1s ease-in-out infinite}.som .eq b:nth-child(2){animation-delay:-.35s}.som .eq b:nth-child(3){animation-delay:-.7s}
 @keyframes eq{0%,100%{height:3px}50%{height:12px}}
 .som.hero{margin-top:18px;pointer-events:auto;padding:10px 16px;font-size:.8rem}
-.cap.hero{pointer-events:none}.cap.hero .som{pointer-events:auto}
-@media (max-width:760px){header.nav .som .lbl{display:none}header.nav .som{padding:7px 9px}}
-
-/* ---- organização da Missão ---- */
-.head[data-n]::before{content:attr(data-n);font-family:var(--f-display);font-weight:800;font-size:clamp(2.4rem,6vw,4.2rem);line-height:.9;color:transparent;-webkit-text-stroke:1px rgba(255,199,120,.45);letter-spacing:.02em}
-.guia{padding-top:clamp(48px,7vw,90px);padding-bottom:clamp(48px,7vw,90px);background:radial-gradient(ellipse at 50% 0%,rgba(255,170,80,.08),transparent 60%)}
-.indice{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:10px;margin-top:6px}
-.indice a{display:flex;align-items:center;gap:12px;padding:14px 16px;border:1px solid var(--line);border-radius:12px;background:rgba(14,17,38,.6);color:var(--ink);text-decoration:none;font-weight:600;font-size:.95rem;transition:border-color .2s,transform .2s,background .2s}
-.indice a b{font-family:var(--f-mono);font-size:.78rem;color:var(--core);min-width:22px}
-.indice a:hover{border-color:rgba(255,199,120,.55);transform:translateY(-2px);background:rgba(255,199,120,.06)}
-.lista{margin:0;padding:0;list-style:none;display:grid;gap:8px;color:#cfd4f2;font-size:.95rem}
-.lista li{position:relative;padding-left:22px}
-.lista li::before{content:"";position:absolute;left:2px;top:.55em;width:9px;height:9px;border-radius:50%;border:2px solid var(--up)}
-.lista.nao li::before{border-color:var(--down);border-radius:2px;transform:rotate(45deg);width:8px;height:8px}
-.riscos{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
-.tblwrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
-table.esp{min-width:520px;font-size:.92rem}
-table.esp th,table.esp td{padding:11px 12px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}
-table.esp th:first-child,table.esp td:first-child{text-align:left;white-space:normal}
-table.esp thead th{font-family:var(--f-mono);font-size:.72rem;letter-spacing:.1em;color:var(--muted);font-weight:600;text-transform:uppercase}
-table.esp td.c{color:var(--core);font-weight:700}
-table.esp tr.sep td{border-top:1px solid rgba(255,199,120,.25)}
-.faq{max-width:860px}
-.faq details p{color:#cfd4f2;margin:10px 0 2px}
-.cap.hero::before{content:"";position:absolute;inset:-50px -70px -40px -70px;background:radial-gradient(closest-side,rgba(6,7,20,.78),rgba(6,7,20,.35) 70%,rgba(6,7,20,0));z-index:-1}
+.cap.hero .som{pointer-events:auto}
 .som.flutua{display:none}
 @media (max-width:760px){header.nav .som{display:none}.som.flutua{display:inline-flex;position:fixed;left:12px;bottom:14px;z-index:60;padding:11px;background:rgba(10,12,30,.88);box-shadow:0 6px 24px rgba(0,0,0,.5)}.som.flutua .lbl{display:none}}
-.ctitle{position:absolute;left:0;right:0;top:41%;text-align:center;z-index:3;pointer-events:none;opacity:0;font-family:var(--f-display);font-weight:600;font-size:clamp(1.05rem,2.6vw,1.9rem);letter-spacing:.5em;padding-left:.5em;color:#f4efe6;text-shadow:0 0 30px rgba(0,0,0,.9),0 0 60px rgba(255,199,120,.25)}
-.ctitle small{display:block;font-family:var(--f-mono);font-weight:600;font-size:.62rem;letter-spacing:.42em;color:var(--core);margin-bottom:12px}
-.grain{position:absolute;inset:-60px;pointer-events:none;z-index:2;opacity:.09;mix-blend-mode:screen;animation:grain .9s steps(6) infinite}
-@keyframes grain{0%{transform:translate(0,0)}20%{transform:translate(-22px,14px)}40%{transform:translate(18px,-26px)}60%{transform:translate(-12px,28px)}80%{transform:translate(26px,8px)}100%{transform:translate(0,0)}}
-@media (prefers-reduced-motion:reduce){.grain{animation:none}.ctitle{display:none}}
 .vig{position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at center,transparent 52%,rgba(0,0,0,.62) 100%);z-index:1}
 .chap{position:absolute;right:clamp(18px,6vw,90px);top:calc(9% + 18px);font-family:var(--f-mono);font-size:.72rem;letter-spacing:.24em;color:var(--muted);z-index:3;opacity:0}
 .chap b{color:var(--core);font-weight:600}
 .cap{z-index:3}
-html.still .lb,html.still .vig,html.still .chap,html.still .grain,html.still .ctitle{display:none}
+html.still .lb,html.still .vig,html.still .chap{display:none}
 .rail{z-index:3;position:absolute;right:16px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:8px}
 .rail i{width:3px;height:26px;border-radius:2px;background:var(--line);transition:background .3s}
 .rail i.on{background:var(--core)}
@@ -145,7 +119,7 @@ html.still .cap.hero{order:1}
 /* ---------- faixas ---------- */
 .band{position:relative;padding:clamp(64px,10vw,130px) clamp(18px,6vw,90px);border-top:1px solid var(--line)}
 .band>.in{max-width:1120px;margin:0 auto;display:grid;gap:34px}
-.band.alt{background:linear-gradient(180deg,#090b1d,var(--space))}
+.band.alt{background:linear-gradient(180deg,rgba(9,11,29,.72),rgba(6,7,20,.55))}
 .head{display:grid;gap:14px}
 .grid3{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px}
 .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:22px;display:grid;gap:10px;align-content:start}
@@ -467,6 +441,7 @@ tr:last-child td{border-bottom:0}
   <a class="navcta" href="#planos">Assinar</a>
 </header>
 <button class="som flutua" type="button" data-som="flut" aria-pressed="false" aria-label="Ligar ou desligar a trilha sonora"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M9 18V6l11-2v12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="6.5" cy="18" r="2.5" fill="currentColor"/><circle cx="17.5" cy="16" r="2.5" fill="currentColor"/></svg><span class="lbl">Som</span><i class="eq" aria-hidden="true"><b></b><b></b><b></b></i></button>
+<canvas id="fundo" aria-hidden="true"></canvas>
 
 <main>
 <!-- ================= MISSAO ================= -->
@@ -474,83 +449,45 @@ tr:last-child td{border-bottom:0}
   <section class="film" id="film" aria-label="Como o robô enxerga o mercado">
     <div class="stage">
       <canvas id="cosmos" aria-hidden="true"></canvas>
-      <div class="vig"></div><div class="grain" aria-hidden="true"></div><div class="lb top"></div><div class="lb bot"></div><div class="ctitle" id="ctitle" aria-hidden="true"></div>
+      <div class="vig"></div><div class="lb top"></div><div class="lb bot"></div>
       <div class="chap" id="chap" aria-hidden="true"></div>
-      <div class="cap hero" data-a="0" data-b="0.085">
+      <div class="cap hero" data-a="0" data-b="0.15">
         <p class="eyebrow">Andrômeda · robô de Bitcoin</p>
         <h1>O robô vigia o Bitcoin. <em>Você vive.</em></h1>
         <p>Uma vez por dia ele decide: ficar em Bitcoin ou esperar em dólar. Sem alavancagem, sem promessa de milagre e com todas as contas à mostra.</p>
         <div class="herochips"><span class="chip">O dinheiro fica na sua conta</span><span class="chip">1 decisão por dia</span><span class="chip">Binance, mercado à vista</span></div>
         <button class="som hero" type="button" data-som="hero" aria-pressed="false"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M9 18V6l11-2v12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="6.5" cy="18" r="2.5" fill="currentColor"/><circle cx="17.5" cy="16" r="2.5" fill="currentColor"/></svg><span class="lbl">Ligar a trilha</span><i class="eq" aria-hidden="true"><b></b><b></b><b></b></i></button>
       </div>
-      <div class="cap low" data-a="0.115" data-b="0.225">
+      <div class="cap low" data-a="0.19" data-b="0.4">
         <p class="eyebrow">O problema</p>
         <h2>O mercado de cripto não fecha. Você precisa dormir.</h2>
         <p>O preço mexe de madrugada, no meio do expediente, no almoço de domingo. Quem tenta acompanhar na mão acaba comprando no susto e vendendo no medo.</p>
       </div>
-      <div class="cap low" data-a="0.27" data-b="0.345">
-        <p class="eyebrow">A travessia</p>
-        <h2>Do outro lado não existe medo nem euforia. Só regra.</h2>
-        <p>Quem opera na mão sente o coração disparar a cada queda e compra por impulso a cada alta. O robô atravessa o mesmo mar de notícias sem emoção: confere números, sempre do mesmo jeito, uma vez por dia.</p>
-      </div>
-      <div class="cap low" data-a="0.39" data-b="0.48">
-        <p class="eyebrow">O horizonte</p>
-        <h2>Notícia, boato e pânico caem num ponto só: o preço de fechamento.</h2>
-        <p>Tudo o que acontece no dia vira um único número quando o dia do Bitcoin fecha, às 21h de Brasília. É só esse número que o robô usa para decidir.</p>
-      </div>
-      <div class="cap low" data-a="0.52" data-b="0.635">
+      <div class="cap low" data-a="0.44" data-b="0.62">
         <p class="eyebrow">A matéria-prima</p>
         <h2>A moeda se desfaz em preço: as estrelas viram velas do Bitcoin.</h2>
         <p>Este é o último ano e pouco, uma vela por semana: verde quando a semana fechou em alta, vermelha quando fechou em baixa. O robô não tenta adivinhar o futuro. Ele só lê para que lado o preço já está indo.</p>
       </div>
-      <div class="cap low" data-a="0.675" data-b="0.81">
+      <div class="cap low" data-a="0.65" data-b="0.8">
         <p class="eyebrow">A régua</p>
         <h2>A linha azul é a média dos últimos 200 dias.</h2>
         <p>Ela funciona como o nível do mar. Preço acima da linha: maré a favor. Preço abaixo: maré contra.</p>
         <div class="key"><span><i class="box" style="background:var(--up)"></i>Semana de alta</span><span><i class="box" style="background:var(--down)"></i>Semana de baixa</span><span><i style="background:var(--ion)"></i>Média de 200 dias</span></div>
       </div>
-      <div class="cap low" data-a="0.85" data-b="1.01">
+      <div class="cap low" data-a="0.83" data-b="1.01">
         <p class="eyebrow">A regra</p>
         <h2>Acima da linha e mais caro que há 90 dias: compra. Senão, sai e espera.</h2>
         <p>Nas faixas verdes o robô estaria com Bitcoin. Fora delas, parado em dólar digital, protegido das quedas longas.</p>
         <div class="key"><span><i class="box" style="background:rgba(86,217,154,.45)"></i>Robô comprado</span><span><i class="box" style="background:rgba(158,176,255,.14)"></i>Robô fora, em dólar</span></div>
       </div>
-      <div class="rail" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+      <div class="rail" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
       <div class="scrollcue" aria-hidden="true">role a tela</div>
     </div>
   </section>
-  <section class="band guia" id="guia" aria-label="Índice da página">
-    <div class="in">
-      <div class="head rv"><p class="eyebrow">Tudo o que você precisa saber</p><h2>O caminho até ligar o robô, em dez paradas.</h2>
-      <p class="lead">Leia na ordem ou pule direto para o que interessa. Os números da página se atualizam sozinhos com os dados do robô.</p></div>
-      <nav class="indice rv" aria-label="Partes da página">
-        <a href="#proposta"><b>01</b>A proposta</a><a href="#como"><b>02</b>Como funciona</a><a href="#seguranca"><b>03</b>Segurança</a>
-        <a href="#historico"><b>04</b>Teste no passado</a><a href="#esperar"><b>05</b>Ganhos e perdas</a><a href="#conta"><b>06</b>Simule</a>
-        <a href="#aovivo"><b>07</b>Ao vivo</a><a href="#custos"><b>08</b>Custos e impostos</a><a href="#riscos"><b>09</b>Riscos</a>
-        <a href="#planos"><b>10</b>Planos</a><a href="#faq"><b>?</b>Perguntas</a><a href="#tutorial"><b>→</b>Passo a passo</a>
-      </nav>
-    </div>
-  </section>
 
-  <section class="band alt" id="proposta">
+  <section class="band alt" id="como">
     <div class="in">
-      <div class="head rv" data-n="01"><p class="eyebrow">A proposta</p><h2>Robôs que operam Bitcoin na sua conta, com as regras às claras.</h2>
-      <p class="lead">Você assina um plano, liga o robô na sua própria conta da Binance e ele passa a comprar e vender sozinho, seguindo uma regra fixa e testada. O dinheiro e o lucro continuam seus. A Andrômeda cobra só a mensalidade.</p></div>
-      <div class="grid3">
-        <div class="card rv"><span class="step">O QUE É</span><h3>Um piloto automático com regra fixa</h3>
-          <ul class="lista"><li>Software que executa a estratégia na sua conta</li><li>Decide no máximo uma vez por dia (o robô principal)</li><li>Avisa cada movimento no Telegram</li><li>Mostra todos os números, inclusive os ruins</li></ul></div>
-        <div class="card rv d1"><span class="step">O QUE NÃO É</span><h3>Nada de promessa nem de custódia</h3>
-          <ul class="lista nao"><li>Não guarda o seu dinheiro nem recebe depósito</li><li>Não promete rendimento fixo nem lucro mensal</li><li>Não usa alavancagem, futuros ou empréstimo</li><li>Não é consultoria nem recomendação personalizada</li></ul></div>
-        <div class="card rv d2"><span class="step">PARA QUEM É</span><h3>Quem pensa em anos, não em semanas</h3>
-          <ul class="lista"><li>Quer ter Bitcoin sem ficar olhando gráfico</li><li>Aceita ver o saldo cair no caminho</li><li>Vai aplicar só o que não precisa a curto prazo</li></ul>
-          <p class="fine" style="margin:0">Não é para quem precisa de renda todo mês, de dinheiro garantido ou de resultado rápido.</p></div>
-      </div>
-    </div>
-  </section>
-
-  <section class="band" id="como">
-    <div class="in">
-      <div class="head rv" data-n="02"><p class="eyebrow">Como funciona</p><h2>Três passos, todo dia às 21h05.</h2>
+      <div class="head rv"><p class="eyebrow">Como funciona</p><h2>Três passos, todo dia às 21h05.</h2>
       <p class="lead">O dia do Bitcoin fecha às 21h de Brasília. Cinco minutos depois o robô faz a conta e age. No resto do tempo, ele não mexe em nada.</p></div>
       <div class="grid3">
         <div class="card rv"><span class="step">01 · OLHA</span><h3>Pega o preço de fechamento</h3><p>Um número só, o do fim do dia. Nada de ficar reagindo a cada tremida do gráfico.</p></div>
@@ -559,20 +496,10 @@ tr:last-child td{border-bottom:0}
       </div>
     </div>
   </section>
-  <section class="band alt" id="seguranca">
-    <div class="in">
-      <div class="head rv" data-n="03"><p class="eyebrow">Segurança · como você se conecta</p><h2>O dinheiro nunca sai da sua conta.</h2>
-      <p class="lead">A Andrômeda não recebe depósito de ninguém. Você continua com a sua própria conta na Binance e só empresta ao robô uma chave que compra e vende.</p></div>
-      <div class="grid3">
-        <div class="card rv"><span class="step">CHAVE LIMITADA</span><h3>Só opera, não saca</h3><p>A chave é criada por você, com a permissão de saque desligada. O robô consegue trocar dólar por Bitcoin e vice-versa. Transferir para fora, não.</p></div>
-        <div class="card rv d1"><span class="step">LUCRO INTEIRO</span><h3>O ganho é todo seu</h3><p>Sem taxa sobre resultado. Você paga uma mensalidade fixa pelo uso do robô, e nada além disso.</p></div>
-        <div class="card rv d2"><span class="step">BOTÃO DE DESLIGAR</span><h3>Você manda</h3><p>Apagou a chave na Binance, o robô para na hora. Sem contrato de fidelidade e sem pedir permissão.</p></div>
-      </div>
-    </div>
-  </section>
+
   <section class="band" id="historico">
     <div class="in">
-      <div class="head rv" data-n="04"><p class="eyebrow">Teste no passado · de 2020 até ontem</p><h2>Ele não ganha de todo mundo. Ele cai menos.</h2>
+      <div class="head rv"><p class="eyebrow">Teste no passado · de 2020 até ontem</p><h2>Ele não ganha de todo mundo. Ele cai menos.</h2>
       <p class="lead" id="btlead"></p></div>
       <div class="two">
         <div class="chartbox rv">
@@ -590,28 +517,40 @@ tr:last-child td{border-bottom:0}
       <p class="fine rv">Simulação com os preços reais da Binance (BTCUSDT diário), taxa de 0,1% e 0,05% de deslizamento por operação. A regra é reescolhida a cada semestre usando só os 24 meses anteriores. Resultado passado não garante resultado futuro.</p>
     </div>
   </section>
-  <section class="band alt" id="esperar">
+
+  <section class="band" id="mercado">
     <div class="in">
-      <div class="head rv" data-n="05"><p class="eyebrow">Ganhos e perdas · o que esperar</p><h2>Como o ganho acontece, e quanto dá para perder.</h2>
-      <p class="lead">O robô não paga um rendimento. Ele ganha quando o Bitcoin sobe enquanto ele está comprado, e protege quando sai antes de uma queda longa. Quando está fora, o dinheiro fica parado em dólar digital (USDT), sem render nada.</p></div>
-      <div class="grid3">
-        <div class="card rv"><span class="step">DE ONDE VEM O GANHO</span><h3>Poucas tendências longas</h3><p>A maior parte do lucro vem de poucos meses de alta forte. No resto do tempo, o robô entra e sai com ganhos e perdas pequenos, ou fica parado.</p></div>
-        <div class="card rv d1"><span class="step">DE ONDE VEM A PERDA</span><h3>A regra só reage depois</h3><p>Ela não prevê nada. Numa queda rápida, o robô só sai quando a tendência vira, e até lá a carteira já caiu. Em mercado de lado, entra e sai várias vezes, pagando taxa.</p></div>
-        <div class="card rv d2"><span class="step">QUANTO TEMPO</span><h3>Pense em um ano ou mais</h3><p>Um mês ou dois não dizem nada. Em prazos curtos, o resultado é quase sorte. É no ano a ano que a regra mostra para que serve.</p></div>
-      </div>
-      <div class="panel rv">
-        <h3 style="margin:0">Daqui a 12 meses, com R$ 1.000 aplicados</h3>
-        <p class="fine" style="margin:0" id="espfonte"></p>
-        <div class="tblwrap"><table class="esp" id="esptab" aria-label="Resultados possíveis em 12 meses"></table></div>
-        <p class="note" id="espnota"></p>
-      </div>
-      <p class="fine rv">Os números acima são do <b>Capitão</b>, o robô do plano Órbita, o único com teste de seis anos refeito semestre a semestre. Os outros robôs rodam ao vivo desde novembro de 2026 e ainda não têm histórico suficiente para uma tabela dessas. Taxas da corretora incluídas; mensalidade e impostos não. Passado não garante futuro.</p>
+      <div class="head rv"><p class="eyebrow">O mercado agora</p><h2>O Bitcoin, vela por vela.</h2>
+      <p class="lead">Cada vela é um pedaço de tempo. Verde: o preço terminou mais alto do que começou. Vermelha: terminou mais baixo. O pavio fino mostra até onde o preço foi. A linha azul é a régua do robô, e as setas marcam cada compra e venda do Capitão.</p></div>
+      <div class="chartbox rv candlebox" data-candles="missao"></div>
     </div>
   </section>
 
-  <section class="band" id="conta">
+  <section class="band alt" id="aovivo">
     <div class="in">
-      <div class="head rv" data-n="06"><p class="eyebrow">Simule · máquina do tempo com dados reais</p><h2>E se você tivesse começado antes?</h2>
+      <div class="head rv"><p class="eyebrow" id="vivoeyebrow">Ao vivo</p><h2>Placar da tripulação ao vivo.</h2>
+      <p class="lead" id="vivolead">Desde 6 de novembro de 2026 toda a tripulação roda ao vivo, com os preços reais do mercado, em ambiente de teste com dinheiro fictício. Cada robô começa com 20 dólares (até 22/11 eram 10; os valores antigos foram dobrados, então as porcentagens não mudaram). São os mesmos robôs que você liga na sua conta ao assinar.</p></div>
+      <div class="board rv" id="board"></div>
+      <p class="fine rv" id="vivonote"></p>
+      <a class="cta ghost rv" href="#escritorio">Ver a tripulação trabalhando no escritório</a>
+    </div>
+  </section>
+
+  <section class="band" id="seguranca">
+    <div class="in">
+      <div class="head rv"><p class="eyebrow">Como você se conecta</p><h2>O dinheiro nunca sai da sua conta.</h2>
+      <p class="lead">A Andrômeda não recebe depósito de ninguém. Você continua com a sua própria conta na Binance e só empresta ao robô uma chave que compra e vende.</p></div>
+      <div class="grid3">
+        <div class="card rv"><span class="step">CHAVE LIMITADA</span><h3>Só opera, não saca</h3><p>A chave é criada por você, com a permissão de saque desligada. O robô consegue trocar dólar por Bitcoin e vice-versa. Transferir para fora, não.</p></div>
+        <div class="card rv d1"><span class="step">LUCRO INTEIRO</span><h3>O ganho é todo seu</h3><p>Sem taxa sobre resultado. Você paga uma mensalidade fixa pelo uso do robô, e nada além disso.</p></div>
+        <div class="card rv d2"><span class="step">BOTÃO DE DESLIGAR</span><h3>Você manda</h3><p>Apagou a chave na Binance, o robô para na hora. Sem contrato de fidelidade e sem pedir permissão.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="band alt" id="conta">
+    <div class="in">
+      <div class="head rv"><p class="eyebrow">Máquina do tempo · dados reais</p><h2>E se você tivesse começado antes?</h2>
       <p class="lead">Escolha um valor e uma data. A conta usa o preço real do Bitcoin e do dólar de cada dia até agora, as taxas da corretora e a mensalidade do plano.</p></div>
       <div class="sim rv">
         <div class="simtop">
@@ -637,57 +576,10 @@ tr:last-child td{border-bottom:0}
       <p class="fine rv">Antes de 06/11/2026 os números são teste histórico, não operação real. Olhando para frente, em 24 de cada 100 simulações de um ano o robô básico terminou no prejuízo, e em 9 de cada 100 a carteira chegou a cair mais de 40% no caminho. Só aplique o que você pode ver oscilar.</p>
     </div>
   </section>
-  <section class="band alt" id="aovivo">
-    <div class="in">
-      <div class="head rv" data-n="07"><p class="eyebrow" id="vivoeyebrow">Ao vivo</p><h2>Placar da tripulação ao vivo.</h2>
-      <p class="lead" id="vivolead">Desde 6 de novembro de 2026 toda a tripulação roda ao vivo, com os preços reais do mercado, em ambiente de teste com dinheiro fictício. Cada robô começa com 20 dólares (até 22/11 eram 10; os valores antigos foram dobrados, então as porcentagens não mudaram). São os mesmos robôs que você liga na sua conta ao assinar.</p></div>
-      <div class="board rv" id="board"></div>
-      <p class="fine rv" id="vivonote"></p>
-      <a class="cta ghost rv" href="#escritorio">Ver a tripulação trabalhando no escritório</a>
-    </div>
-  </section>
-  <section class="band" id="mercado">
-    <div class="in">
-      <div class="head rv"><p class="eyebrow">O mercado agora</p><h2>O Bitcoin, vela por vela.</h2>
-      <p class="lead">Cada vela é um pedaço de tempo. Verde: o preço terminou mais alto do que começou. Vermelha: terminou mais baixo. O pavio fino mostra até onde o preço foi. A linha azul é a régua do robô, e as setas marcam cada compra e venda do Capitão.</p></div>
-      <div class="chartbox rv candlebox" data-candles="missao"></div>
-    </div>
-  </section>
-  <section class="band alt" id="custos">
-    <div class="in">
-      <div class="head rv" data-n="08"><p class="eyebrow">Custos e impostos</p><h2>Tudo o que sai do seu bolso, sem letra miúda.</h2>
-      <p class="lead">São três custos: a mensalidade da Andrômeda, a taxa da Binance em cada compra e venda e o imposto sobre o ganho, quando houver.</p></div>
-      <div class="grid3">
-        <div class="card rv"><span class="step">MENSALIDADE</span><h3>De R$ 59 a R$ 149 por mês</h3><p>Valor fixo, sem taxa sobre o lucro e sem fidelidade. Só começa a contar no dia em que o robô é ligado na sua conta. <span id="custopaga"></span></p></div>
-        <div class="card rv d1"><span class="step">TAXA DA CORRETORA</span><h3>Cerca de 0,1% por operação</h3><p>A Binance cobra em cada compra e cada venda, direto da sua conta. Pagando a taxa com BNB, a moeda da corretora, o desconto é de 25%. O Capitão opera poucas vezes por mês, então esse custo é pequeno.</p></div>
-        <div class="card rv d2"><span class="step">IMPOSTO</span><h3>15% sobre o ganho do ano</h3><p>Pela Lei 14.754/2023, ganho em corretora no exterior, como a Binance, paga 15% na declaração anual do Imposto de Renda, sem a isenção mensal de R$ 35 mil. Perdas podem abater ganhos. Confirme o seu caso com um contador.</p></div>
-      </div>
-      <div class="panel rv">
-        <h3 style="margin:0">Quanto você precisa para começar</h3>
-        <p style="margin:0">A Binance só aceita ordens a partir de cerca de 5 dólares, por isso cada robô precisa de no mínimo <b>20 dólares</b> (perto de R$ 110). Dá para começar com isso, mas a mensalidade pesa: com pouco dinheiro aplicado, ela pode ser maior que o ganho do ano. Cada plano mostra, logo abaixo da lista, a partir de quanto aplicado a mensalidade costuma se pagar num ano típico do teste.</p>
-      </div>
-    </div>
-  </section>
 
-  <section class="band" id="riscos">
+  <section class="band" id="planos">
     <div class="in">
-      <div class="head rv" data-n="09"><p class="eyebrow">Riscos</p><h2>O que pode dar errado, dito antes.</h2>
-      <p class="lead">Criptomoeda é um dos investimentos mais arriscados que existem. O robô diminui o tamanho das quedas no teste histórico, mas não elimina o risco.</p></div>
-      <div class="riscos">
-        <div class="card rv"><span class="step">MERCADO</span><h3>O Bitcoin pode cair muito</h3><p>No teste de 2020 a 2026, a carteira do Capitão chegou a cair 53% do topo ao fundo. Uma queda maior pode acontecer no futuro.</p></div>
-        <div class="card rv d1"><span class="step">REGRA</span><h3>Sinais falsos</h3><p>Em mercado sem direção, o robô pode comprar e vender várias vezes seguidas, com pequenas perdas e taxas em cada uma.</p></div>
-        <div class="card rv d2"><span class="step">CORRETORA</span><h3>A Binance pode falhar</h3><p>Instabilidade, bloqueio de conta ou mudança de regras da corretora afetam o robô. O dinheiro fica na sua conta, sujeito às regras dela.</p></div>
-        <div class="card rv"><span class="step">TÉCNICO</span><h3>O servidor pode parar</h3><p>Se o robô ficar fora do ar, a posição fica como está até ele voltar. Você recebe aviso no Telegram e pode agir na Binance a qualquer momento.</p></div>
-        <div class="card rv d1"><span class="step">ROBÔS NOVOS</span><h3>Nem todos têm histórico</h3><p>Só o Capitão tem teste de seis anos. Os outros estão em teste ao vivo desde novembro de 2026. Pepê e Surfista operam moedas muito arriscadas e podem perder a maior parte do valor.</p></div>
-        <div class="card rv d2"><span class="step">REGRAS DO PAÍS</span><h3>A lei pode mudar</h3><p>Regras de corretoras, de criptomoedas e de impostos no Brasil estão em mudança. Algo que vale hoje pode mudar amanhã.</p></div>
-      </div>
-      <p class="note rv"><b>Golpes:</b> a Andrômeda nunca pede a sua senha, o código do celular nem uma chave com permissão de saque. Pagamento só pelo Pix desta página, conferido no Telegram oficial @AndromedaCriptoBot.</p>
-    </div>
-  </section>
-
-  <section class="band alt" id="planos">
-    <div class="in">
-      <div class="head rv" data-n="10"><p class="eyebrow">Planos mensais</p><h2>Escolha a sua órbita.</h2>
+      <div class="head rv"><p class="eyebrow">Planos mensais</p><h2>Escolha a sua órbita.</h2>
       <p class="lead">Mensalidade fixa, sem taxa sobre o lucro e sem fidelidade. Quanto mais alto o plano, mais robôs você pode ligar. A mensalidade só começa a contar no dia em que o robô for ligado na sua conta.</p></div>
       <div class="plans" id="plans"></div>
       <div class="panel avisos rv" id="avisos"><p class="eyebrow">Avisos importantes</p>
@@ -698,19 +590,7 @@ tr:last-child td{border-bottom:0}
           <li>As simulações desta página incluem as taxas da corretora, mas não incluem impostos. Ganhos com criptoativos podem ser tributados no Brasil: confira com um contador.</li>
         </ul></div>
       <p class="rv" style="font-size:.95rem;color:var(--muted)">Primeira vez com corretora? <a href="#tutorial">Veja o passo a passo completo, do cadastro ao robô ligado</a>.</p>
-    </div>
-  </section>
-  <section class="band" id="faq">
-    <div class="in">
-      <div class="head rv" data-n="?"><p class="eyebrow">Perguntas frequentes</p><h2>O que as pessoas perguntam antes de assinar.</h2></div>
-      <div class="faq rv">
-        <details><summary>Posso perder dinheiro?</summary><p>Sim. O robô pode terminar o ano no prejuízo e a carteira pode cair bastante no caminho. A tabela de <a href="#esperar">ganhos e perdas</a> mostra com que frequência isso aconteceu nas simulações. Aplique só o que você aguenta ver oscilar.</p></details>
-        <details><summary>Posso sacar quando quiser?</summary><p>Sim. O dinheiro está na sua conta da Binance. Pause o robô pelo Telegram, venda se quiser e saque normalmente pela corretora, como faria sem robô.</p></details>
-        <details><summary>O robô pode sacar ou transferir o meu dinheiro?</summary><p>Não. A chave que você cria tem a permissão de saque desligada. Ela só permite comprar e vender dentro da sua conta. Se tentar mandar uma chave com saque ligado, o robô recusa.</p></details>
-        <details><summary>Preciso deixar o computador ou o celular ligado?</summary><p>Não. O robô roda num servidor na nuvem, 24 horas por dia. Você só recebe as mensagens no Telegram.</p></details>
-        <details><summary>Quanto tempo até ver resultado?</summary><p>Em semanas, quase nada se pode concluir. A regra foi feita para tendências que duram meses. Avalie no prazo de um ano ou mais.</p></details>
-        <details><summary>Rende todo mês, como renda fixa?</summary><p>Não. Tem mês de ganho, mês de perda e mês parado em dólar. Não existe pagamento mensal. Para renda previsível, renda fixa faz mais sentido.</p></details>
-        <details><summary>Preciso declarar no Imposto de Renda?</summary><p>Sim. Saldo em corretora no exterior e ganhos com criptomoedas entram na declaração anual, com 15% sobre o ganho do ano. Veja <a href="#custos">custos e impostos</a> e confirme com um contador.</p></details>
+      <div class="rv">
         <details><summary>Isso é investimento garantido?</summary><p>Não. Bitcoin oscila muito e o robô pode perder dinheiro. O que ele oferece é disciplina: seguir a mesma regra todo dia, sem emoção.</p></details>
         <details><summary>O robô usa alavancagem ou futuros?</summary><p>Não. Só compra e vende Bitcoin de verdade no mercado à vista. O máximo que se perde é o que foi aplicado.</p></details>
         <details><summary>Preciso entender de gráfico?</summary><p>Não. As mensagens chegam em linguagem do dia a dia e o painel mostra o essencial. Os detalhes técnicos ficam guardados para quem quiser conferir.</p></details>
@@ -718,10 +598,8 @@ tr:last-child td{border-bottom:0}
         <details><summary>Posso ligar mais de um robô?</summary><p>Sim, nos planos Constelação e Galáxia. No Telegram você escolhe quais robôs ligar e quanto vai para cada um, com mínimo de 20 dólares por robô.</p></details>
         <details><summary>E se eu desistir?</summary><p>Antes de o robô ser ligado na sua conta, o valor pago volta inteiro. Depois, você cancela quando quiser e não paga o mês seguinte.</p></details>
       </div>
-      <p class="rv" style="font-size:.95rem;color:var(--muted)">Ficou alguma dúvida? Mande no Telegram para <b>@AndromedaCriptoBot</b>, ou veja o <a href="#tutorial">passo a passo completo</a>.</p>
     </div>
   </section>
-
 
   <footer><div class="in">
     <p style="display:flex;align-items:center;gap:10px"><svg viewBox="0 0 64 64" width="26" height="26" aria-hidden="true"><use href="#logo"/></svg><b style="font-family:var(--f-display);letter-spacing:.14em;color:var(--ink)">ANDRÔMEDA</b> · projeto de Thales Andrade</p>
@@ -1278,8 +1156,8 @@ function Trilha(){
       if(el>18&&step%2===0)batida(next,step%8===0?.22:.11);
       next+=E8;step++;
     }
-    const p=window.__filmP==null?0:window.__filmP,vis=$('#v-missao')&&!$('#v-missao').hidden;
-    const alvo=vis?600+p*3800:1400;lp.frequency.setTargetAtTime(alvo,ctx.currentTime,.8);
+    const de=document.documentElement,p=clamp((scrollY||0)/Math.max(1,de.scrollHeight-innerHeight)),vis=$('#v-missao')&&!$('#v-missao').hidden;
+    const alvo=vis?900+p*3200:1600;lp.frequency.setTargetAtTime(alvo,ctx.currentTime,.8);
     arpG.gain.setTargetAtTime(vis?.5+p*.7:.6,ctx.currentTime,1.2);
   }
   function liga(){
@@ -1305,18 +1183,53 @@ function Trilha(){
   ui();
 }
 
+function Fundo(){
+  // galáxia de fundo da página inteira: espiral girando devagar, estrelas e brilho suave, atrás de todo o conteúdo
+  const cv=$('#fundo');if(!cv)return;
+  let c,W=0,H=0,raf=0,last=0;
+  let sd=29;const rnd=()=>(sd=(sd*16807)%2147483647)/2147483647;
+  const MOB=innerWidth<700,N=MOB?2600:5200,P=[],ST=[];
+  for(let i=0;i<N;i++){const arm=i%3,r=Math.pow(rnd(),.7),a=arm*2.094+r*6.2+(rnd()-.5)*(1.1-r*.6),k=rnd();
+    P.push({r,a,s:.7+rnd()*1.6,c:r<.12?'255,214,160':(k<.5?'140,170,255':(k<.75?'111,224,255':(k<.88?'255,190,140':'235,238,255'))),al:.45+rnd()*.55});}
+  for(let i=0;i<(MOB?140:260);i++)ST.push({x:rnd(),y:rnd(),s:rnd()<.1?1.6:.9,a:.12+rnd()*.45,f:rnd()*6.28,d:.2+rnd()*.8});
+  function size(){[c,W,H]=fit(cv);}
+  function vis(){
+    // na Missão, a galáxia de fundo aparece depois do filme do topo, para não brigar com ele
+    const m=$('#v-missao'),f=$('#film');
+    if(m&&!m.hidden&&f){const b=f.getBoundingClientRect().bottom;return clamp(1-(b-innerHeight*.35)/(innerHeight*.65));}
+    return 1;
+  }
+  function draw(t){
+    const o=vis();cv.style.opacity=o;
+    c.clearRect(0,0,W,H);if(o<=0)return;
+    const sy=scrollY||0;
+    for(const s of ST){const y=((s.y*H-sy*.04*s.d)%H+H)%H;c.fillStyle='rgba(205,216,255,'+(s.a*(.7+.3*Math.sin(t*.001+s.f)))+')';c.fillRect(s.x*W,y,s.s,s.s);}
+    const cx=W*(MOB?.62:.72),cy=H*.48-((sy*.02)%(H*.2)),R=Math.max(W,H)*(MOB?.75:.5),rot=t*.000018,tilt=.42,ang=-.5;
+    let g=c.createRadialGradient(cx,cy,0,cx,cy,R*.9);g.addColorStop(0,'rgba(255,200,130,.26)');g.addColorStop(.3,'rgba(110,110,230,.11)');g.addColorStop(1,'rgba(6,7,20,0)');c.fillStyle=g;c.fillRect(0,0,W,H);
+    const ca=Math.cos(ang),sa=Math.sin(ang);
+    for(const p of P){const a=p.a+rot*(1.6-p.r),x=Math.cos(a)*p.r*R,y=Math.sin(a)*p.r*R*tilt;
+      c.fillStyle='rgba('+p.c+','+p.al*(1-p.r*.45)+')';c.fillRect(cx+x*ca-y*sa,cy+x*sa+y*ca,p.s,p.s);}
+    g=c.createRadialGradient(cx,cy,0,cx,cy,R*.16);g.addColorStop(0,'rgba(255,232,195,.55)');g.addColorStop(1,'rgba(255,200,130,0)');c.fillStyle=g;c.fillRect(cx-R*.16,cy-R*.16,R*.32,R*.32);
+  }
+  function frame(t){raf=0;if(t-last>40){last=t;draw(t);}if(!RM&&!document.hidden)raf=requestAnimationFrame(frame);}
+  const start=()=>{if(!raf)raf=requestAnimationFrame(frame);};
+  addEventListener('resize',()=>{size();draw(performance.now());});
+  addEventListener('scroll',()=>{if(RM)draw(0);},{passive:true});
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden)start();});
+  addEventListener('hashchange',()=>setTimeout(()=>draw(performance.now()),60));
+  size();draw(0);start();
+}
+
 function Film(){
-  const cv=$('#cosmos'),film=$('#film'),stage=$('.stage'),caps=$$('#film .cap'),rail=$$('.rail i'),lbs=$$('.lb'),chap=$('#chap'),ct=$('#ctitle');
-  (()=>{const gc=document.createElement('canvas');gc.width=gc.height=160;const gx=gc.getContext('2d'),im=gx.createImageData(160,160);for(let i=0;i<im.data.length;i+=4){const v=Math.random()*255;im.data[i]=im.data[i+1]=im.data[i+2]=v;im.data[i+3]=255;}gx.putImageData(im,0,0);const gr=$('.grain');if(gr)gr.style.backgroundImage='url('+gc.toDataURL()+')';})();
-  const NOMES=['ABERTURA','O PROBLEMA','A TRAVESSIA','O HORIZONTE','A MATÉRIA-PRIMA','A RÉGUA','A REGRA'];
-  const INI=[0,.10,.25,.37,.50,.65,.82];
-  let c,W=0,H=0,raf=0,pS=0,mx=.5,my2=.5,F={},lastT=0;
+  const cv=$('#cosmos'),film=$('#film'),stage=$('.stage'),caps=$$('.cap'),rail=$$('.rail i'),lbs=$$('.lb'),chap=$('#chap');
+  const NOMES=['ABERTURA','O PROBLEMA','A MATÉRIA-PRIMA','A RÉGUA','A REGRA'];
+  let c,W=0,H=0,raf=0,pS=0,mx=.5,my2=.5,F={};
   function data(){const n=M.n,m=Math.min(420,n),a=n-m;F={M:m,c:M.c.slice(a),ma:M.sma[M.N].slice(a),in:Array.from(M.regra.slice(a)),d0:a};
     const all=F.c.concat(F.ma.filter(v=>v!=null));F.lo=Math.min(...all)*.97;F.hi=Math.max(...all)*1.02;
     F.wk=[];for(let i=0;i<m;i+=7){const j=Math.min(m-1,i+6),seg=F.c.slice(i,j+1),o=i?F.c[i-1]:F.c[0];F.wk.push({i0:i,i1:j,o,c:F.c[j],h:Math.max(o,...seg),l:Math.min(o,...seg)});}}
   data();
   let sd=11;const rnd=()=>(sd=(sd*16807)%2147483647)/2147483647;
-  const bump=(p,a,w)=>clamp(1-Math.abs(p-a)/w);
+  // pontos do simbolo: um B inclinado com os dois tracos em cima e embaixo
   const SK=-.13;let GI=null,GB={};
   function glyph(){
     const GW=420,GH=520,g=document.createElement('canvas');g.width=GW;g.height=GH;const x=g.getContext('2d');
@@ -1330,177 +1243,53 @@ function Film(){
     return pts.map(p=>{const ny=(p[1]-cyg)/hh;return [(p[0]-cxg)/hh+SK*ny,ny];});
   }
   const GP=glyph();
-  const MOB=innerWidth<700;
-  // estrelas de fundo, estrelas do salto, anéis do planeta, disco do buraco negro, estrelas dentro da passagem
-  const ST=[];for(let i=0;i<(MOB?160:260);i++)ST.push({x:rnd(),y:rnd(),a:.15+rnd()*.55,s:rnd()<.12?1.7:1,tw:rnd()*6.28});
-  const WS=[];for(let i=0;i<(MOB?260:520);i++)WS.push({x:(rnd()*2-1),y:(rnd()*2-1),z:rnd(),h:rnd()<.15?1:0});
-  const RP=[];for(let i=0;i<(MOB?260:520);i++)RP.push({r:1.28+rnd()*1.0,th:rnd()*6.283,s:.6+rnd()*1.2,b:rnd()<.06});
-  const BIN=[];for(let i=0;i<(MOB?14:26);i++)BIN.push({r:1.35+rnd()*.85,th:rnd()*6.283,ch:rnd()<.5?'0':'1',ph:rnd()*6.28});
-  const IW=[];for(let i=0;i<(MOB?180:320);i++)IW.push({r:Math.sqrt(rnd()),th:rnd()*6.283,a:.3+rnd()*.7,w:rnd()<.2});
-  const N=MOB?1100:2200,P=[];
+  const N=innerWidth<700?1300:2600,P=[];
   for(let i=0;i<N;i++){
-    const q={ty:i<N*.28&&GP.length?1:0,k:(i*7919%N+rnd())/N,jy:(rnd()+rnd()+rnd()-1.5)*9,dl:rnd(),sz:.7+rnd()*1.5,a:.45+rnd()*.55,ph:rnd()*6.283};
-    q.r=1.55+Math.pow(rnd(),1.4)*2.4;q.th=rnd()*6.283;q.v=.00042/Math.pow(q.r,1.5)*(.9+rnd()*.2);q.h=(rnd()-.5)*.06;
-    if(q.ty===1){const g=GP[Math.floor(rnd()*GP.length)];q.gx=g[0]+(rnd()-.5)*.012;q.gy=g[1]+(rnd()-.5)*.012;}
+    const u=i/N,ty=u<.3&&GP.length?1:u<.42?2:0,q={ty,k:(i*7919%N+rnd())/N,jy:(rnd()+rnd()+rnd()-1.5)*9,dl:rnd(),sz:.8+rnd()*1.5,a:.4+rnd()*.6,ph:rnd()*6.283};
+    if(ty===1){const g=GP[Math.floor(rnd()*GP.length)];q.gx=g[0]+(rnd()-.5)*.012;q.gy=g[1]+(rnd()-.5)*.012;}
+    else if(ty===2){const r=Math.pow(rnd(),1.6)*.26,a=rnd()*6.283;q.r=r;q.th=a;q.h=(rnd()-.5)*.05;}
+    else{const arm=i%2;q.r=.2+Math.pow(rnd(),.8)*.92;q.th=arm*Math.PI+q.r*5+(rnd()-.5)*1.05*(1.25-q.r);q.h=(rnd()-.5)*.06*(1.3-q.r);q.rr=rnd()<.3?.84+(rnd()-.5)*.015:1+(rnd()-.5)*.05;}
     P.push(q);
   }
-  const hasConic=typeof CanvasRenderingContext2D!=='undefined'&&'createConicGradient' in CanvasRenderingContext2D.prototype;
+  const ST=[];for(let i=0;i<190;i++)ST.push({x:rnd(),y:rnd(),a:.15+rnd()*.5,s:rnd()<.12?1.7:1});
   let bx0,bx1,by0,by1;
   const px=i=>bx0+(bx1-bx0)*i/(F.M-1),py=v=>by1-(v-F.lo)/(F.hi-F.lo)*(by1-by0);
   function size(){[c,W,H]=fit(cv);}
-  // lente: empurra para fora o que está perto de uma massa (passagem ou buraco negro)
-  function lens(x,y,L){if(!L)return [x,y,1];const dx=x-L.x,dy=y-L.y,d=Math.hypot(dx,dy)||1;if(d<L.r*1.02)return null;const nd=d+L.k*L.r*L.r/d;return [L.x+dx/d*nd,L.y+dy/d*nd,1+L.k*L.r/d*.6];}
-  function sky(p,t,L,dim){
-    for(const s of ST){
-      let x=(s.x*W+p*-90*s.s+(mx-.5)*-10*s.s+W*2)%W,y=(s.y*H-p*220*s.s+H*4)%H;
-      const q=lens(x,y,L);if(!q)continue;
-      const a=s.a*(.75+.25*Math.sin(t*.0012+s.tw))*dim*Math.min(1.8,q[2]);
-      c.fillStyle='rgba(205,216,255,'+a+')';c.fillRect(q[0],q[1],s.s,s.s);
-    }
-  }
-  function nebula(x,y,r,col,a){if(a<=0)return;const g=c.createRadialGradient(x,y,0,x,y,r);g.addColorStop(0,'rgba('+col+','+a+')');g.addColorStop(1,'rgba('+col+',0)');c.fillStyle=g;c.fillRect(x-r,y-r,r*2,r*2);}
-  // ---------------------------------------------------------------- cena 1: salto no hiperespaço
-  function warp(p,dt,w){
-    const cx=W*.5+(mx-.5)*-30,cy=H*(MOB?.42:.46)+(my2-.5)*-20,f=Math.min(W,H)*.55;
-    const sp=lerp(.00006,.0011,Math.pow(ease(clamp(p/.09)),1.6))*dt;
-    nebula(cx,cy,Math.max(W,H)*.7,'40,70,170',.22*w);
-    nebula(cx,cy,Math.min(W,H)*.22,'150,190,255',(.05+.14*clamp(p/.09))*w);
-    c.globalCompositeOperation='lighter';c.lineCap='round';
-    const st=clamp(sp*900,0,1);
-    for(const s of WS){
-      s.z-=sp;if(s.z<=.02){s.z=1;s.x=rnd()*2-1;s.y=rnd()*2-1;}
-      const z0=s.z,z1=Math.min(1,s.z+sp*(6+st*30)),x0=cx+s.x/z0*f*.35,y0=cy+s.y/z0*f*.35,x1=cx+s.x/z1*f*.35,y1=cy+s.y/z1*f*.35;
-      if(x0<-50||x0>W+50||y0<-50||y0>H+50)continue;
-      const a=clamp((1-z0)*1.4)*w,col=s.h?'255,214,160':'190,214,255';
-      c.strokeStyle='rgba('+col+','+a+')';c.lineWidth=.6+(1-z0)*2.2;c.beginPath();c.moveTo(x1,y1);c.lineTo(x0,y0);c.stroke();
-    }
-    c.globalCompositeOperation='source-over';
-  }
-  // ---------------------------------------------------------------- cena 2: o planeta dos anéis
-  function saturno(p,t,w){
-    const k=ease(clamp((p-.09)/.16)),mob=MOB;
-    const cx=lerp(W*(mob?.62:.7),W*(mob?.5:.64),k)+(mx-.5)*-24,cy=lerp(H*(mob?.36:.5),H*(mob?.33:.46),k)+(my2-.5)*-16;
-    const R=Math.min(W,H)*(mob?.17:.16)*lerp(.75,1.25,k),tilt=.3,rot=-.36+.08*k;
-    nebula(cx,cy,R*5,'200,150,90',.12*w);
-    c.save();c.globalAlpha=w;
-    const band=(a0,a1)=>{for(let i=0;i<34;i++){const r=1.28+i*.03;let al=.18+.32*Math.abs(Math.sin(i*1.7))*(i<22?1:.6);if(r>1.93&&r<1.99)al=.03;if(r>2.18)al*=.55;
-        c.strokeStyle='rgba('+(r<1.6?'226,196,150':'214,190,160')+','+al+')';c.lineWidth=R*.031;c.beginPath();c.ellipse(cx,cy,r*R,r*R*tilt,rot,a0,a1);c.stroke();}};
-    const dots=front=>{c.globalCompositeOperation='lighter';for(const d of RP){const an=d.th+t*.00004/d.r;const s=Math.sin(an);if((s>0)!==front)continue;
-        const x=cx+Math.cos(an)*d.r*R*Math.cos(rot)-s*d.r*R*tilt*Math.sin(rot),y=cy+Math.cos(an)*d.r*R*Math.sin(rot)+s*d.r*R*tilt*Math.cos(rot);
-        c.fillStyle=d.b?'rgba(255,199,120,.9)':'rgba(240,226,200,.55)';c.fillRect(x,y,d.s,d.s);}c.globalCompositeOperation='source-over';};
-    band(Math.PI,2*Math.PI);dots(false);
-    // planeta
-    c.save();c.beginPath();c.arc(cx,cy,R,0,6.283);c.clip();
-    let g=c.createLinearGradient(cx,cy-R,cx,cy+R);g.addColorStop(0,'#e9d3a6');g.addColorStop(.5,'#c9a46d');g.addColorStop(1,'#8a6a43');c.fillStyle=g;c.fillRect(cx-R,cy-R,R*2,R*2);
-    c.translate(cx,cy);c.rotate(rot);for(let i=-10;i<=10;i++){c.fillStyle='rgba('+(i%2?'120,86,50':'250,232,196')+','+(.08+.07*Math.abs(Math.sin(i*2.3)))+')';c.fillRect(-R,i*R*.1,R*2,R*.06+R*.03*Math.abs(Math.sin(i)));}
-    c.fillStyle='rgba(20,14,8,.35)';c.beginPath();c.ellipse(0,R*.18,R*1.2,R*.08,0,0,6.283);c.fill();
-    c.setTransform(1,0,0,1,0,0);const d=Math.min(devicePixelRatio||1,2);c.setTransform(d,0,0,d,0,0);
-    g=c.createRadialGradient(cx-R*.45,cy-R*.5,R*.1,cx+R*.2,cy+R*.2,R*1.25);g.addColorStop(0,'rgba(0,0,0,0)');g.addColorStop(.55,'rgba(0,0,0,.15)');g.addColorStop(1,'rgba(4,4,12,.92)');c.fillStyle=g;c.fillRect(cx-R,cy-R,R*2,R*2);
-    c.restore();
-    c.strokeStyle='rgba(255,226,180,.25)';c.lineWidth=1.5;c.beginPath();c.arc(cx,cy,R,Math.PI*.9,Math.PI*1.6);c.stroke();
-    band(0,Math.PI);dots(true);
-    // dados: zeros e uns orbitando nos anéis, o lado computador da coisa
-    c.font='600 '+Math.max(9,R*.09)+'px "JetBrains Mono",monospace';c.textAlign='center';c.textBaseline='middle';
-    for(const b of BIN){const an=b.th+t*.00003;const s=Math.sin(an);const x=cx+Math.cos(an)*b.r*R*Math.cos(rot)-s*b.r*R*tilt*Math.sin(rot),y=cy+Math.cos(an)*b.r*R*Math.sin(rot)+s*b.r*R*tilt*Math.cos(rot);
-      if(s<0&&Math.hypot(x-cx,y-cy)<R)continue;c.fillStyle='rgba(111,224,255,'+(.25+.35*Math.max(0,Math.sin(t*.002+b.ph)))+')';c.fillText(b.ch,x,y);}
-    c.restore();
-    return {x:cx,y:cy,R};
-  }
-  // ---------------------------------------------------------------- cena 3: a passagem (esfera que dobra a luz)
-  function passagem(p,t,w){
-    const k=clamp((p-.25)/.115),e=Math.pow(k,2.4);
-    const cx=W*.5+(mx-.5)*-20*(1-e),cy=H*(MOB?.36:.44)+(my2-.5)*-14*(1-e);
-    const Rw=Math.min(W,H)*lerp(.07,2.2,e);
-    return {x:cx,y:cy,r:Rw,k:.9,draw(){
-      c.save();c.globalAlpha=w;
-      nebula(cx,cy,Rw*1.9,'120,170,255',.18);
-      c.beginPath();c.arc(cx,cy,Rw,0,6.283);c.save();c.clip();
-      let g=c.createRadialGradient(cx-Rw*.25,cy-Rw*.3,0,cx,cy,Rw);g.addColorStop(0,'#0b1a3a');g.addColorStop(.7,'#060c22');g.addColorStop(1,'#1b2f66');c.fillStyle=g;c.fillRect(cx-Rw,cy-Rw,Rw*2,Rw*2);
-      // o outro lado: um brilho quente distante, esticado em arco perto da borda
-      c.globalCompositeOperation='lighter';
-      for(let i=0;i<6;i++){const rr=Rw*(.78+i*.035),a0=-2.4+Math.sin(t*.0003+i)*.2;c.strokeStyle='rgba(255,'+(170+i*10)+',110,'+(.10+.05*(5-i))+')';c.lineWidth=Rw*.018;c.beginPath();c.arc(cx,cy,rr,a0,a0+1.5);c.stroke();}
-      nebula(cx-Rw*.42,cy-Rw*.38,Rw*.35,'255,190,120',.35);
-      for(const s of IW){const th=s.th+t*.00012+(1-s.r)*2.2,r=Rw*(1-Math.pow(1-s.r,2));const x=cx+Math.cos(th)*r,y=cy+Math.sin(th)*r;c.fillStyle=s.w?'rgba(255,214,170,'+s.a+')':'rgba(200,220,255,'+s.a+')';c.fillRect(x,y,1.3,1.3);}
-      c.globalCompositeOperation='source-over';c.restore();
-      g=c.createRadialGradient(cx,cy,Rw*.86,cx,cy,Rw*1.02);g.addColorStop(0,'rgba(170,210,255,0)');g.addColorStop(1,'rgba(200,228,255,.5)');c.fillStyle=g;c.beginPath();c.arc(cx,cy,Rw,0,6.283);c.fill();
-      c.strokeStyle='rgba(230,242,255,.85)';c.lineWidth=1.4;c.beginPath();c.arc(cx,cy,Rw,0,6.283);c.stroke();
-      c.restore();}};
-  }
-  // ---------------------------------------------------------------- cena 4: o horizonte (buraco negro com disco de luz)
-  let BH={x:0,y:0,rs:1};
-  function horizonte(p,t,w,pre){
-    const k=ease(clamp((p-.36)/.14)),mob=MOB;
-    const cx=lerp(W*.5,W*(mob?.5:.64),k)+(mx-.5)*-16,cy=H*(mob?.36:.45)+(my2-.5)*-10;
-    const rs=Math.min(W,H)*(mob?.105:.095)*lerp(1.35,1,k);
-    BH={x:cx,y:cy,rs};
-    if(pre)return {x:cx,y:cy,r:rs*1.05,k:2.2};
-    c.save();c.globalAlpha=w;
-    nebula(cx,cy,rs*7,'255,140,50',.16);
-    // imagem do lado de trás do disco, dobrada por cima e por baixo da sombra
-    for(let i=0;i<14;i++){const rr=rs*(1.08+i*.035),al=(.42-i*.028);
-      if(hasConic){const g=c.createConicGradient(0,cx,cy);g.addColorStop(0,'rgba(255,190,110,'+al*.55+')');g.addColorStop(.25,'rgba(255,214,150,'+al*.8+')');g.addColorStop(.5,'rgba(255,236,200,'+al+')');g.addColorStop(.75,'rgba(255,214,150,'+al*.8+')');g.addColorStop(1,'rgba(255,190,110,'+al*.55+')');c.strokeStyle=g;}
-      else c.strokeStyle='rgba(255,206,140,'+al*.8+')';
-      c.lineWidth=rs*.04;c.beginPath();c.ellipse(cx,cy,rr,rr*.94,0,0,6.283);c.stroke();}
-    const disk=(a0,a1)=>{for(let i=0;i<22;i++){const rr=rs*(1.6+i*.1),al=(.5-i*.02)*(i<3?.7:1);
-        if(hasConic){const g=c.createConicGradient(0,cx,cy);g.addColorStop(0,'rgba(255,160,70,'+al*.5+')');g.addColorStop(.5,'rgba(255,236,196,'+al+')');g.addColorStop(1,'rgba(255,160,70,'+al*.5+')');c.strokeStyle=g;}
-        else c.strokeStyle='rgba(255,196,120,'+al*.75+')';
-        c.lineWidth=rs*.1;c.beginPath();c.ellipse(cx,cy,rr,rr*.12,-.04,a0,a1);c.stroke();}};
-    disk(Math.PI,2*Math.PI);
-    return {front(){
-      // sombra e anel de fótons
-      const g=c.createRadialGradient(cx,cy,rs*.6,cx,cy,rs*1.04);g.addColorStop(0,'#000');g.addColorStop(.93,'#000');g.addColorStop(1,'rgba(0,0,0,0)');c.fillStyle=g;c.beginPath();c.arc(cx,cy,rs*1.04,0,6.283);c.fill();
-      c.strokeStyle='rgba(255,240,210,.95)';c.lineWidth=1.6;c.shadowColor='rgba(255,200,120,.9)';c.shadowBlur=14;c.beginPath();c.arc(cx,cy,rs*1.035,0,6.283);c.stroke();c.shadowBlur=0;
-      disk(0,Math.PI);
-      c.restore();
-    }};
-  }
-  function draw(p,t,dt){
+  function draw(p,t){
     c.clearRect(0,0,W,H);
     const mob=W<760,mn=Math.min(W,H);
     bx0=W*.06;bx1=W*(mob?.95:.92);by0=H*(mob?.18:.19);by1=H*(mob?.5:.52);
-    const wW=1-clamp((p-.088)/.02),sW=clamp((p-.093)/.025)*(1-clamp((p-.25)/.04)),pW=clamp((p-.225)/.04)*(1-clamp((p-.358)/.012)),hW=clamp((p-.355)/.02)*(1-clamp((p-.6)/.06));
-    const g=clamp((p-.50)/.13),a1=clamp((p-.59)/.05);
-    // lente ativa para as estrelas de fundo
-    let L=null,PS=null;
-    if(pW>0){PS=passagem(p,t,pW);L={x:PS.x,y:PS.y,r:PS.r,k:.9};}
-    else if(hW>0){L=horizonte(p,t,hW,true);}
-    if(wW<1)sky(p,t,L,clamp(1-g*.6)*(1-wW));
-    if(wW>0)warp(p,dt,wW);
-    if(sW>0)saturno(p,t,sW);
-    if(PS)PS.draw();
-    let HF=null;if(hW>0)HF=horizonte(p,t,hW,false);
-    // partículas: giram no disco, formam a moeda, depois viram as velas do Bitcoin
-    if(p>.35){
-      const cx=BH.x,cy=BH.y,rs=BH.rs,gs=rs*1.25,u=ease(clamp((p-.405)/.06)),glyphA=clamp((p-.41)/.04)*(1-clamp((p-.54)/.04));
-      if(HF&&GI&&glyphA>0){const sc=gs/GB.hh;c.save();c.globalAlpha=glyphA*.55*hW;c.translate(cx,cy);c.transform(1,0,SK,1,0,0);c.scale(sc,sc);c.shadowColor='rgba(247,147,26,.95)';c.shadowBlur=30;c.drawImage(GI,-GB.cxg,-GB.cyg);c.restore();}
-      const back=[],front=[];
-      c.globalCompositeOperation='lighter';c.lineCap='round';
-      const pa=clamp((p-.355)/.03);
-      for(const q of P){
-        const an=q.th+t*q.v,dx=Math.cos(an)*q.r*rs,dy=Math.sin(an)*q.r*rs*.12+q.h*rs;
-        let x0=cx+dx,y0=cy+dy,isF=Math.sin(an)>0,w=1;
-        if(q.ty===1){x0=lerp(x0,cx+q.gx*gs,u);y0=lerp(y0,cy+q.gy*gs,u);if(u>.5)isF=true;}
-        const m=ease(clamp(g*1.7-q.dl*.7)),fi=q.k*(F.M-1),i0=Math.floor(fi),v=lerp(F.c[i0],F.c[Math.min(F.M-1,i0+1)],fi-i0);
-        const x=lerp(x0,px(fi),m),y=lerp(y0,py(v)+q.jy*(1-.6*clamp((p-.6)/.1)),m);
-        if(!isF&&m<.05&&Math.hypot(x-cx,y-cy)<rs*1.03)continue;
-        if(x<-20||x>W+20||y<-20||y>H+20)continue;
-        const dop=1+.55*(-Math.cos(an)),hot=clamp(1.6-q.r*.4);
-        const al=q.a*pa*(m>0?lerp(dop*.8,.55,m):dop*.75)*(1-.75*a1)*(HF?1:1);
-        const col=m>.5?'rgba(190,212,255,':(q.ty===1&&u>.3?'rgba(255,200,110,':'rgba(255,'+Math.round(lerp(170,236,hot))+','+Math.round(lerp(80,200,hot))+',');
-        (isF||m>.05?front:back).push([x,y,q.sz*lerp(1,.8,m),col+Math.min(1,al)+')']);
+    const u=ease(clamp((p-.15)/.25)),g=clamp((p-.44)/.18),spin=Math.sin(Math.PI*clamp((p-.15)/.25));
+    const cx=lerp(mob?W*.5:W*.7,W*(mob?.5:.67),u)+(mx-.5)*-18,cy=lerp(mob?H*.78:H*.5,H*(mob?.34:.44),u)+(my2-.5)*-12;
+    for(const s of ST){c.fillStyle='rgba(200,214,255,'+(s.a*(1-.5*g))+')';c.fillRect((s.x*W+p*-70*s.s+(mx-.5)*-8*s.s+W)%W,(s.y*H-p*160*s.s+H*2)%H,s.s,s.s);}
+    const S=mn*(mob?.36:.5)*(1+u*.35),rot=t*.00007+p*3.1,sq=lerp(.34,1,u),roll=lerp(-.42,0,u),cr=Math.cos(roll),sr=Math.sin(roll);
+    const gs=lerp(S*.36,mn*(mob?.32:.34),u),RC=gs*.84;
+    if(g<1){const k=1-g;let gr=c.createRadialGradient(cx,cy,0,cx,cy,S*.7);gr.addColorStop(0,'rgba(255,170,60,'+(.34*k)+')');gr.addColorStop(.3,'rgba(247,147,26,'+(.1*k)+')');gr.addColorStop(1,'rgba(90,110,255,0)');c.fillStyle=gr;c.fillRect(0,0,W,H);
+      if(u>.05){const fl=u*k;gr=c.createLinearGradient(cx-mn*.9,0,cx+mn*.9,0);gr.addColorStop(0,'rgba(255,200,120,0)');gr.addColorStop(.5,'rgba(255,214,150,'+(.5*fl)+')');gr.addColorStop(1,'rgba(255,200,120,0)');c.fillStyle=gr;c.fillRect(cx-mn*.9,cy-1.2,mn*1.8,2.4);c.fillRect(cx-mn*.5,cy-3,mn,6);
+        const dg=c.createRadialGradient(cx-RC*.3,cy-RC*.35,RC*.1,cx,cy,RC);dg.addColorStop(0,'rgba(120,70,10,'+(.55*fl)+')');dg.addColorStop(1,'rgba(40,22,4,'+(.7*fl)+')');c.fillStyle=dg;c.beginPath();c.arc(cx,cy,RC,0,6.283);c.fill();
+        c.strokeStyle='rgba(255,199,120,'+(.75*fl)+')';c.lineWidth=2;c.beginPath();c.arc(cx,cy,RC*1.0,0,6.283);c.stroke();c.strokeStyle='rgba(255,199,120,'+(.3*fl)+')';c.lineWidth=1;c.beginPath();c.arc(cx,cy,RC*.86,0,6.283);c.stroke();}
+      if(GI){const sc=gs/GB.hh;c.save();c.globalAlpha=clamp(1-g*2.6)*.92;c.translate(cx,cy);c.transform(1,0,SK,1,0,0);c.scale(sc,sc);c.shadowColor='rgba(247,147,26,.9)';c.shadowBlur=26;c.drawImage(GI,-GB.cxg,-GB.cyg);c.restore();}}
+    const a1=clamp((p-.6)/.05);
+    c.globalCompositeOperation='lighter';c.lineCap='round';
+    for(const q of P){
+      let gx,gy,w,tx=0,tyv=0;
+      if(q.ty===1){const tw=1+.03*Math.sin(t*.002+q.ph);gx=cx+q.gx*gs*tw;gy=cy+q.gy*gs*tw;w=1;if(g<=0&&Math.sin(t*.004+q.ph*5)<.55)continue;}
+      else{
+        const an=q.th+rot*(1.25-q.r*.5),x3=q.r*Math.cos(an),z3=q.r*Math.sin(an),yy=z3*sq+q.h*2*(1-u);
+        const ax=cx+(x3*cr-yy*sr)*S,ay=cy+(x3*sr+yy*cr)*S;
+        if(q.ty===0){const ra=q.th+rot*.35,rx=cx+Math.cos(ra)*RC*q.rr,ry=cy+Math.sin(ra)*RC*q.rr,uu=ease(clamp(u*1.5-q.dl*.5));gx=lerp(ax,rx,uu);gy=lerp(ay,ry,uu);w=uu*.8;tx=-(gy-cy);tyv=gx-cx;}
+        else{gx=lerp(ax,cx+(ax-cx)*.5,u);gy=lerp(ay,cy+(ay-cy)*.5,u);w=1;}
       }
-      for(const d of back){c.fillStyle=d[3];c.fillRect(d[0]-d[2]/2,d[1]-d[2]/2,d[2],d[2]);}
-      c.globalCompositeOperation='source-over';
-      if(HF)HF.front();
-      c.globalCompositeOperation='lighter';
-      for(const d of front){c.fillStyle=d[3];c.fillRect(d[0]-d[2]/2,d[1]-d[2]/2,d[2],d[2]);}
-      c.globalCompositeOperation='source-over';
+      const m=ease(clamp(g*1.7-q.dl*.7)),fi=q.k*(F.M-1),i0=Math.floor(fi),v=lerp(F.c[i0],F.c[Math.min(F.M-1,i0+1)],fi-i0);
+      const x=lerp(gx,px(fi),m),y=lerp(gy,py(v)+q.jy*(1-.6*clamp((p-.6)/.1)),m);
+      if(x<-20||x>W+20||y<-20||y>H+20)continue;
+      const ww=w*(1-m),al=q.a*lerp(1,.55,m)*(1-.75*a1),col='rgba('+Math.round(lerp(190,255,ww))+','+Math.round(lerp(212,q.ty===1?168:200,ww))+','+Math.round(lerp(255,q.ty===1?60:130,ww))+',';
+      const s=q.sz*lerp(1,.8,m);
+      if(q.ty===0&&spin>.05&&m<.2){const d=Math.hypot(tx,tyv)||1,len=spin*(6+q.r*26);c.strokeStyle=col+(al*.55)+')';c.lineWidth=s*.8;c.beginPath();c.moveTo(x,y);c.lineTo(x-tx/d*len,y-tyv/d*len);c.stroke();}
+      c.fillStyle=col+al+')';c.fillRect(x-s/2,y-s/2,s,s);
     }
-    // clarões das passagens de cena
-    const fl=Math.max(bump(p,.092,.008)*.32,bump(p,.362,.007)*.42);
-    if(fl>0){c.fillStyle='rgba(225,236,255,'+fl+')';c.fillRect(0,0,W,H);}
-    // o gráfico: velas semanais, régua e faixas da regra (igual ao de antes)
-    const q2=clamp((p-.67)/.12),q3=clamp((p-.84)/.1),Mx=F.M;
+    c.globalCompositeOperation='source-over';
+    const q2=clamp((p-.66)/.12),q3=clamp((p-.83)/.1),Mx=F.M;
     if(a1>0){
       if(q3>0){let i=0;while(i<Mx){let j=i;while(j<Mx&&F.in[j]===F.in[i])j++;c.fillStyle=F.in[i]?'rgba(86,217,154,'+(.17*q3)+')':'rgba(158,176,255,'+(.05*q3)+')';c.fillRect(px(i),by0-14,px(Math.min(Mx-1,j))-px(i),by1-by0+28);i=j;}}
       c.font='11px "JetBrains Mono",monospace';c.textBaseline='middle';
@@ -1514,20 +1303,17 @@ function Film(){
   }
   let lastP=-1;
   function frame(t){
-    raf=0;const dt=Math.min(60,lastT?t-lastT:16);lastT=t;
+    raf=0;
     const r=film.getBoundingClientRect(),sh=stage.offsetHeight,pT=RM?1:clamp(-r.top/Math.max(1,r.height-sh));
-    pS=RM?1:pS+(pT-pS)*.12;if(Math.abs(pT-pS)<.0004)pS=pT;const p=pS;
-    window.__filmP=p;
+    pS=RM?1:pS+(pT-pS)*.14;if(Math.abs(pT-pS)<.0004)pS=pT;const p=pS;
     if(r.bottom>0&&r.top<innerHeight){
-      draw(p,t,dt);
+      draw(p,t);
       if(Math.abs(p-lastP)>.0004){lastP=p;let act=0;
-        caps.forEach((el,i)=>{const a=+el.dataset.a,b=+el.dataset.b;const o=RM?1:clamp(a===0?1:(p-a)/.025)*clamp((b-p)/.025);el.style.opacity=o;el.style.transform='translateY('+((1-o)*22)+'px)';el.style.visibility=o>0?'visible':'hidden';});
-        INI.forEach((a,i)=>{if(p>=a-.001)act=i;});
+        caps.forEach((el,i)=>{const a=+el.dataset.a,b=+el.dataset.b;const o=RM?1:clamp(a===0?1:(p-a)/.03)*clamp((b-p)/.03);el.style.opacity=o;el.style.transform='translateY('+((1-o)*22)+'px)';el.style.visibility=o>0?'visible':'hidden';if(p>=a)act=i;});
         rail.forEach((el,i)=>el.classList.toggle('on',i===act));
-        const lb=ease(clamp((p-.09)/.04))*clamp((1-p)/.012);lbs.forEach(el=>el.style.transform='scaleY('+lb+')');
-        chap.style.opacity=lb;chap.innerHTML='<b>0'+(act+1)+'</b> / 07 · '+NOMES[act];
-        if(ct){const o=act>0?bump(p,INI[act]+.012,.022):0;ct.style.opacity=o;ct.style.letterSpacing=(.5+.25*(1-o))+'em';if(o>0)ct.innerHTML='<small>CAPÍTULO '+['I','II','III','IV','V','VI','VII'][act]+'</small>'+NOMES[act];}
-        $('.scrollcue').style.opacity=clamp(1-p*14);
+        const lb=ease(clamp((p-.12)/.07))*clamp((1-p)/.012);lbs.forEach(el=>el.style.transform='scaleY('+lb+')');
+        chap.style.opacity=lb;chap.innerHTML='<b>0'+(act+1)+'</b> / 05 · '+NOMES[act];
+        $('.scrollcue').style.opacity=clamp(1-p*12);
       }
     }
     if(!RM&&!$('#v-missao').hidden)raf=requestAnimationFrame(frame);
@@ -2062,7 +1848,7 @@ function Modo(){
   $('#faqreal').textContent=real?'O Capitão opera com dinheiro real. Os outros robôs do placar mostram a carteira simulada com os preços reais do mercado e as mesmas taxas. O gráfico de 2020 a 2026 é uma simulação com preços históricos. Na sua conta, todos operam com o seu dinheiro de verdade.':'Não. O placar ao vivo vem do ambiente de teste da Binance, com dinheiro fictício e preços reais, desde novembro de 2026. O gráfico de 2020 a 2026 é uma simulação com preços históricos. Na sua conta, o robô opera com o seu dinheiro de verdade.';
 }
 Modo();onData.push(Modo);
-Trilha();const FILM=Film(),BT=Backtest();Board();Sim();const PL=Plans();OFF=Office();const PN=Painel();
+Trilha();Fundo();const FILM=Film(),BT=Backtest();Board();Sim();const PL=Plans();OFF=Office();const PN=Painel();
 addEventListener('keydown',e=>{if(e.key==='Escape'){closeDrawer();PL.close();}});
 const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('on');if(e.target.contains($('#bt')))BT.play();io.unobserve(e.target);}}),{threshold:.15});
 $$('.rv').forEach(el=>io.observe(el));
@@ -2079,26 +1865,6 @@ function go(){
   if(VIEWS.includes(h))scrollTo({top:0,behavior:'instant'});
 }
 addEventListener('hashchange',go);go();startLive();
-
-function Esperar(){
-  // tabela de ganhos e perdas: 10 mil futuros sorteados com os dias reais (dados MT, já usados na simulação)
-  const tab=$('#esptab');if(!tab||typeof MT==='undefined')return;
-  const c=MT.capitao,b=MT.segurar,v=x=>'R$ '+Math.round(1000*x).toLocaleString('pt-BR'),pc=x=>(x>=1?'+':'')+Math.round((x-1)*100)+'%';
-  const L=[['Ano muito ruim · 5 em cada 100','5'],['Ano fraco · 1 em cada 4','25'],['Ano típico · metade acima, metade abaixo','50'],['Ano bom · 1 em cada 4','75'],['Ano muito bom · 5 em cada 100','95']];
-  let h='<thead><tr><th>Cenário em 12 meses</th><th>Capitão</th><th></th><th>Só segurar Bitcoin</th><th></th></tr></thead><tbody>';
-  L.forEach(([n,k])=>{h+='<tr><td>'+n+'</td><td class="c">'+v(c.pct[k][12])+'</td><td>'+pc(c.pct[k][12])+'</td><td>'+v(b.pct[k][12])+'</td><td>'+pc(b.pct[k][12])+'</td></tr>';});
-  const q=MT.capitao.queda['12'],qb=MT.segurar.queda['12'];
-  h+='<tr class="sep"><td>Chance de terminar o ano no prejuízo</td><td class="c">'+Math.round(c.perda[12]*100)+'%</td><td></td><td>'+Math.round(b.perda[12]*100)+'%</td><td></td></tr>';
-  h+='<tr><td>Queda no caminho, num ano comum</td><td class="c">'+Math.round(q.mediana*100)+'%</td><td></td><td>'+Math.round(qb.mediana*100)+'%</td><td></td></tr>';
-  h+='<tr><td>Queda no caminho, 1 ano em cada 10</td><td class="c">'+Math.round(q.pior10*100)+'%</td><td></td><td>'+Math.round(qb.pior10*100)+'%</td><td></td></tr></tbody>';
-  tab.innerHTML=h;
-  $('#espfonte').textContent=MT.n.toLocaleString('pt-BR')+' futuros sorteados com os dias reais do teste de 2020 a 2026, em blocos de 30 dias. Valores antes da mensalidade e do imposto.';
-  const t=c.pct['50'][12]-1,pl=(typeof PLANOS!=='undefined'&&PLANOS[0])?PLANOS[0].preco:59,ano=pl*12,min=t>0?Math.ceil(ano/t/100)*100:0;
-  $('#espnota').innerHTML='Leia assim: em 1 de cada 4 anos sorteados o Capitão perdeu dinheiro, e em 1 de cada 20 a perda passou de '+Math.round((1-c.pct['5'][12])*100)+'%. A vantagem dele sobre só segurar aparece nas quedas: no ano comum, o tombo no caminho foi bem menor.';
-  const cp=$('#custopaga');if(cp&&min)cp.textContent='Num ano típico do teste, a mensalidade do Órbita (R$ '+ano.toLocaleString('pt-BR')+' por ano) se paga a partir de uns R$ '+min.toLocaleString('pt-BR')+' aplicados.';
-}
-setTimeout(Esperar,0);
-
 
 
 /* ============ maquina do tempo para frente (Monte Carlo) ============ */
